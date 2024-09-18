@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: greenyellow;
+    /* url(./) no-repeat*/
+    background-size: cover;
+    background-position: center;
+    background: url('./src/image/immortalzed.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+}
