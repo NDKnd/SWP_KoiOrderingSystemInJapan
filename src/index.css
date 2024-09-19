@@ -1,4 +1,4 @@
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -10,10 +10,43 @@ body {
     align-items: center;
     min-height: 100vh;
     background-color: greenyellow;
-    /* url(./) no-repeat*/
     background-size: cover;
     background-position: center;
     background: url('./src/image/immortalzed.jpg') no-repeat;
     background-size: cover;
     background-position: center;
+} */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    /* colors */
+    --purple1: hsl(266, 14%, 27%);
+    --purple2: hsl(266, 14%, 42%);
+    --purple3: hsl(266, 14%, 52%);
+    --purple4: hsl(266, 14%, 62%);
+    --purple5: hsl(75, 100%, 96%);
+    --colora: #90be6d;
+    --colora2: #e63946;
+    /* landing page */
+    --ff: sans-serif, monospace;
+    --h1: bold 4rem/1em var(--ff);
+    --h2: bold 3rem/1.2em var(--ff);
+    --h3: bold 2.25rem/1.2em var(--ff);
+    --h4: bold 1.5rem/1.6em var(--ff);
+    --big: 1.25rem/1.6em var(--ff);
+    --p: 1rem/1.6em var(--ff);
+    --small: .75rem/2em var(--ff);
+
+}
+
+body{
+    font-family: var(--ff);
+    text-wrap: balance;
+    background: var(--purple5);
+    color: var(--purple1);
 }

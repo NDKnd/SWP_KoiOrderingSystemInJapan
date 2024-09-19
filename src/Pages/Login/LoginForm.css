@@ -1,9 +1,21 @@
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background: url('./src/image/immortalzed.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
 .wrapper {
     position: relative;
     width: 420px;
     height: 450px;
     background: transparent;
-    border: 2px solid rgba(255,255,255,.1);
+    border: 2px solid rgba(255, 255, 255, .1);
     backdrop-filter: blur(30px);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     color: #fff;
@@ -14,36 +26,37 @@
     overflow: hidden;
 }
 
-.wrapper.active{
+.wrapper.active {
     height: 520px;
 }
 
-.wrapper .form-box{
+.wrapper .form-box {
     width: 100%;
     padding: 20px;
 }
 
-.wrapper .form-box.login{
+.wrapper .form-box.login {
     transition: translate .18s ease;
     translate: 0;
 }
 
-.wrapper.active .form-box.login{
+.wrapper.active .form-box.login {
     transition: none;
     translate: -400px;
 }
 
-.wrapper.active .form-box.register{
+.wrapper.active .form-box.register {
     transition: translate .18s ease;
     translate: 0;
     padding-right: 90px;
 }
 
-.wrapper .form-box.register{
+.wrapper .form-box.register {
     position: absolute;
     transition: none;
     translate: 400px;
 }
+
 .wrapper h1 {
     font-size: 36px;
     text-align: center;
@@ -89,7 +102,7 @@
 }
 
 .remember-forgot label input {
-    accent-color:hsl(75, 100%, 96%);
+    accent-color: hsl(75, 100%, 96%);
     margin-right: 10px;
 }
 
@@ -123,7 +136,7 @@
 }
 
 .register-link p a {
-    color:hsl(75, 100%, 96%);
+    color: hsl(75, 100%, 96%);
     text-decoration: none;
     font-weight: 600;
 }
