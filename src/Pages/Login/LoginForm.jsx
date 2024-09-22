@@ -1,21 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './LoginForm.css'
-import { FaUser, FaLock, FaEnvelope } from "react-icons/fa"
+import { FaUser,FaEye, FaEyeSlash , FaEnvelope, FaPen , FaLock} from "react-icons/fa"
 
 const LoginForm = () => {
 
+    //for tranfsition from login to regis
     const [action, setAction] = useState('');
     const registerLink = () => {
         setAction('active');
     }
-
     const loginLink = () => {
         setAction('');
     }
 
-    
+    // for seeing Password
+    const [see, setSee] = useState(false);
+    const togglePassword = (event) => {
+        setSee(prevState => !prevState);
+    }
+    useEffect(() => {
+        setSee()
+    }
+    ,[setSee])
+    // for Confirm Password
 
-    return (<>
+    return (
         <div className="login-body">
             <div className={`wrapper ${action}`}>
                 <div className="form-box login">
@@ -26,8 +35,11 @@ const LoginForm = () => {
                             <FaUser className="icon"></FaUser>
                         </div>
                         <div className="input-box">
-                            <input type="password" placeholder="Password" required></input>
-                            <FaLock className="icon"></FaLock>
+                            <input type={see?"password":"text"} placeholder="Password" required></input>
+                            {see ? 
+                                <FaEye className="icon" onClick={() => togglePassword()} /> 
+                                : <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                            }
                         </div>
                         <div className="remember-forgot">
                             <label><input type="checkbox"></input>Remember me</label>
@@ -45,6 +57,14 @@ const LoginForm = () => {
                     <form action="">
                         <h1>Registraion</h1>
                         <div className="input-box">
+                            <input type="text" placeholder="First name" required></input>
+                            <FaPen className="icon"/>
+                        </div>
+                        <div className="input-box">
+                            <input type="text" placeholder="Last name" required></input>
+                            <FaPen className="icon"/>
+                        </div>
+                        <div className="input-box">
                             <input type="text" placeholder="Username" required></input>
                             <FaUser className="icon" />
                         </div>
@@ -53,12 +73,22 @@ const LoginForm = () => {
                             <FaEnvelope className="icon" />
                         </div>
                         <div className="input-box">
-                            <input type="password" placeholder="Password" required></input>
-                            <FaLock className="icon" />
+                            {/* <input type="password" placeholder="Password" required></input>
+                            <FaEyeSlash className="icon" /> */}
+                            <input type={see?"password":"text"} placeholder="Password" required></input>
+                            {see ? 
+                                <FaEye className="icon" onClick={togglePassword} /> : 
+                                <FaEyeSlash className="icon" onClick={togglePassword} />
+                            }
                         </div>
                         <div className="input-box">
-                            <input type="password" placeholder="Confirm password" required></input>
-                            <FaLock className="icon" />
+                            {/* <input type="password" placeholder="Confirm password" required></input>
+                            <FaEyeSlash className="icon" /> */}
+                            <input type={see?"password":"text"} placeholder="Confirm password" required></input>
+                            {see ? 
+                                <FaEye className="icon" onClick={togglePassword} /> : 
+                                <FaEyeSlash className="icon" onClick={togglePassword} />
+                            }
                         </div>
                         <div className="remember-forgot">
                             <label><input type="checkbox" required></input>
@@ -74,8 +104,7 @@ const LoginForm = () => {
                 </div>
             </div>
         </div>
-
-    </>);
+    );
 }
 
 export default LoginForm
