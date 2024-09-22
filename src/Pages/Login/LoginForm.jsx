@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './LoginForm.css'
-import { FaUser,FaEye, FaEyeSlash , FaEnvelope, FaPen , FaLock} from "react-icons/fa"
+import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaLock } from "react-icons/fa"
 
 const LoginForm = () => {
 
@@ -14,15 +14,28 @@ const LoginForm = () => {
     }
 
     // for seeing Password
-    const [see, setSee] = useState(false);
+    const [see, setSee] = useState(true);
     const togglePassword = (event) => {
         setSee(prevState => !prevState);
     }
     useEffect(() => {
         setSee()
     }
-    ,[setSee])
+        , [setSee])
     // for Confirm Password
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleConfirmPasswordChange = (e) => {
+        const value = e.target.value;
+        setConfirmPassword(value);
+
+        if (password !== value) {
+            e.target.setCustomValidity('Password and Confirm Password do not match!');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    };
 
     return (
         <div className="login-body">
@@ -35,10 +48,10 @@ const LoginForm = () => {
                             <FaUser className="icon"></FaUser>
                         </div>
                         <div className="input-box">
-                            <input type={see?"password":"text"} placeholder="Password" required></input>
-                            {see ? 
-                                <FaEye className="icon" onClick={() => togglePassword()} /> 
-                                : <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                            <input type={see ? "text" : "password"} placeholder="Password" required></input>
+                            {see ?
+                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                                : <FaEye className="icon" onClick={() => togglePassword()} />
                             }
                         </div>
                         <div className="remember-forgot">
@@ -56,17 +69,18 @@ const LoginForm = () => {
                 <div className="form-box register">
                     <form action="">
                         <h1>Registraion</h1>
-                        <div className="input-box">
-                            <input type="text" placeholder="First name" required></input>
-                            <FaPen className="icon"/>
-                        </div>
-                        <div className="input-box">
-                            <input type="text" placeholder="Last name" required></input>
-                            <FaPen className="icon"/>
-                        </div>
+
                         <div className="input-box">
                             <input type="text" placeholder="Username" required></input>
                             <FaUser className="icon" />
+                        </div>
+                        <div className="input-box">
+                            <input type="text" placeholder="First name" required></input>
+                            <FaPen className="icon" />
+                        </div>
+                        <div className="input-box">
+                            <input type="text" placeholder="Last name" required></input>
+                            <FaPen className="icon" />
                         </div>
                         <div className="input-box">
                             <input type="email" placeholder="Email" required></input>
@@ -75,19 +89,39 @@ const LoginForm = () => {
                         <div className="input-box">
                             {/* <input type="password" placeholder="Password" required></input>
                             <FaEyeSlash className="icon" /> */}
-                            <input type={see?"password":"text"} placeholder="Password" required></input>
-                            {see ? 
-                                <FaEye className="icon" onClick={togglePassword} /> : 
-                                <FaEyeSlash className="icon" onClick={togglePassword} />
+                            {/* <input type={see ? "text" : "password"} placeholder="Password" required></input> */}
+                            <input
+                                type={see ? "text" : "password"}
+                                id="password"
+                                value={password}
+                                placeholder="Password"
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            {see ?
+                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                                : <FaEye className="icon" onClick={() => togglePassword()} />
                             }
                         </div>
                         <div className="input-box">
                             {/* <input type="password" placeholder="Confirm password" required></input>
                             <FaEyeSlash className="icon" /> */}
-                            <input type={see?"password":"text"} placeholder="Confirm password" required></input>
-                            {see ? 
-                                <FaEye className="icon" onClick={togglePassword} /> : 
-                                <FaEyeSlash className="icon" onClick={togglePassword} />
+                            {/* <input type={see ? "text" : "password"} placeholder="Confirm password" required></input>
+                            {see ?
+                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                                : <FaEye className="icon" onClick={() => togglePassword()} />
+                            } */}
+                            <input
+                                type={see ? "text" : "password"}
+                                id="confirmPassword"
+                                value={confirmPassword}
+                                placeholder="Confirm password"
+                                onChange={handleConfirmPasswordChange}
+                                required
+                            />
+                            {see ?
+                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                                : <FaEye className="icon" onClick={() => togglePassword()} />
                             }
                         </div>
                         <div className="remember-forgot">

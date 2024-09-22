@@ -81,9 +81,9 @@
     padding: 20px 50px 20px 20px;
 }
 
-/* .input-box input::placeholder, .input-box{
+.input-box input::placeholder, .input-box{
     color: #fff;
-} */
+}
 
 .input-box .icon {
     position: absolute;
