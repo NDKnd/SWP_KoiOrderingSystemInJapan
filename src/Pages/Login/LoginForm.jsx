@@ -6,7 +6,7 @@ const LoginForm = () => {
 
     const [action, setAction] = useState('');
     const registerLink = () => {
-        setAction(' active');
+        setAction('active');
     }
 
     const loginLink = () => {
@@ -17,7 +17,7 @@ const LoginForm = () => {
 
     return (<>
         <div className="login-body">
-            <div className={`wrapper${action}`}>
+            <div className={`wrapper ${action}`}>
                 <div className="form-box login">
                     <form action="">
                         <h1>Login</h1>
