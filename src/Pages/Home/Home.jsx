@@ -1,10 +1,16 @@
+import FilterAddress from "../../Components/FilterAddress_TEST/filter";
+import MyTables from "../../Components/Table/Tables";
+
 
 
 function Home() {
 
-    return(
+    return (
         <>
-            <h1>Home</h1>
+            <h1>Home</h1><hr />
+            <FilterAddress/><hr />
+            <MyTables /><hr />
+
         </>
     );
 }
