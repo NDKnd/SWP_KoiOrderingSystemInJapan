@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import './LoginForm.css'
 import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaLock } from "react-icons/fa"
+import api from "./axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
 
@@ -37,18 +39,58 @@ const LoginForm = () => {
         }
     };
 
+    //handle login
+    const navigatie = useNavigate()
+
+    const handleLogin = async (event) => {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+        const formData = new FormData(event.target); // Lấy dữ liệu form
+        const userName = formData.get('username'); // Lấy giá trị của trường Username
+        const password = formData.get('password'); // Lấy giá trị của trường Password
+        console.log("Username:", userName);
+        console.log("Password:", password);
+
+        try{
+            // const response = await api.get.post("login",userName,password);
+            // const {token} = response.data;
+            // localStorage.setItem("token", token);
+            // localStorage.setItem("user",JSON.stringify(response.data));
+            navigatie("/");
+        } catch (err){
+            console.log(err);
+            alert("Username or Password is invalid!");
+        }
+        
+    };
+
+    //handle registration
+    const handleRegitration = (event) => {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+        const formData = new FormData(event.target); // Lấy dữ liệu form
+        const userName = formData.get('username'); // Lấy giá trị của trường Username
+        const firstName = formData.get('firstname'); // Lấy giá trị của trường Password
+        const lastName = formData.get('lastname'); // Lấy giá trị của trường Password
+        const email = formData.get('email'); // Lấy giá trị của trường Password
+        const password = formData.get('password'); // Lấy giá trị của trường Password
+        console.log("Username:", userName);
+        console.log("Firstname:", firstName);
+        console.log("Lastname:", lastName);
+        console.log("Email:", email);
+        console.log("Password:", password);
+    };
+
     return (
         <div className="login-body">
             <div className={`wrapper ${action}`}>
                 <div className="form-box login">
-                    <form action="">
+                    <form action="" onSubmit={handleLogin}>
                         <h1>Login</h1>
                         <div className="input-box">
-                            <input type="text" placeholder="Username" required></input>
+                            <input type="text" name="username" placeholder="Username" required></input>
                             <FaUser className="icon"></FaUser>
                         </div>
                         <div className="input-box">
-                            <input type={see ? "text" : "password"} placeholder="Password" required></input>
+                            <input type={see ? "text" : "password"} name="password" placeholder="Password" required></input>
                             {see ?
                                 <FaEyeSlash className="icon" onClick={() => togglePassword()} />
                                 : <FaEye className="icon" onClick={() => togglePassword()} />
@@ -58,43 +100,41 @@ const LoginForm = () => {
                             <label><input type="checkbox"></input>Remember me</label>
                             <a href="#">Forgot password?</a>
                         </div>
-
                         <button type="submit">Login</button>
                         <div className="register-link">
                             <p>Don't have an account? <a href="#" onClick={registerLink}>Register</a></p>
                         </div>
                     </form>
+
                 </div>
 
                 <div className="form-box register">
-                    <form action="">
+                    <form action="" onSubmit={handleRegitration}>
                         <h1>Registraion</h1>
 
                         <div className="input-box">
-                            <input type="text" placeholder="Username" required></input>
+                            <input type="text" placeholder="Username" name="username" required></input>
                             <FaUser className="icon" />
                         </div>
                         <div className="input-box">
-                            <input type="text" placeholder="First name" required></input>
+                            <input type="text" placeholder="First name" name="firstname" required></input>
                             <FaPen className="icon" />
                         </div>
                         <div className="input-box">
-                            <input type="text" placeholder="Last name" required></input>
+                            <input type="text" placeholder="Last name" name="lastname" required></input>
                             <FaPen className="icon" />
                         </div>
                         <div className="input-box">
-                            <input type="email" placeholder="Email" required></input>
+                            <input type="email" placeholder="Email" name="email" required></input>
                             <FaEnvelope className="icon" />
                         </div>
                         <div className="input-box">
-                            {/* <input type="password" placeholder="Password" required></input>
-                            <FaEyeSlash className="icon" /> */}
-                            {/* <input type={see ? "text" : "password"} placeholder="Password" required></input> */}
                             <input
                                 type={see ? "text" : "password"}
                                 id="password"
                                 value={password}
                                 placeholder="Password"
+                                name="password"
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
@@ -104,13 +144,6 @@ const LoginForm = () => {
                             }
                         </div>
                         <div className="input-box">
-                            {/* <input type="password" placeholder="Confirm password" required></input>
-                            <FaEyeSlash className="icon" /> */}
-                            {/* <input type={see ? "text" : "password"} placeholder="Confirm password" required></input>
-                            {see ?
-                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
-                                : <FaEye className="icon" onClick={() => togglePassword()} />
-                            } */}
                             <input
                                 type={see ? "text" : "password"}
                                 id="confirmPassword"
