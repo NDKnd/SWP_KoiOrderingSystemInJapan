@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './LoginForm.css'
 import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaLock } from "react-icons/fa"
-import api from "./axios";
+import api from "./../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
