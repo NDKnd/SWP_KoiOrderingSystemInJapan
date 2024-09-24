@@ -1,28 +1,33 @@
-import React from "react";
+import React, {useEffect} from "react";
 import './Header.css';
 import { FaHome, FaAngleDown } from 'react-icons/fa'
-import { Link } from "react-router-dom";
+import { NavLink, RouterProvider } from "react-router-dom";
 
 function Header() {
 
-    // const dropdowns = document.querySelector('.dropdown last');
-    // const dropConts = document.querySelector('.drop-conts last');
+    const activeNav = () => {
+        const pageActive = document.querySelector('.active');
+        const parent = pageActive.parentElement;
+        if(parent === null) return;
+        parent.style.backgroundColor = 'rgba(137, 43, 226, 0.174)';
+        let newDiv = document.createElement('div');
+        newDiv.style.transition = '0.3s inline';
+        newDiv.style.position = 'absolute';
+        newDiv.style.bottom = '0';
+        newDiv.style.width = '100%';
+        newDiv.style.height = '0.1em';
+        newDiv.style.backgroundColor = 'rgba(137, 43, 226)';
+        parent.appendChild(newDiv);
+    };
 
-    // const outOfPage = dropConts.getBoundingClientRect().y < 0;
-    // dropdowns.style.position = 'absolute';
-    // if (outOfPage) {
-    //     dropdowns.style.top = '3em';
-    //     dropdowns.style.left = '0';
-    // } else {
-    //     dropdowns.style.top = '3em';
-    //     dropdowns.style.left = '0';
-    // }
-
+    useEffect(() => {
+        activeNav();
+    }, []);
 
     return (
         <div className="navbar">
             <div className="nav-item">
-                <Link to="/" style={{ textDecoration: 'none' }}><FaHome /></Link>
+                <NavLink to="/"><FaHome /></NavLink>
             </div>
             <div className="nav-item">
                 <p className="title" >Title</p><FaAngleDown />
@@ -40,9 +45,7 @@ function Header() {
                 <p className="title">Title</p><FaAngleDown />
                 <ul className="dropdown">
                     <div className="drop-conts">
-                        <li className="opt">
-                            <Link to="/login" style={{ textDecoration: 'none' }}>Login</Link>
-                        </li>
+                        <li className="opt">Opt1</li>
                         <li className="opt">Opt2</li>
                         <li className="opt">Opt3</li>
                     </div>
@@ -52,7 +55,9 @@ function Header() {
                 <p className="title">Title</p><FaAngleDown />
                 <ul className="dropdown last">
                     <div className="drop-conts last">
-                        <li className="opt">Opt1</li>
+                        <li className="opt">
+                            <NavLink to="/login" >Login</NavLink>
+                        </li>
                         <li className="opt">Opt2</li>
                         <li className="opt">Opt3</li>
                     </div>
