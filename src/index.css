@@ -25,10 +25,10 @@ body {
 
 :root{
     /* colors */
-    --purple1: hsl(266, 14%, 27%);
-    --purple2: hsl(266, 14%, 42%);
-    --purple3: hsl(266, 14%, 52%);
-    --purple4: hsl(266, 14%, 62%);
+    --purple1: hsl(271, 68%, 32%);
+    --purple2: hsl(271, 68%, 42%);
+    --purple3: hsl(271, 68%, 52%);
+    --purple4: hsl(271, 68%, 62%);
     --purple5: hsl(75, 100%, 96%);
     --colora: #90be6d;
     --colora2: #e63946;

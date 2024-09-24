@@ -1,4 +1,4 @@
-
+import Header from "../../Components/Header/Header";
 import MyTables from "../../Components/Table/Tables";
 
 
@@ -7,8 +7,8 @@ function Home() {
 
     return (
         <>
-            <h1>Home</h1><hr />
-            <MyTables /><hr />
+            <Header/>
+            {/* <MyTables /><hr /> */}
 
         </>
     );

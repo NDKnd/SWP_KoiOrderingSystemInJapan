@@ -1,0 +1,157 @@
+
+Link{
+    text-decoration: none;
+}
+
+.navbar{
+    background-color: var(--purple5);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);/*for testing*/
+
+    line-height: 3em;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-item{
+    /* for testing */
+    /* background-color: bisque; */
+
+    width: 5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    .title{
+        color: #551a8b;
+        margin-right: 0.6em;
+    }
+
+    cursor: pointer;
+}
+
+.nav-item::after{
+    content: '';
+    width: 0;
+    height: 0.1em;
+    
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    /* style line */
+    transition: width 200ms ease-in-out;
+}
+.nav-item:hover::after{
+    width: 100%;
+    background-color: blueviolet;
+}
+
+.nav-item:hover{
+    background-color: rgba(137, 43, 226, 0.174);
+    
+    title, svg{
+        color: rgb(26, 8, 43);
+    }
+}
+
+.dropdown{
+    /* for testing*/
+    /* background-color: rgba(25, 30, 180, 0.435); */
+    min-width: 9em;
+
+    position: absolute;
+    top: 3em;
+    left: 0;
+
+    list-style: none;
+
+    position: absolute;
+    z-index: 1000;
+    display: none;/**/
+}
+
+.nav-item:hover .dropdown{
+    display: block;
+}
+
+.drop-conts{
+    /* for testing */
+    
+    /* background-color: rgba(63, 141, 137, 0.285); */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+    padding: 0.3em;
+
+    color: var(--purple1);
+    display: block;
+    text-align: center;
+    border-radius: 0.5em;
+
+    .opt{
+        width: 100%;
+        line-height: 2em;
+        
+        border: 1px solid rgba(35, 1, 35, 0.375);
+        border-radius: 0.5em;
+        cursor: pointer;
+    }
+    .opt:hover{
+        border: 1px solid rgba(35, 1, 35, 0.523);
+        background-color: rgba(137, 43, 226, 0.174);
+    }
+    .opt:nth-child(n+1){
+        margin-top: 0.3em;
+    }
+}
+
+/* For last dropdown */
+
+.dropdown.last{
+    /* for testing*/
+    /* background-color: rgba(25, 30, 180, 0.435); */
+    min-width: 9em;
+
+    position: absolute;
+    top: 3em;
+    left: -4.1em;
+
+    list-style: none;
+
+    position: absolute;
+    z-index: 1000;
+    display: none;/**/
+}
+.drop-conts.last{
+    /* for testing */
+    
+    /* background-color: rgba(63, 141, 137, 0.285); */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+    padding: 0.3em;
+
+    color: var(--purple1);
+    display: block;
+    text-align: center;
+    border-radius: 0.5em;
+
+    .opt{
+        width: 100%;
+        line-height: 2em;
+        
+        border: 1px solid rgba(35, 1, 35, 0.375);
+        border-radius: 0.5em;
+        cursor: pointer;
+    }
+    .opt:hover{
+        border: 1px solid rgba(35, 1, 35, 0.523);
+        background-color: rgba(137, 43, 226, 0.174);
+    }
+    .opt:nth-child(n+1){
+        margin-top: 0.3em;
+    }
+}
+
