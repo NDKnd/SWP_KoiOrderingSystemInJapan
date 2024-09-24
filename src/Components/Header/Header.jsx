@@ -30,7 +30,7 @@ function Header() {
                 <NavLink to="/"><FaHome /></NavLink>
             </div>
             <div className="nav-item">
-                <p className="title" >Title</p><FaAngleDown />
+                <p className="title" >Services</p><FaAngleDown />
                 <ul className="dropdown" >
                     <div className="drop-conts">
                         <li className="opt">Opt1</li>
