@@ -15,8 +15,6 @@ const LoginForm = () => {
         setAction('');
     }
 
-    // demo for merge
-
     // for seeing Password
     const [see, setSee] = useState(true);
     const togglePassword = (event) => {
