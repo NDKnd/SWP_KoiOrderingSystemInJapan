@@ -5,6 +5,9 @@ import { NavLink, RouterProvider } from "react-router-dom";
 
 function Header() {
 
+    const token = localStorage.getItem('token');
+
+    
     const activeNav = () => {
         const pageActive = document.querySelector('.active');
         const parent = pageActive.parentElement;
@@ -52,7 +55,9 @@ function Header() {
                 </ul>
             </div>
             <div className="nav-item">
-                <p className="title">Title</p><FaAngleDown />
+                <p className="title">
+                    Title
+                </p><FaAngleDown />
                 <ul className="dropdown last">
                     <div className="drop-conts last">
                         <li className="opt">
