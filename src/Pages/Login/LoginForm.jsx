@@ -51,10 +51,10 @@ const LoginForm = () => {
         console.log("Password:", password);
 
         try{
-            // const response = await api.get.post("login",userName,password);
-            // const {token} = response.data;
-            // localStorage.setItem("token", token);
-            // localStorage.setItem("user",JSON.stringify(response.data));
+            const response = await api.post("login",userName,password);
+            const {token} = response.data;
+            localStorage.setItem("token", token);
+            localStorage.setItem("user",JSON.stringify(response.data));
             navigatie("/");
         } catch (err){
             console.log(err);
@@ -101,6 +101,7 @@ const LoginForm = () => {
                             <a href="#">Forgot password?</a>
                         </div>
                         <button type="submit">Login</button>
+
                         <div className="register-link">
                             <p>Don't have an account? <a href="#" onClick={registerLink}>Register</a></p>
                         </div>
