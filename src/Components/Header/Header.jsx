@@ -1,17 +1,20 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
+import {Avatar} from 'antd';
 import './Header.css';
 import { FaHome, FaAngleDown } from 'react-icons/fa'
-import { NavLink, RouterProvider } from "react-router-dom";
+import { NavLink} from "react-router-dom";
 
 function Header() {
 
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
+    // for example
+    const token = 'he he he';
 
-    
+
     const activeNav = () => {
         const pageActive = document.querySelector('.active');
         const parent = pageActive.parentElement;
-        if(parent === null) return;
+        if (parent === null) return;
         parent.style.backgroundColor = 'rgba(137, 43, 226, 0.174)';
         let newDiv = document.createElement('div');
         newDiv.style.transition = '0.3s inline';
@@ -54,20 +57,51 @@ function Header() {
                     </div>
                 </ul>
             </div>
-            <div className="nav-item">
-                <p className="title">
-                    Title
-                </p><FaAngleDown />
-                <ul className="dropdown last">
-                    <div className="drop-conts last">
-                        <li className="opt">
-                            <NavLink to="/login" >Login</NavLink>
-                        </li>
-                        <li className="opt">Opt2</li>
-                        <li className="opt">Opt3</li>
+            {
+                !token ? (
+                    <div className="nav-item">
+                        <p className="title">
+                            Join Us
+                        </p><FaAngleDown />
+                        <ul className="dropdown last">
+                            <div className="drop-conts last">
+                                <li className="opt">
+                                    <NavLink to="/login" >Login</NavLink>
+                                </li>
+                                <li className="opt">
+                                    <NavLink to="/register" >Register</NavLink>
+                                </li>
+                            </div>
+                        </ul>
                     </div>
-                </ul>
-            </div>
+
+                ) : (
+                    <div className="nav-item">
+                        <p className="title">
+                            <Avatar
+                                size={{
+                                    xs: 24,
+                                    sm: 32,
+                                    md: 40,
+                                }}
+                            />
+                        </p>
+                        <ul className="dropdown last">
+                            <div className="drop-conts last">
+                                <li className="opt">
+                                    <NavLink to="/profile" >Profile</NavLink>
+                                </li>
+                                <li className="opt">
+                                    <NavLink to="/account-setting" >Settings</NavLink>
+                                </li>
+                                <li className="opt">
+                                    <NavLink to="/logout" >Logout</NavLink>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
+                )
+            }
         </div>
     );
 }

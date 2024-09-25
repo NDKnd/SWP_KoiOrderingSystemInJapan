@@ -17,7 +17,7 @@ function Carousels() {
         }
     ];
 
-    const heightSlide = '40vh';
+    const heightSlide = '60vh';
     const urlPicBackGround = './src/image/KoiFish.jpg';
 
     const contentStyle = {
@@ -36,16 +36,16 @@ function Carousels() {
         backdropFilter: 'blur(10px) saturate(200%)',
     };
 
-
     return (
         <div style={{ height: heightSlide }}>
             <Carousel
+                startIndex={0}
                 autoplaySpeed={4000}
                 autoplay
                 arrows
             >   {
                     contentList.map((content, indx) => (
-                        <div>
+                        <div key={indx}>
                             <h3 style={contentStyle}>
                                 <span>{content.title}</span>
                             </h3>
@@ -58,3 +58,4 @@ function Carousels() {
 }
 
 export default Carousels;
+
