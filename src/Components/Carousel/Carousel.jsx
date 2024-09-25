@@ -2,37 +2,43 @@ import { Carousel } from 'antd';
 
 function Carousels() {
 
-    const heigtSlide = '300px';
+    const heightSlide = '40vh';
+    const urlPicBackGround = './src/image/KoiFish.jpg';
 
     const contentStyle = {
-        height: {heigtSlide},
-        color: '#fff',
-        lineHeight: {heigtSlide},
+        height: heightSlide,
+        lineHeight: heightSlide,
+        color: 'var(--purple5)',
         textAlign: 'center',
-        background: '#364d79',
+        backgroundImage: `url(${urlPicBackGround})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
     };
 
     return (
-        <div style={{height: {heigtSlide}}}>
+        <div style={{ height: heightSlide }}>
             <Carousel
-                pauseOnHover
                 autoplaySpeed={4000}
                 autoplay
                 arrows
             >
                 <div>
                     <h3 style={contentStyle}>
-                        <img src="./src/image/KoiFish.jpg" alt="" />
+                        <span>p</span>
                     </h3>
                 </div>
                 <div>
                     <h3 style={contentStyle}>
-                        haha
+
+                        <span>Hello2</span>
+
                     </h3>
                 </div>
                 <div>
                     <h3 style={contentStyle}>
-                        heelo
+
+                        <span>hello3</span>
+
                     </h3>
                 </div>
             </Carousel>
