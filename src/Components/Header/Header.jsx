@@ -5,11 +5,15 @@ import { FaHome, FaAngleDown } from 'react-icons/fa'
 import { NavLink} from "react-router-dom";
 
 function Header() {
-
+    //for getting user token
     const token = localStorage.getItem('token');
-    // for example
-    // const token = 'he he he';
 
+    const handleLogout = () => {
+        // Xoá token khỏi localStorage
+        localStorage.removeItem('token');
+        // Điều hướng người dùng về trang đăng nhập
+        navigate('/login');
+    };
 
     const activeNav = () => {
         const pageActive = document.querySelector('.active');
@@ -95,7 +99,7 @@ function Header() {
                                     <NavLink to="/account-setting" >Settings</NavLink>
                                 </li>
                                 <li className="opt">
-                                    <NavLink to="/logout" >Logout</NavLink>
+                                    <NavLink onClick={() => localStorage.clear()} >Logout</NavLink>
                                 </li>
                             </div>
                         </ul>
