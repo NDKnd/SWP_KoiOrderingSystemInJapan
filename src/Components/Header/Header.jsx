@@ -6,9 +6,9 @@ import { NavLink} from "react-router-dom";
 
 function Header() {
 
-    // const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     // for example
-    const token = 'he he he';
+    // const token = 'he he he';
 
 
     const activeNav = () => {

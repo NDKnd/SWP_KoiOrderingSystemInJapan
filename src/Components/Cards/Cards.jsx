@@ -1,73 +1,44 @@
-import { Card, List} from 'antd';
+import { Card, List, Row, Col, Popover } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import './Cards.css';
 
-function Cards() {
+function Cards(props) {
 
     const navigate = useNavigate();
 
-    const dataList = [
-        {
-            title: 'Card title',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-        {
-            title: 'Card title 2',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-        {
-            title: 'Card title 3',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-        {
-            title: 'Card title 4',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-        {
-            title: 'Card title 4',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-        {
-            title: 'Card title 4',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-        {
-            title: 'Card title 4',
-            description: 'This is the description.',
-            img : 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        },
-    ];
+    const dataListCards = props.dataListCards || {};
+
     return (
         <List
             grid={{
                 gutter: 16,
-                column: 4,
+                column: 3,
             }}
-            dataSource={dataList}
+            dataSource={dataListCards}
             renderItem={(item) => (
                 <List.Item>
                     <Card
-                        title={item.title}
+                        className='cust-card'
                         style={{
-                            width: '100%', 
-                            maxWidth: '15rem', 
-                            minHeight: '15rem',
+                            width: '25rem',
+                            height: '6rem',
                             margin: '0 auto',
                         }}
-                        headStyle={{
-                            textAlign: 'center'
-                        }}
-                        cover={
-                            <img alt={item.title} src={item.img} className="card-cover" />
-                        }
-                        hoverable={true}
+                        hoverable
                     >
-                        <p style={{ textAlign: 'center' }}>{item.description}</p>
+                        <Row>
+                            <Col span={9}>
+                                <img src={item.img} 
+                                style={{objectFit: 'cover', width: '100%', height: '100%', }} 
+                                />
+                            </Col>
+                            <Col span={15}>
+                                <div style={{ padding: '1em' }}>
+                                    <h3>{item.titleCard}</h3>
+                                    <p>{item.description}</p>
+                                </div>
+                            </Col>
+                        </Row>
                     </Card>
                 </List.Item>
             )}
@@ -75,6 +46,17 @@ function Cards() {
     );
 }
 
-export default Cards;
 
+Cards.defaultProps = {
+    title: 'Default',
+    dataListCards: [
+        {
+            titleCard: 'Card title hehe',
+            description: 'This is the description.',
+            img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+        },
+    ],
+};
+
+export default Cards;
 

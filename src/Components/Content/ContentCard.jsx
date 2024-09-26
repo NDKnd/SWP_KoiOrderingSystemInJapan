@@ -5,7 +5,7 @@ function ContentCard(props) {
 
     const title = props.title;
 
-    const dataList = props.dataList;
+    const dataList = props.dataList || {};
 
     return (
         <>
@@ -14,3 +14,5 @@ function ContentCard(props) {
         </>
     );
 }
+
+export default ContentCard;

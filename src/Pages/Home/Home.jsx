@@ -6,18 +6,34 @@ import Footers from "../../Components/Footer/Footers";
 
 import { Space, Divider } from 'antd';
 import Cards from "../../Components/Cards/Cards";
-// import ContentCard from "../../Components/Content/ContentCard";
+import ContentCard from "../../Components/Content/ContentCard";
 
 
 function Home() {
 
     const token = localStorage.getItem("token");
 
-    const listFarms =[
+    const listTest = 
         {
-            
-        }
-    ]
+            title: 'List Farm',
+            datalistTest: [
+                {
+                    titleCard: 'Card title 1',
+                    description: 'This is the description.',
+                    img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+                },
+                {
+                    titleCard: 'Card title 2',
+                    description: 'This is the description.',
+                    img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+                },
+                {
+                    titleCard: 'Card title 3',
+                    description: 'This is the description.',
+                    img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+                }
+            ],
+        };
 
     return (
         <>
@@ -35,11 +51,9 @@ function Home() {
             >
                 <Carousels />
 
-                <Divider orientation="left" style={{ margin: '20px 0', fontSize: '25px' }}>Famous Farm</Divider>
-                <Cards title="" />
+                <ContentCard title={listTest.title} dataList={listTest.datalistTest} />
 
-                <Divider orientation="left" style={{ margin: '20px 0', fontSize: '25px' }}>Koi Farm</Divider>
-                <Cards title="" />
+                <ContentCard title={listTest.title} dataList={listTest.datalistTest} />
 
                 <Divider orientation="left" style={{ margin: '20px 0', fontSize: '25px' }}>Famous Table</Divider>
                 <MyTables />
