@@ -53,13 +53,21 @@ function Cards() {
                 <List.Item>
                     <Card
                         title={item.title}
-                        style={{width: 300, margin: '0 auto'}}
+                        style={{
+                            width: '100%', 
+                            maxWidth: '15rem', 
+                            minHeight: '15rem',
+                            margin: '0 auto',
+                        }}
+                        headStyle={{
+                            textAlign: 'center'
+                        }}
                         cover={
-                            <img alt={item.title} src={item.img} />
+                            <img alt={item.title} src={item.img} className="card-cover" />
                         }
                         hoverable={true}
                     >
-                        <p>{item.description}</p>
+                        <p style={{ textAlign: 'center' }}>{item.description}</p>
                     </Card>
                 </List.Item>
             )}

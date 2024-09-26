@@ -13,6 +13,12 @@ function Home() {
 
     const token = localStorage.getItem("token");
 
+    const listFarms =[
+        {
+            
+        }
+    ]
+
     return (
         <>
             <Header />
