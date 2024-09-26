@@ -21,14 +21,23 @@ const LoginForm = () => {
         setAction("");
     };
 
-    // for seeing Password
-    const [see, setSee] = useState(true);
-    const togglePassword = (event) => {
-        setSee((prevState) => !prevState);
+    // for see password
+    const [seeLoginPassword, setSeeLoginPassword] = useState(false);
+    const [seeRegisterPassword, setSeeRegisterPassword] = useState(false);
+    const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
+    // Toggle cho form đăng nhập
+    const toggleLoginPassword = () => {
+        setSeeLoginPassword(prev => !prev);
     };
-    useEffect(() => {
-        setSee();
-    }, [setSee]);
+    // Toggle cho form đăng ký
+    const toggleRegisterPassword = () => {
+        setSeeRegisterPassword(prev => !prev);
+    };
+    // Toggle cho ô xác nhận mật khẩu
+    const toggleConfirmPassword = () => {
+        setSeeConfirmPassword(prev => !prev);
+    };
+
     // for Confirm Password
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -45,7 +54,7 @@ const LoginForm = () => {
     };
 
     //handle login
-    const navigatie = useNavigate();
+    const navigate = useNavigate();
 
     const handleLogin = async (event) => {
         event.preventDefault(); // Ngăn chặn hành vi mặc định của form
@@ -63,7 +72,7 @@ const LoginForm = () => {
             const { token } = response.data;
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(response.data));
-            navigatie("/");
+            navigate("/");
         } catch (err) {
             console.log(err);
             alert("Username or Password is invalid!");
@@ -71,7 +80,7 @@ const LoginForm = () => {
     };
 
     //handle registration
-    const handleRegitration = (event) => {
+    const handleRegitration = async (event) => {
         event.preventDefault(); // Ngăn chặn hành vi mặc định của form
         const formData = new FormData(event.target); // Lấy dữ liệu form
         const userName = formData.get("username"); // Lấy giá trị của trường Username
@@ -85,14 +94,14 @@ const LoginForm = () => {
         console.log("Email:", email);
         console.log("Password:", password);
         try {
-            const response = api.post("register", {
+            const response = await api.post("register", {
                 username: userName,
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
                 password: password,
             });
-            navigatie("/login");
+            navigate("/login");
         } catch (err) {
             console.log(err);
             alert("Registration fail! Please try again!");
@@ -116,15 +125,15 @@ const LoginForm = () => {
                         </div>
                         <div className="input-box">
                             <input
-                                type={see ? "text" : "password"}
+                                type={seeLoginPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="Password"
                                 required
                             ></input>
-                            {see ? (
-                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                            {seeLoginPassword ? (
+                                <FaEyeSlash className="icon" onClick={() => toggleLoginPassword()} />
                             ) : (
-                                <FaEye className="icon" onClick={() => togglePassword()} />
+                                <FaEye className="icon" onClick={() => toggleLoginPassword()} />
                             )}
                         </div>
                         <div className="remember-forgot">
@@ -188,7 +197,7 @@ const LoginForm = () => {
                         </div>
                         <div className="input-box">
                             <input
-                                type={see ? "text" : "password"}
+                                type={seeRegisterPassword ? "text" : "password"}
                                 id="password"
                                 value={password}
                                 placeholder="Password"
@@ -196,25 +205,25 @@ const LoginForm = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-                            {see ? (
-                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                            {seeRegisterPassword ? (
+                                <FaEyeSlash className="icon" onClick={() => toggleRegisterPassword()} />
                             ) : (
-                                <FaEye className="icon" onClick={() => togglePassword()} />
+                                <FaEye className="icon" onClick={() => toggleRegisterPassword()} />
                             )}
                         </div>
                         <div className="input-box">
                             <input
-                                type={see ? "text" : "password"}
+                                type={seeConfirmPassword ? "text" : "password"}
                                 id="confirmPassword"
                                 value={confirmPassword}
                                 placeholder="Confirm password"
                                 onChange={handleConfirmPasswordChange}
                                 required
                             />
-                            {see ? (
-                                <FaEyeSlash className="icon" onClick={() => togglePassword()} />
+                            {seeConfirmPassword ? (
+                                <FaEyeSlash className="icon" onClick={() => toggleConfirmPassword()} />
                             ) : (
-                                <FaEye className="icon" onClick={() => togglePassword()} />
+                                <FaEye className="icon" onClick={() => toggleConfirmPassword()} />
                             )}
                         </div>
                         <div className="remember-forgot">
