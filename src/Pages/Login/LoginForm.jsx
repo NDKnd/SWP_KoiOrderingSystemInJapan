@@ -105,7 +105,7 @@ const LoginForm = () => {
       loginLink();
     } catch (err) {
       console.log(err);
-      alert("Registration fail! Please try again!");
+      alert(err.response.data);
     }
   };
 
