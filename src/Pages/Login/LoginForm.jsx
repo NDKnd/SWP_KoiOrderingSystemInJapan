@@ -53,7 +53,7 @@ const LoginForm = () => {
     }
   };
 
-  //handle login
+  //handle login/ register
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
@@ -75,7 +75,7 @@ const LoginForm = () => {
       navigate("/");
     } catch (err) {
       console.log(err);
-      alert(err.response.data);
+      alert(err.response.data); // nhận thông báo lỗi từ backend
     }
   };
 
@@ -105,7 +105,7 @@ const LoginForm = () => {
       loginLink();
     } catch (err) {
       console.log(err);
-      alert(err.response.data);
+      alert(err.response.data); // nhận thông báo lỗi từ backend
     }
   };
 
