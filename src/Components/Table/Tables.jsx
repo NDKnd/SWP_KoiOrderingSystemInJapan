@@ -1,6 +1,10 @@
 import { Table } from 'antd';
-function Tables() {
+function Tables(props) {
 
+    const columsTest = props.TitleColTest;
+    const rowTest = props.dataRowTest;
+
+    // Tên cột
     const colums = [
         {
             title: 'Name', // Tiêu đề của cột
@@ -23,7 +27,6 @@ function Tables() {
             key: 'act',
         },
     ];
-
     // Dữ liệu của bảng
     const data = [
         {

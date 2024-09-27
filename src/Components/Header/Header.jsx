@@ -7,7 +7,7 @@ import { NavLink} from "react-router-dom";
 function Header() {
     //for getting user token
     const token = localStorage.getItem('token');
-
+           
     const handleLogout = () => {
         // Xoá token khỏi localStorage
         localStorage.removeItem('token');
