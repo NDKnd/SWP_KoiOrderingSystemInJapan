@@ -101,7 +101,7 @@ const LoginForm = () => {
                 email: email,
                 password: password,
             });
-            navigate("/login");
+            loginLink();
         } catch (err) {
             console.log(err);
             alert("Registration fail! Please try again!");
