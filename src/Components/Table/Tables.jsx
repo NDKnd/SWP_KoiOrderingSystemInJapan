@@ -1,10 +1,10 @@
 import { Table } from "antd";
-function Tables(props) {
-  const [cols, setCol] = useState([]);
-  const [rows, setRow] = useState([]);
+function Tables() {
+  // const [cols, setCol] = useState([]);
+  // const [rows, setRow] = useState([]);
 
-  setCol = props.TitleColTest;
-  setRow = props.dataRowTest;
+  // setCol = props.TitleColTest;
+  // setRow = props.dataRowTest;
 
   // Tên cột
   const colums = [
