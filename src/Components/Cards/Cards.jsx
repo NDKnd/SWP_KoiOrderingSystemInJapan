@@ -15,16 +15,18 @@ function Cards(props) {
           className='cust-card'
             hoverable
             cover={
-              <img 
-                src={item.img} 
-                alt={item.titleCard} 
-                style={{ height: '200px', objectFit: 'cover' }}
-              />
+              <div style={{ height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <img 
+                  src={item.img} 
+                  alt={item.titleCard} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+              </div>
             }
           >
             <Title level={4}>{item.titleCard}</Title>
             <Paragraph>{item.description}</Paragraph>
-            <Button type="primary">Read More</Button>
+            <Button type="primary"  style={{ margin: '0 auto', display: 'block' }}>Order</Button>
           </Card>
         </Col>
       ))}
