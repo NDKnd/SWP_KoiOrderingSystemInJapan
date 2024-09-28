@@ -1,13 +1,25 @@
-import { useEffect } from "react";
-import { Avatar } from "antd";
+import { useEffect, useState } from "react";
+import { Avatar, Badge } from "antd";
 import "./Header.css";
-import { FaHome, FaAngleDown } from "react-icons/fa";
+import { FaHome, FaAngleDown, FaShoppingBag } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
+import api from "../../services/axios";
 
 function Header() {
   //for getting user token
   localStorage.setItem("token", "hehe I am here");
   const token = localStorage.getItem("token");
+  console.log(token);
+
+  //get order number from user
+  const [countCard, setCountCard] = useState(0);
+  useEffect(() => {
+    const numOrders = api.get("/orders", {});
+    if (!numOrders || numOrders.data === null) {
+      setCountCard(0);
+    }
+    console.log(numOrders);
+  }, []);
 
   const handleLogout = () => {
     const navigate = useNavigate;
@@ -85,30 +97,39 @@ function Header() {
           </ul>
         </div>
       ) : (
-        <div className="nav-item">
-          <p className="title">
-            <Avatar
-              size={{
-                xs: 24,
-                sm: 32,
-                md: 40,
-              }}
-            />
-          </p>
-          <ul className="dropdown last">
-            <div className="drop-conts last">
-              <li className="opt">
-                <NavLink to="/profile">Profile</NavLink>
-              </li>
-              <li className="opt">
-                <NavLink to="/account-setting">Settings</NavLink>
-              </li>
-              <li className="opt">
-                <NavLink onClick={() => handleLogout()}>Logout</NavLink>
-              </li>
-            </div>
-          </ul>
-        </div>
+        <>
+          <div className="nav-item card">
+            <NavLink to="/orders">
+              <Badge count={countCard}>
+                <FaShoppingBag />
+              </Badge>
+            </NavLink>
+          </div>
+          <div className="nav-item">
+            <p className="title">
+              <Avatar
+                size={{
+                  xs: 24,
+                  sm: 32,
+                  md: 40,
+                }}
+              />
+            </p>
+            <ul className="dropdown last">
+              <div className="drop-conts last">
+                <li className="opt">
+                  <NavLink to="/profile">Profile</NavLink>
+                </li>
+                <li className="opt">
+                  <NavLink to="/account-setting">Settings</NavLink>
+                </li>
+                <li className="opt">
+                  <NavLink onClick={() => handleLogout()}>Logout</NavLink>
+                </li>
+              </div>
+            </ul>
+          </div>
+        </>
       )}
     </div>
   );

@@ -2,17 +2,31 @@ import { Divider } from "antd";
 import Cards from "../Cards/Cards";
 
 function ContentCard(props) {
+  const title = props.title;
 
-    const title = props.title;
+  const dataList = props.dataList || {};
 
-    const dataList = props.dataList || {};
-
-    return (
-        <>
-            <Divider orientation="left" style={{ margin: '20px 0', fontSize: '25px' }}>{title}</Divider>
-            <Cards dataListCards={dataList} />
-        </>
-    );
+  return (
+    <>
+      <Divider
+        orientation="left"
+        style={{ margin: "20px 0", fontSize: "25px" }}
+      >
+        {title}
+      </Divider>
+      <Cards dataListCards={dataList} />
+    </>
+  );
 }
+
+ContentCard.defaultProps = {
+  title: "Default",
+  dataList: [],
+};
+
+ContentCard.propTypes = {
+  title: "string",
+  dataList: "array",
+};
 
 export default ContentCard;

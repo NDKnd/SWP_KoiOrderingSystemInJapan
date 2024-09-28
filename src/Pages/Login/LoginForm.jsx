@@ -49,6 +49,13 @@ const LoginForm = () => {
   //handle login/ register
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const handleLogin = async (event) => {
     event.preventDefault(); // Ngăn chặn hành vi mặc định của form
     const formData = new FormData(event.target); // Lấy dữ liệu form

@@ -34,6 +34,34 @@
     }
 }
 
+.nav-item.card{
+    width: 3em;
+    height: 3em;
+    a {
+        text-decoration: none;
+        color: var(--purple1);
+        width: 100%;
+        height: 100%;
+        display: block; /* Biến NavLink thành một khối */
+    }
+
+    a svg{
+        display: block;
+        padding: 0.8em;
+        width: 100%;
+        height: 3em;
+        position: relative;
+        top: .2em;
+        left: .2em;
+    }
+
+    sup{
+        position: relative;
+        left:1.5em;
+        top: -2.3em;
+    }
+}
+
 .nav-item::after {
     content: '';
     width: 0;
