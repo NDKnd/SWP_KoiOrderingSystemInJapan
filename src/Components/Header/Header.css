@@ -44,6 +44,7 @@
 }
 
 .dropdown {
+    list-style: none;
     position: absolute;
     top: 3em;
     left: 0;
