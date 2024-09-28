@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const PrivateRoute = () => {
-  
   const navigate = useNavigate();
-  //get the token of user
-  localStorage.setItem("token","Hehe I am here");
 
   useEffect(() => {
     // Kiểm tra người dùng đã đăng nhập hay chưa

@@ -2,14 +2,23 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Table, Modal, Form } from "antd";
 import axios from "axios";
+import upFile from "../utils/file";
 
 function Test() {
   const api = "https://66f6b940436827ced9783796.mockapi.io/Student";
-
   const [data, setData] = useState([]); // danh sach mãng rỗng
   const [openModal, setOpenModal] = useState(false);
+  const [fileList, setFileList] = useState([]);
 
   const fetchData = async () => {
+    //upload ảnh
+    if (fileList.length > 0) {
+      const file = fileList[0];
+
+      const url = await upFile(file.originalFileObj);
+      console.log(url);
+    }
+
     // async =>
     try {
       //Lấy dữ liệu từ back-end
@@ -48,6 +57,7 @@ function Test() {
   ];
 
   const handleModal = () => {
+    setFileList([]);
     //open modal
     setOpenModal(!openModal);
   };

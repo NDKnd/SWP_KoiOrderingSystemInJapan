@@ -9,8 +9,6 @@ import api from "./../../services/axios";
 import { useEffect, useState } from "react";
 
 function Home() {
-  // for getting user token
-
   const [ListData, setListData] = useState({
     title: "List Farm",
     datalistTest: [],
@@ -29,9 +27,9 @@ function Home() {
           datalistTest: somethingListData.map((Sths) => ({
             // dãy thông tin của gì đó
             //example
-            titleCard: farm.name, // tên của farm
-            description: farm.description, // mô tả của farm
-            img: farm.imageURL, // hình ảnh của farm
+            titleCard: Sths.name, // tên của farm
+            description: Sths.description, // mô tả của farm
+            img: Sths.imageURL, // hình ảnh của farm
           })),
         });
       } catch (error) {
@@ -40,6 +38,7 @@ function Home() {
     };
     fetchData(); // Thực hiện gọi hàm fetchData khi trang được load
   }, []); // Mảng phụ thuộc rỗng để gọi fetchData chỉ một lần khi trang load
+  console.log(ListData);
 
   const listTest = {
     title: "List Farm",

@@ -20,7 +20,13 @@ function App() {
     },
     {
       path: "KoiPageFind",
-      element: <KoiPageFind />,
+      element: <PrivateRoute />,
+      children: [
+        {
+          path: "",
+          element: <KoiPageFind />,
+        },
+      ],
       errorElement: <Error />,
     },
     {

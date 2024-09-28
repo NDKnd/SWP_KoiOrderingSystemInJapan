@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./LoginForm.css";
-import {
-  FaUser,
-  FaEye,
-  FaEyeSlash,
-  FaEnvelope,
-  FaPen,
-  FaLock,
-} from "react-icons/fa";
+import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen } from "react-icons/fa";
 import api from "./../../services/axios";
 import { useNavigate } from "react-router-dom";
 

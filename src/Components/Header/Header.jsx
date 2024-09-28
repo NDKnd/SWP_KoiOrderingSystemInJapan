@@ -6,12 +6,11 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 function Header() {
   //for getting user token
-  localStorage.setItem("token", "he he");
+  localStorage.setItem("token", "hehe I am here");
   const token = localStorage.getItem("token");
 
-  const navigate = useNavigate;
-
   const handleLogout = () => {
+    const navigate = useNavigate;
     // Xoá token khỏi localStorage
     localStorage.removeItem("token");
     // Điều hướng người dùng về trang đăng nhập
@@ -21,10 +20,10 @@ function Header() {
   const activeNav = () => {
     const pageActive = document.querySelector(".active");
     const parent = pageActive.parentElement;
+    if (!parent.classList.contains("nav-item")) return;
     if (parent === null) return;
     parent.style.backgroundColor = "rgba(137, 43, 226, 0.174)";
     let newDiv = document.createElement("div");
-    newDiv.style.transition = "0.3s inline";
     newDiv.style.position = "absolute";
     newDiv.style.bottom = "0";
     newDiv.style.width = "100%";
@@ -49,7 +48,9 @@ function Header() {
         <FaAngleDown />
         <ul className="dropdown">
           <div className="drop-conts">
-            <li className="opt">Opt1</li>
+            <li className="opt">
+              <NavLink to="/KoiPageFind">Kois</NavLink>
+            </li>
             <li className="opt">Opt2</li>
             <li className="opt">Opt3</li>
             <li className="opt">Opt4</li>
