@@ -2,24 +2,23 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import api from "../../services/axios";
 import Headers from "../../Components/Header/Header";
-
-import { Breadcrumb, Layout, Menu } from "antd";
+import { Tabs, Layout, Menu, Divider, ConfigProvider } from "antd";
 import {
   FaHistory,
   FaShoppingBag,
   FaSignOutAlt,
   FaUserCog,
+  FaShippingFast,
+  FaBox,
 } from "react-icons/fa";
-import { NavLink, useNavigate } from "react-router-dom";
 
 function Account() {
-  const navigate = useNavigate;
   // const fetchData = async () => {
   //   const res = await axios.post(api);
 
   //   console.log(res.data);
   // };
-
+  console.log(api);
   // useEffect(() => {
   //   fetchData();
   // }, []);
@@ -51,6 +50,17 @@ function Account() {
       path: "#",
     },
   ];
+  const handleMenuSelect = ({ item }) => {
+    // Tìm item được chọn từ menu
+    console.log(item);
+    console.log(item.props);
+
+    const selectedItem = item.props; // Props của menu chứa đầy đủ thông tin
+    if (selectedItem.path) {
+      // navigate(selectedItem.path);
+      console.log(selectedItem.path);
+    }
+  };
 
   const { Content, Sider } = Layout;
 
@@ -65,50 +75,21 @@ function Account() {
           }}
         >
           <Menu
-            items={contentAccount}
             mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["1"]}
             style={{
               height: "100%",
               borderRight: 0,
-              backgroundColor: "var(--purple5)",
             }}
-          >
-            {contentAccount.map((item) => {
-              return (
-                <Menu.Item
-                  key={item.key}
-                  icon={item.icon}
-                  onClick={() => navigate(item.path)}
-                >
-                  {item.label}
-                </Menu.Item>
-              );
-            })}
-          </Menu>
+            items={contentAccount}
+            onSelect={handleMenuSelect}
+          />
         </Sider>
+
         <Layout
           style={{
             padding: "0 24px 24px",
           }}
         >
-          <Breadcrumb
-            items={[
-              {
-                title: "Home",
-              },
-              {
-                title: "List",
-              },
-              {
-                title: "App",
-              },
-            ]}
-            style={{
-              margin: "16px 0",
-            }}
-          />
           <Content
             style={{
               padding: 24,
@@ -118,7 +99,32 @@ function Account() {
               borderRadius: 10,
             }}
           >
-            <h1>Account</h1>
+            <Divider style={{ margin: "10px 0" }} />
+            <ConfigProvider
+              theme={{
+                components: {
+                  Tabs: {
+                    colorPrimary: "var(--purple1)",
+                    itemHoverColor: "var(--purple2)",
+                    itemActiveColor: "var(--purple5)",
+                  },
+                },
+              }}
+            >
+              <Tabs
+                defaultActiveKey="1"
+                inkBarColor="var(--purple5)"
+                items={[FaBox, FaShippingFast].map((Icon, i) => {
+                  const id = String(i + 1);
+                  return {
+                    key: id,
+                    label: `Tab ${id}`,
+                    children: `Tab ${id}`,
+                    icon: <Icon />,
+                  };
+                })}
+              />
+            </ConfigProvider>
           </Content>
         </Layout>
       </Layout>

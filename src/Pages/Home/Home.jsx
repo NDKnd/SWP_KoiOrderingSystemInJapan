@@ -3,7 +3,7 @@ import Header from "../../Components/Header/Header";
 import MyTables from "../../Components/Table/Tables";
 import Carousels from "../../Components/Carousel/Carousel";
 import Footers from "../../Components/Footer/Footers";
-import { Space, Divider } from "antd";
+import { Divider, Layout } from "antd";
 import ContentCard from "../../Components/Content/ContentCard";
 import api from "./../../services/axios";
 import { useEffect, useState } from "react";
@@ -62,19 +62,9 @@ function Home() {
   };
 
   return (
-    <>
+    <Layout>
       <Header />
-      <Space
-        direction="vertical"
-        size="large"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          padding: "30px",
-          backgroundColor: "var(--purple5)",
-          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+      <Layout style={{ padding: "5px 24px 24px" }}>
         <Carousels />
 
         <ContentCard title={listTest.title} dataList={listTest.datalistTest} />
@@ -88,9 +78,9 @@ function Home() {
           Famous Table
         </Divider>
         <MyTables />
-      </Space>
+      </Layout>
       <Footers style={{ marginTop: "20px" }} />
-    </>
+    </Layout>
   );
 }
 
