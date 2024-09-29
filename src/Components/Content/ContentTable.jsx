@@ -1,7 +1,9 @@
+import React from "react";
+import { useState } from "react";
 import { Divider } from "antd";
-import Cards from "../Cards/Cards";
+import MyTables from "../Table/Tables";
 
-function ContentCard(props) {
+function ContentTable(props) {
   const title = props.title;
 
   const dataList = props.dataList || {};
@@ -14,19 +16,19 @@ function ContentCard(props) {
       >
         {title}
       </Divider>
-      <Cards dataListCards={dataList} />
+      <MyTables dataListTable={dataList} />
     </>
   );
 }
 
-ContentCard.defaultProps = {
+ContentTable.defaultProps = {
   title: "Default",
-  dataList: [],
+  dataList: [{}],
 };
 
-ContentCard.propTypes = {
+ContentTable.propTypes = {
   title: "string",
   dataList: "array",
 };
 
-export default ContentCard;
+export default ContentTable;
