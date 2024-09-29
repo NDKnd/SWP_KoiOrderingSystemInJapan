@@ -1,0 +1,9 @@
+.menu-bar{
+    margin: 0;
+    padding: 0;
+    height: 88vh;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
