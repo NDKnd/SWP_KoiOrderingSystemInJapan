@@ -46,18 +46,6 @@ const App = () => {
       errorElement: <Error />,
     },
     {
-      path: "KoiPageFind",
-      element: <PrivateRoute />,
-      children: [
-        {
-          path: "",
-          element: <KoiPageFind />,
-        },
-      ],
-      errorElement: <Error />,
-    },
-
-    {
       path: "admin",
       element: <PrivateRoute />,
       errorElement: <Error />,
@@ -92,11 +80,19 @@ const App = () => {
             // },
           ]
         },
-
-
       ],
     },
-
+    {
+      path: "KoiPageFind",
+      element: <PrivateRoute />,
+      children: [
+        {
+          path: "",
+          element: <KoiPageFind />,
+        },
+      ],
+      errorElement: <Error />,
+    },
     {
       path: "profile",
       element: <PrivateRoute />,
