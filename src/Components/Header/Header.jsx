@@ -7,19 +7,26 @@ import api from "../../services/axios";
 
 function Header() {
   //for getting user token
-  localStorage.setItem("token", "hehe I am here");
+  // for example
+  // localStorage.setItem("token", "hehe I am here");
   const token = localStorage.getItem("token");
-  console.log(token);
+  token ? console.log(token) : console.log("not login yet");
 
   //get order number from user
-  const [countCard, setCountCard] = useState(0);
+  const [quantity, setQuantity] = useState(0);
+
   useEffect(() => {
-    const numOrders = api.get("/orders", {});
-    if (!numOrders || numOrders.data === null) {
-      setCountCard(0);
-    }
-    console.log(numOrders);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const res = await api.get("/Koi");
+        console.log(res.data);
+        setQuantity(res.data.length);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  });
 
   const handleLogout = () => {
     const navigate = useNavigate;
@@ -100,7 +107,7 @@ function Header() {
         <>
           <div className="nav-item card">
             <NavLink to="/orders">
-              <Badge count={countCard}>
+              <Badge count={quantity}>
                 <FaShoppingBag />
               </Badge>
             </NavLink>

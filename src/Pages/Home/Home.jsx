@@ -9,57 +9,35 @@ import api from "./../../services/axios";
 import { useEffect, useState } from "react";
 
 function Home() {
-  const [ListData, setListData] = useState({
-    title: "List Farm",
-    datalistTest: [],
-  });
-
   // Gọi API từ backend khi component được mount
+  // const [dataCard, setListDataCard] = useState([]);
+  const [KoiList, setKoiList] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get("/something"); // Gọi API tới endpoint '/gì gì đó'
-        const somethingListData = res.data; // Dữ liệu trả về từ API
-
-        // Cập nhật state của ListData với dữ liệu mới của backend
-        setListData({
-          title: "List of SomeThing",
-          datalistTest: somethingListData.map((Sths) => ({
-            // dãy thông tin của gì đó
-            //example
-            titleCard: Sths.name, // tên của farm
-            description: Sths.description, // mô tả của farm
-            img: Sths.imageURL, // hình ảnh của farm
-          })),
-        });
+        const res = await api.get("Koi");
+        console.log(res.data);
+        setKoiList(res.data);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchData(); // Thực hiện gọi hàm fetchData khi trang được load
-  }, []); // Mảng phụ thuộc rỗng để gọi fetchData chỉ một lần khi trang load
-  console.log(ListData);
+    fetchData();
+  }, []);
 
-  const listTest = {
-    title: "List Farm",
-    datalistTest: [
-      {
-        titleCard: "Card title 1",
-        description: "This is the description.",
-        img: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-      },
-      {
-        titleCard: "Card title 2",
-        description: "This is the description.",
-        img: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-      },
-      {
-        titleCard: "Card title 3",
-        description: "This is the description.",
-        img: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-      },
-    ],
-  };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await api.get("Koi");
+  //       console.log(res.data);
+  //       setListDataCard(res.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <Layout>
@@ -67,9 +45,9 @@ function Home() {
       <Layout style={{ padding: "5px 24px 24px" }}>
         <Carousels />
 
-        <ContentCard title={listTest.title} dataList={listTest.datalistTest} />
-
-        <ContentCard title={listTest.title} dataList={listTest.datalistTest} />
+        {/* <ContentCard title="List Farm" dataList={dataCard} /> */}
+        {/* for 2 type of list : "koi" and "farm" */}
+        <ContentCard title="List Kois" dataList={KoiList} typeList="koi" />
 
         <Divider
           orientation="left"

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+// import React, { useEffect } from "react";
+// import axios from "axios";
 import api from "../../services/axios";
 import Headers from "../../Components/Header/Header";
 import { Tabs, Layout, Menu, Divider, ConfigProvider } from "antd";
@@ -10,7 +10,9 @@ import {
   FaUserCog,
   FaShippingFast,
   FaBox,
+  FaUserAlt,
 } from "react-icons/fa";
+import "../../Components/SideMenu/SideMenu.css";
 
 function Account() {
   // const fetchData = async () => {
@@ -22,13 +24,18 @@ function Account() {
   // useEffect(() => {
   //   fetchData();
   // }, []);
-
   const contentAccount = [
     {
       key: 1,
       label: "Account",
-      icon: <FaUserCog />,
+      icon: <FaUserAlt />,
       children: [
+        {
+          key: 1.0,
+          label: "Profile",
+          icon: <FaUserCog />,
+          path: "/profile",
+        },
         {
           key: 1.1,
           label: "History",
@@ -75,16 +82,14 @@ function Account() {
           }}
         >
           <Menu
+            defaultSelectedKeys={["1.0"]}
+            defaultOpenKeys={["1"]}
+            className="custom-menu"
             mode="inline"
-            style={{
-              height: "100%",
-              borderRight: 0,
-            }}
             items={contentAccount}
             onSelect={handleMenuSelect}
           />
         </Sider>
-
         <Layout
           style={{
             padding: "0 24px 24px",
@@ -99,7 +104,9 @@ function Account() {
               borderRadius: 10,
             }}
           >
-            <Divider style={{ margin: "10px 0" }} />
+            <Divider orientation="right">
+              <h3>Orders</h3>
+            </Divider>
             <ConfigProvider
               theme={{
                 components: {
