@@ -1,0 +1,40 @@
+/* Tùy chỉnh nền và văn bản cho SubMenu khi nó được mở */
+/* .custom-menu .ant-menu-submenu-open {
+  background-color: whitesmoke;
+  color: var(--purple1);
+} */
+
+/* Tùy chỉnh nền và màu chữ cho các item bên trong SubMenu */
+.custom-menu .ant-menu-submenu-title {
+  /* background-color: var(--purple3); */
+  color: var(--purple1);
+}
+
+/* Tùy chỉnh nền và văn bản khi hover trên SubMenu */
+.custom-menu .ant-menu-submenu:hover .ant-menu-submenu-title {
+  /* background-color: var(--purple4); */
+  color: var(--purple1);
+}
+
+/* Tùy chỉnh màu sắc của các item trong SubMenu khi được chọn */
+.custom-menu .ant-menu-submenu-selected .ant-menu-submenu-title {
+  /* background-color: var(--purple1); */
+  color: var(--purple1);
+}
+
+/* Tùy chỉnh các item con trong SubMenu  */
+.custom-menu .ant-menu-sub {
+  background-color: var(--purple1);
+}
+
+.custom-menu .ant-menu-item-selected {
+  background-color: rgba(128, 0, 128, 0.157);
+}
+
+.custom-menu .ant-menu-item:hover {
+  background-color: rgba(128, 0, 128, 0.248);
+}
+
+.custom-menu .ant-menu-item {
+  color: var(--purple1);
+}
