@@ -1,14 +1,24 @@
-import Header from "../../Components/Header/Header";
+import Headers from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
-import { Divider, Layout } from "antd";
+import { Space } from "antd";
 
 function KoiPageFind() {
   return (
-    <Layout>
-      <Header />
-      <Layout style={{ padding: "5px 24px 24px" }}></Layout>
-      <Footer style={{ marginTop: "20px" }} />
-    </Layout>
+    <>
+      <Headers />
+      <Space
+        direction="vertical"
+        size="large"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "30px",
+          backgroundColor: "var(--purple5)",
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+        }}
+      ></Space>
+      <Footer />
+    </>
   );
 }
 
