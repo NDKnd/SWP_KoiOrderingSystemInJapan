@@ -10,14 +10,15 @@ import { useEffect, useState } from "react";
 
 function Home() {
   // Gọi API từ backend khi component được mount
-  const [dataCard, setListDataCard] = useState([]);
+  // const [dataCard, setListDataCard] = useState([]);
+  const [KoiList, setKoiList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await api.get("Koi");
         console.log(res.data);
-        setListDataCard(res.data);
+        setKoiList(res.data);
       } catch (error) {
         console.log(error);
       }
@@ -25,26 +26,18 @@ function Home() {
     fetchData();
   }, []);
 
-  // const listTest = {
-  //   title: "List Farm",
-  //   datalistTest: [
-  //     {
-  //       titleCard: "Card title 1",
-  //       description: "This is the description.",
-  //       img: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-  //     },
-  //     {
-  //       titleCard: "Card title 2",
-  //       description: "This is the description.",
-  //       img: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-  //     },
-  //     {
-  //       titleCard: "Card title 3",
-  //       description: "This is the description.",
-  //       img: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-  //     },
-  //   ],
-  // };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await api.get("Koi");
+  //       console.log(res.data);
+  //       setListDataCard(res.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <Layout>
@@ -52,9 +45,9 @@ function Home() {
       <Layout style={{ padding: "5px 24px 24px" }}>
         <Carousels />
 
-        <ContentCard title="List Farm" dataList={dataCard} />
-
-        <ContentCard title="List Koi" dataList={dataCard} />
+        {/* <ContentCard title="List Farm" dataList={dataCard} /> */}
+        {/* for 2 type of list : "koi" and "farm" */}
+        <ContentCard title="List Kois" dataList={KoiList} typeList="koi" />
 
         <Divider
           orientation="left"
