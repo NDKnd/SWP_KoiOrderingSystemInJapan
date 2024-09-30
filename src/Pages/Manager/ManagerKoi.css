@@ -1,0 +1,152 @@
+.koi-card {
+    border: 1px solid hsl(0, 0%, 80%);
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px hsl(0, 0%, 0%, 0.1);
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    width: 385px;
+    height: 600px;
+    display: inline-block;
+    padding-top: 20px;
+}
+
+.koi-img img{
+    width: 350px;
+    height: 450px;
+}
+
+.koi-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+.button {
+    justify-content: center;
+    display: flex;
+}
+
+.button button {
+    border: 1px solid hsl(0, 0%, 80%);
+    cursor: pointer;
+    width: 60px;
+    height: 30px;
+    font-size: 15px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.button button:hover{
+    background-color: #ccc;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 1000px;
+    width: 90%;
+    animation: fadeIn 0.3s;
+  }
+  .title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #333;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin: 10px 0 5px;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  textarea {
+    resize: none; 
+    height: 80px;
+  }
+  
+  .button-popup {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .button-popup:hover {
+    background-color: #0056b3;
+  }
+  
+  button[type="button"] {
+    background-color: #6c757d;
+  }
+  
+  button[type="button"]:hover {
+    background-color: #5a6268;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .edit-detail input {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .edit-detail textarea{
+    font-family: sans-serif;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .edit-contents .popup-but{
+    display: flex;
+    justify-content: center;
+  }
+
+  .popup-but button{
+    margin: 5px;
+  }
