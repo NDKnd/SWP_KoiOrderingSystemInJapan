@@ -10,11 +10,11 @@ import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
 //manager
 import MenuList from "./Components/manager-header/MenuList.jsx";
 import { Layout } from "antd";
-import ManagerHome from './Pages/Manager/ManagerHome';
-import PendingOrder from './Pages/Manager/PendingOrder.jsx';
-import OrderHistory from './Pages/Manager/OrderHistory.jsx';
-import ManagerFarm from './Pages/Manager/ManagerFarm';
-import ManagerKoi from './Pages/Manager/ManagerKoi';
+import ManagerHome from "./Pages/Manager/ManagerHome";
+import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
+import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
+import ManagerFarm from "./Pages/Manager/ManagerFarm";
+import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import { Outlet } from "react-router-dom";
 const { Content, Sider } = Layout;
 
@@ -34,7 +34,6 @@ const ManagerLayout = () => {
 };
 
 const App = () => {
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -79,7 +78,7 @@ const App = () => {
             //   path: "settings",
             //   element: <Settings />, // Route for settings
             // },
-          ]
+          ],
         },
       ],
     },
@@ -112,6 +111,6 @@ const App = () => {
   ]);
 
   return <RouterProvider router={router} />;
-}
+};
 
 export default App;
