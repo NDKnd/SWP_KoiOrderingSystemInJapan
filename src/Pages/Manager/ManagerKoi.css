@@ -1,34 +1,34 @@
-.koi-card {
+.manager-koi-card {
     border: 1px solid hsl(0, 0%, 80%);
     border-radius: 10px;
     box-shadow: 5px 5px 5px hsl(0, 0%, 0%, 0.1);
     padding: 10px;
     margin: 10px;
     text-align: center;
-    width: 385px;
+    width: 380px;
     height: 600px;
     display: inline-block;
     padding-top: 20px;
 }
 
-.koi-img img{
+.manager-koi-img img{
     width: 350px;
     height: 450px;
 }
 
-.koi-name {
+.manager-koi-name {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 10px;
 }
 
-.button {
+.manager-koi-button {
     justify-content: center;
     display: flex;
 }
 
-.button button {
+.manager-koi-button button {
     border: 1px solid hsl(0, 0%, 80%);
     cursor: pointer;
     width: 60px;
@@ -38,11 +38,11 @@
     margin: 5px;
 }
 
-.button button:hover{
+.manager-koi-button button:hover{
     background-color: #ccc;
 }
 
-.modal {
+.manager-koi-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -55,7 +55,7 @@
     z-index: 1000;
   }
 
-  .modal-content {
+  .manager-koi-modal-content {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -64,26 +64,26 @@
     width: 90%;
     animation: fadeIn 0.3s;
   }
-  .title {
+  .manager-koi-title-edit {
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
     color: #333;
   }
   
-  form {
+  .edit-manager-koi-contents {
     display: flex;
     flex-direction: column;
   }
   
-  label {
+  .edit-manager-koi-contents label {
     margin: 10px 0 5px;
     font-weight: bold;
   }
   
-  input[type="text"],
-  input[type="number"],
-  textarea {
+  .edit-manager-koi-contents input[type="text"],
+  .edit-manager-koi-contents input[type="number"],
+  .edit-manager-koi-contents textarea {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -91,12 +91,12 @@
     font-size: 16px;
   }
   
-  textarea {
+  .edit-manager-koi-contents textarea {
     resize: none; 
     height: 80px;
   }
   
-  .button-popup {
+  .manager-koi-button-popup {
     background-color: #007bff;
     color: white;
     border: none;
@@ -110,15 +110,15 @@
     justify-content: center;
   }
   
-  .button-popup:hover {
+  .manager-koi-button-popup:hover {
     background-color: #0056b3;
   }
   
-  button[type="button"] {
+  .manager-koi-button button[type="button"] {
     background-color: #6c757d;
   }
   
-  button[type="button"]:hover {
+  .manager-koi-button button[type="button"]:hover {
     background-color: #5a6268;
   }
   
@@ -131,22 +131,56 @@
     }
   }
 
-  .edit-detail input {
+  .edit-detail-manager-koi input {
     width: 100%;
     margin-top: 10px;
   }
 
-  .edit-detail textarea{
+  .edit-detail-manager-koi textarea{
     font-family: sans-serif;
     width: 100%;
     margin-top: 10px;
   }
 
-  .edit-contents .popup-but{
+  .edit-manager-koi-contents .popup-but-edit-manager-koi{
     display: flex;
     justify-content: center;
   }
 
-  .popup-but button{
+  .popup-but-edit-manager-koi button{
     margin: 5px;
+  }
+
+  .search-bar-manager-koi{
+    border: 1px solid hsl(0, 0%, 80%);
+    width: 30%;
+    height: 40px;
+    font-size: 1em;
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 10px;
+  }
+
+  .manager-koi-create-search{
+    display: flex;
+    justify-content: space-between;
+    padding-right: 40px;
+    width: 100%;
+  }
+
+  .manager-koi-create-search-button{
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 40px;
+    background-color: #fff;
+    margin-left: 10px;
+  }
+  .manager-koi-create-search-icon{
+    width: 100%;
+  }
+
+  .manager-koi-create-search-icon:hover{
+    background-color: #ccc;
   }

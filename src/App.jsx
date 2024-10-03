@@ -17,6 +17,7 @@ import ManagerFarm from './Pages/Manager/ManagerFarm';
 import ManagerKoi from './Pages/Manager/ManagerKoi';
 import { Outlet } from "react-router-dom";
 const { Content, Sider } = Layout;
+
 const ManagerLayout = () => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -47,7 +48,7 @@ const App = () => {
     },
     {
       path: "admin",
-      element: <PrivateRoute />,
+      // element: <PrivateRoute />,
       errorElement: <Error />,
       children: [
         {
