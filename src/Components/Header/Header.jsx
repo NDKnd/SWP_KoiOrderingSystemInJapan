@@ -32,7 +32,7 @@ function Header() {
       }
     };
     fetchData();
-  }, []);
+  }, [user]);
 
   const handleLogout = () => {
     const navigate = useNavigate;
