@@ -11,14 +11,18 @@ import { useEffect, useState } from "react";
 function Home() {
   // Gọi API từ backend khi component được mount
   // const [dataCard, setListDataCard] = useState([]);
-  const [KoiList, setKoiList] = useState([]);
 
+  const [FarmList, setFarmList] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get("Koi");
+        const res = await api.get("farm", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         console.log(res.data);
-        setKoiList(res.data);
+        setFarmList(res.data);
       } catch (error) {
         console.log(error);
       }
@@ -47,7 +51,7 @@ function Home() {
 
         {/* <ContentCard title="List Farm" dataList={dataCard} /> */}
         {/* for 2 type of list : "koi" and "farm" */}
-        <ContentCard title="List Kois" dataList={KoiList} typeList="koi" />
+        <ContentCard title="List Farms" dataList={FarmList} typeList="koi" />
 
         <Divider
           orientation="left"
