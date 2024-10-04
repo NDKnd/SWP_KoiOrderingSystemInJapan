@@ -16,6 +16,8 @@ import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
 import ManagerFarm from "./Pages/Manager/ManagerFarm";
 import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import { Outlet } from "react-router-dom";
+import TestUpFile from "./utils/testUpFile";
+
 const { Content, Sider } = Layout;
 const ManagerLayout = () => {
   return (
@@ -36,7 +38,8 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
+      // element: <Home />,
+      element: <TestUpFile />,
       errorElement: <Error />,
     },
     {
