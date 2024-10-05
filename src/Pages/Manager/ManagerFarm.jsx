@@ -1,17 +1,18 @@
-import { Button, message, Modal, Upload } from "antd";
+import { message, Modal } from "antd";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
 import { useEffect, useState } from "react";
 import "./ManagerFarm.css";
 import api from "../../services/axios";
-import upLoad from "../../utils/file";
 import upFile from "../../utils/file";
+import storage from "../../config/firebase";
+import { deleteObject, ref } from "firebase/storage";
 
 const ManagerFarm = () => {
   const [search, setSearch] = useState("");
   const [koiFarmList, setKoiFarmList] = useState([]);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentKoiFarm, setCurrentKoiFarm] = useState(null);
@@ -63,6 +64,25 @@ const ManagerFarm = () => {
     try {
       // Update Koi data via API
       await api.put(`farm/${currentKoiFarm.id}`, currentKoiFarm);
+
+      // Lưu lại URL của ảnh cũ
+      const oldImageUrl = currentKoiFarm.image;
+      // Nếu tạo farm thành công, tiến hành upload ảnh
+      if (file) {
+        // Xóa ảnh cũ nếu có
+        if (oldImageUrl) {
+          const oldImageRef = ref(storage, oldImageUrl); // Tham chiếu đến ảnh cũ trong Firebase
+          await deleteObject(oldImageRef); // Xóa ảnh cũ
+        }
+
+        const downloadURL = await upFile(file, "farms"); // Tải file lên Firebase
+        if (downloadURL) {
+          // Cập nhật farm với URL của ảnh
+          currentKoiFarm.image = downloadURL;
+          await api.put(`farm/${currentKoiFarm.id}`, currentKoiFarm); // Cập nhật lại farm với URL ảnh
+        }
+      }
+
       setKoiFarmList((prevList) =>
         prevList.map((farm) =>
           farm.id === currentKoiFarm.id ? currentKoiFarm : farm
@@ -86,8 +106,15 @@ const ManagerFarm = () => {
   const handleDelete = async (id) => {
     try {
       console.log("farm id: ", id);
+      // Lưu lại URL của ảnh
+      const ImageUrl = koiFarmList.find((farm) => farm.id === id).image;
       // Delete Koi data via API
       const response = await api.delete(`farm/${id}`);
+      // Xóa ảnh cũ nếu có
+      if (ImageUrl) {
+        const ImageRef = ref(storage, ImageUrl); // Tham chiếu đến ảnh trong Firebase
+        await deleteObject(ImageRef); // Xóa ảnh
+      }
       console.log("response: ", response);
       // Remove Koi from state
       setKoiFarmList((prevList) => prevList.filter((farm) => farm.id !== id));
@@ -130,10 +157,22 @@ const ManagerFarm = () => {
         description: newFarm.description,
         phone: newFarm.phone || "",
         email: newFarm.email || "",
-        image: newFarm.image,
+        // image: newFarm.image,
+        image: "", // Không gán image ở đây, sẽ gán sau
       };
       console.log("farm after: ", newFarm2);
       const response = await api.post("farm", newFarm2);
+      const farmCreated = response.data;
+
+      // Nếu tạo farm thành công, tiến hành upload ảnh
+      if (file) {
+        const downloadURL = await upFile(file, "farms"); // Tải file lên Firebase
+        if (downloadURL) {
+          // Cập nhật farm với URL của ảnh
+          farmCreated.image = downloadURL;
+          await api.put(`farm/${farmCreated.id}`, farmCreated); // Cập nhật lại farm với URL ảnh
+        }
+      }
       setKoiFarmList((prevList) => [...prevList, response.data]);
       message.success("New farm created successfully");
       // Reset form sau khi submit thành công
@@ -145,6 +184,7 @@ const ManagerFarm = () => {
         email: "",
         image: "",
       });
+      setFile(null); // Reset file state
     } catch (err) {
       console.error(err.response.data);
       message.error(err.response.data);
@@ -314,16 +354,10 @@ const ManagerFarm = () => {
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
-                  <label>Image URL: </label>
+                  <label>Upload Image: </label>
                   <input
-                    type="text"
-                    value={currentKoiFarm.image}
-                    onChange={(e) =>
-                      setCurrentKoiFarm({
-                        ...currentKoiFarm,
-                        image: e.target.value,
-                      })
-                    }
+                    type="file"
+                    onChange={(e) => handleFileChange(e.target.files[0])} // Xử lý file upload
                   />
                 </div>
                 <div className="popup-but-edit-manager-koi">
@@ -397,16 +431,6 @@ const ManagerFarm = () => {
                     value={newFarm?.email || ""}
                     onChange={(e) =>
                       setNewFarm({ ...newFarm, email: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="edit-detail-manager-koi">
-                  <label>Image URL: </label>
-                  <input
-                    type="text"
-                    value={newFarm?.image || ""}
-                    onChange={(e) =>
-                      setNewFarm({ ...newFarm, image: e.target.value })
                     }
                   />
                 </div>
