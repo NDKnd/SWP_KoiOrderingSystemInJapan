@@ -21,7 +21,7 @@ const routes = [
   { path: "login", element: <LoginForm /> },
   {
     path: "admin",
-    element: <PrivateRoute />, //Bảo vệ trang
+    // element: <PrivateRoute />, //Bảo vệ trang
     children: [
       {
         path: "",

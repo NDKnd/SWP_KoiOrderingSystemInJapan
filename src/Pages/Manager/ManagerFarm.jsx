@@ -14,6 +14,9 @@ const ManagerFarm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentKoiFarm, setCurrentKoiFarm] = useState(null);
 
+  const [newFarm, setNewFarm] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   useEffect(() => {
     const fetchKoiFarmData = async () => {
       try {
@@ -38,6 +41,55 @@ const ManagerFarm = () => {
   const filteredKoiFarmList = koiFarmList.filter(koiFarm =>
     koiFarm.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleEdit = (farm) => {
+    setCurrentKoiFarm(farm);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (event) => {
+    event.preventDefault();
+    try {
+      // Update Koi data via API
+      await axios.put(`https://66faa67eafc569e13a9ca1fc.mockapi.io/farm/${currentKoiFarm.id}`, currentKoiFarm);
+      setKoiFarmList((prevList) => prevList.map(farm => (farm.id === currentKoiFarm.id ? currentKoiFarm : farm)));
+    } catch (err) {
+      console.error("Failed to update Koi Farm data", err);
+    } finally {
+      setIsModalOpen(false);
+      setCurrentKoiFarm(null);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      // Delete Koi data via API
+      await axios.delete(`https://66faa67eafc569e13a9ca1fc.mockapi.io/farm/${id}`);
+
+      // Update Koi list state to remove the deleted Koi
+      setKoiFarmList((prevList) => prevList.filter(farm => farm.id !== id));
+    } catch (err) {
+      console.error("Failed to delete Koi Farm data", err);
+    }
+  };
+
+  const handleCreateFarm = () => {
+    setIsCreateModalOpen(true);
+  }
+
+  const handleCreate = async (event) => {
+    event.preventDefault();
+    try {
+      await axios.post(`https://66faa67eafc569e13a9ca1fc.mockapi.io/farm`, newFarm);
+      setKoiFarmList((prevList) => [...prevList, newFarm]);
+    } catch (err) {
+      console.error("Failed to create new Koi Farm", err);
+    } finally {
+      setIsCreateModalOpen(false);
+      setNewFarm(null);
+    }
+  };
+
   return (
     <>
       <div className="manager-farm-create-search">
@@ -77,7 +129,7 @@ const ManagerFarm = () => {
                     </div>
 
                     <div className="manager-farm-location">
-                      <p>Location: {farm.location}</p>
+                      <p>Address: {farm.location}</p>
                     </div>
 
                     <div className="manager-farm-button">
@@ -107,17 +159,83 @@ const ManagerFarm = () => {
                     value={currentKoiFarm.name}
                     onChange={(e) => setCurrentKoiFarm({ ...currentKoiFarm, name: e.target.value })}
                   />
-                  <div>
-                    <label>
-                      
-                    </label>
-                  </div>
+                </div>
+                <div className="edit-detail-manager-koi">
+                  <label>Description: </label>
+                  <textarea
+                   value={currentKoiFarm.description}
+                   onChange={(e) => setCurrentKoiFarm ({ ...currentKoiFarm, description: e.target.value})}
+                   />
+                </div>
+                <div className="edit-detail-manager-koi">
+                    <label>Address: </label>
+                    <input 
+                      type="text"
+                      value={currentKoiFarm.location}
+                      onChange={(e) => setCurrentKoiFarm({ ...currentKoiFarm, location: e.target.value})}
+                    />
+                </div>
+                <div className="edit-detail-manager-koi">
+                  <label>Image URL: </label>
+                  <input
+                    type="text"
+                    value={currentKoiFarm.image}
+                    onChange={(e) => setCurrentKoiFarm({ ...currentKoiFarm, image: e.target.value })}
+                  />
+                </div>
+                <div className="popup-but-edit-manager-koi">
+                  <button className="manager-farm-button-popup" type="submit">Save</button>
+                  <button className="manager-farm-button-popup" type="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
                 </div>
               </form>
             </div>
           </div>
         )}
 
+        {isCreateModalOpen && (
+          <div className="manager-farm-modal">
+          <div className="manager-koi-modal-content">
+            <h2 className="manager-farm-title-edit">Add new Koi Farm</h2>
+            <form onSubmit={handleCreate} className="edit-manager-koi-contents">
+              <div className="edit-detail-manager-koi">
+                <label>Koi Farm Name: </label>
+                <input
+                  type="text"
+                  value={newFarm?.name || ""}
+                  onChange={(e) => setNewFarm({ ...newFarm, name: e.target.value })}
+                />
+              </div>
+              <div className="edit-detail-manager-koi">
+                <label>Description: </label>
+                <textarea
+                 value={newFarm?.description || ""}
+                 onChange={(e) => setNewFarm ({ ...newFarm, description: e.target.value})}
+                 />
+              </div>
+              <div className="edit-detail-manager-koi">
+                  <label>Address: </label>
+                  <input 
+                    type="text"
+                    value={newFarm?.location || ""}
+                    onChange={(e) => setNewFarm({ ...newFarm, location: e.target.value})}
+                  />
+              </div>
+              <div className="edit-detail-manager-koi">
+                <label>Image URL: </label>
+                <input
+                  type="text"
+                  value={newFarm?.image || ""}
+                  onChange={(e) => setNewFarm({ ...newFarm, image: e.target.value })}
+                />
+              </div>
+              <div className="popup-but-edit-manager-koi">
+                <button className="manager-farm-button-popup" type="submit">Create</button>
+                <button className="manager-farm-button-popup" type="button" onClick={() => setIsCreateModalOpen(false)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        )}
       </div>
     </>
   )

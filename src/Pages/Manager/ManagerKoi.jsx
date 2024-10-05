@@ -23,8 +23,7 @@ const ManagerKoi = () => {
     const fetchKoiData = async () => {
       try {
         axios.get("https://66faa67eafc569e13a9ca1fc.mockapi.io/koi")
-          .then(response => setKoiList(response.data)
-          )
+          .then(response => setKoiList(response.data))
       } catch (err) {
         setError("Failed to fetch Koi data. Please try again.");
       } finally {

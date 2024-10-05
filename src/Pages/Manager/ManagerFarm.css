@@ -102,3 +102,105 @@
 .manager-farm-button button:hover{
     background-color: #ccc;
 }
+
+.manager-farm-modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.manager-koi-modal-content{
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 1000px;
+    width: 90%;
+    animation: fadeIn 0.3s;
+}
+
+.manager-farm-title-edit{
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #333;
+}
+
+.edit-manager-koi-contents{
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-manager-koi-contents label{
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.edit-manager-koi-contents input[type="text"],
+  .edit-manager-koi-contents input[type="number"],
+  .edit-manager-koi-contents textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+
+  .edit-manager-koi-contents textarea {
+    resize: none; 
+    height: 80px;
+  }
+
+  .manager-farm-button-popup{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .manager-farm-button-popup:hover{
+    background-color: #0056b3;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .edit-detail-manager-koi input{
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .edit-detail-manager-koi textarea{
+    font-family: sans-serif;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .edit-manager-koi-contents .popup-but-edit-manager-koi{
+    display: flex;
+    justify-content: center;
+  }
+
+  .popup-but-edit-manager-koi button{margin: 5px;}
+
+  
