@@ -9,29 +9,36 @@ function Header() {
   //for getting user token
   // for example
   // localStorage.setItem("token", "hehe I am here");
+  const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
-  token ? console.log(token) : console.log("not login yet");
-
-  //get order number from user
+  // console.log(user);
+  const userInfo = JSON.parse(user);
+  // console.log(userInfo);
   const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const res = await api.get("/Koi");
-        console.log(res.data);
-        setQuantity(res.data.length);
-      } catch (error) {
-        console.log(error);
+      if (user) {
+        // try {
+        //   const res = await api.get("/cart");
+        //   console.log(res.data);
+        //   setQuantity(res.data.length);
+        // } catch (error) {
+        //   console.log(error);
+        // }
+        console.log(`user name: ${userInfo.username}`);
+      } else {
+        console.log("not login yet");
       }
     };
     fetchData();
-  });
+  }, [user]);
 
   const handleLogout = () => {
     const navigate = useNavigate;
     // Xoá token khỏi localStorage
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     // Điều hướng người dùng về trang đăng nhập
     navigate("/login");
   };

@@ -6,109 +6,60 @@ import Home from "./Pages/Home/Home.jsx";
 import PrivateRoute from "./Components/private-rout/PrivateRoute.jsx";
 import Account from "./Pages/Account/Account.jsx";
 import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
-
-//manager
-import MenuList from "./Components/manager-header/MenuList.jsx";
 import { Layout } from "antd";
 import ManagerHome from "./Pages/Manager/ManagerHome";
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
 import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
 import ManagerFarm from "./Pages/Manager/ManagerFarm";
 import ManagerKoi from "./Pages/Manager/ManagerKoi";
-import { Outlet } from "react-router-dom";
+import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
+
 const { Content, Sider } = Layout;
 
-const ManagerLayout = () => {
-  return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider>
-        <MenuList />
-      </Sider>
-      <Layout>
-        <Content style={{ padding: "24px", backgroundColor: "#fff" }}>
-          <Outlet />
-        </Content>
-      </Layout>
-    </Layout>
-  );
-};
+const routes = [
+  { path: "/", element: <Home /> },
+  { path: "login", element: <LoginForm /> },
+  {
+    path: "admin",
+    element: <PrivateRoute />, //Bảo vệ trang
+    children: [
+      {
+        path: "",
+        element: <ManagerLayOut />, // Layout của trang quản lý
+        children: [
+          { path: "", element: <ManagerHome /> },
+          { path: "ManagerFarm", element: <ManagerFarm /> },
+          { path: "ManagerKoi", element: <ManagerKoi /> },
+          { path: "ManagerPendingOrder", element: <PendingOrder /> },
+          { path: "ManagerOrderHistory", element: <OrderHistory /> },
+        ],
+      },
+    ],
+  },
+  {
+    path: "KoiPageFind",
+    element: <PrivateRoute />,
+    children: [{ path: "", element: <KoiPageFind /> }],
+  },
+  {
+    path: "profile",
+    element: <PrivateRoute />,
+    children: [{ path: "", element: <Account /> }],
+  },
+  { path: "*", element: <Error /> },
+];
 
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Home />,
+  const router = createBrowserRouter(
+    routes.map((route) => ({
+      ...route, // cú pháp spread (...) để sao chép tất cả các thuộc tính hiện có của route.
       errorElement: <Error />,
-    },
-    {
-      path: "login",
-      element: <LoginForm />,
-      errorElement: <Error />,
-    },
-    {
-      path: "admin",
-      // element: <PrivateRoute />,
-      errorElement: <Error />,
-      children: [
-        {
-          path: "",
-          element: <ManagerLayout />,
-          children: [
-            {
-              path: "",
-              element: <ManagerHome />,
-            },
-            {
-              path: "ManagerFarm",
-              element: <ManagerFarm />,
-            },
-            {
-              path: "ManagerKoi",
-              element: <ManagerKoi />,
-            },
-            {
-              path: "ManagerPendingOrder",
-              element: <PendingOrder />,
-            },
-            {
-              path: "ManagerOrderHistory",
-              element: <OrderHistory />,
-            },
-            // {
-            //   path: "settings",
-            //   element: <Settings />, // Route for settings
-            // },
-          ],
-        },
-      ],
-    },
-    {
-      path: "KoiPageFind",
-      element: <PrivateRoute />,
-      children: [
-        {
-          path: "",
-          element: <KoiPageFind />,
-        },
-      ],
-      errorElement: <Error />,
-    },
-    {
-      path: "profile",
-      element: <PrivateRoute />,
-      children: [
-        {
-          path: "",
-          element: <Account />,
-        },
-      ],
-      errorElement: <Error />,
-    },
-    {
-      path: "*",
-      element: <Error />,
-    },
-  ]);
+      children: route.children?.map((child) => ({
+        ...child, // cú pháp spread (...) để sao chép tất cả các thuộc tính hiện có của child.
+        errorElement: <Error />,
+      })),
+    }))
+  );
 
   return <RouterProvider router={router} />;
 };

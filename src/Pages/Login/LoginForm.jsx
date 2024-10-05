@@ -61,8 +61,8 @@ const LoginForm = () => {
     const formData = new FormData(event.target); // Lấy dữ liệu form
     const userName = formData.get("username"); // Lấy giá trị của trường Username
     const password = formData.get("password"); // Lấy giá trị của trường Password
-    console.log("Username:", userName);
-    console.log("Password:", password);
+    // console.log("Username:", userName);
+    // console.log("Password:", password);
 
     try {
       const response = await api.post("login", {
@@ -88,11 +88,11 @@ const LoginForm = () => {
     const lastName = formData.get("lastname"); // Lấy giá trị của trường Password
     const email = formData.get("email"); // Lấy giá trị của trường Password
     const password = formData.get("password"); // Lấy giá trị của trường Password
-    console.log("Username:", userName);
-    console.log("Firstname:", firstName);
-    console.log("Lastname:", lastName);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    // console.log("Username:", userName);
+    // console.log("Firstname:", firstName);
+    // console.log("Lastname:", lastName);
+    // console.log("Email:", email);
+    // console.log("Password:", password);
     try {
       const response = await api.post("register", {
         username: userName,
