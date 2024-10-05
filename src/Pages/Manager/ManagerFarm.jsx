@@ -296,7 +296,7 @@ const ManagerFarm = () => {
                     onChange={(e) =>
                       setCurrentKoiFarm({
                         ...currentKoiFarm,
-                        name: e.target.value,
+                        farmName: e.target.value,
                       })
                     }
                   />
