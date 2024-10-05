@@ -12,23 +12,19 @@ function Home() {
   // Gọi API từ backend khi component được mount
   // const [dataCard, setListDataCard] = useState([]);
 
-  const [FarmList, setFarmList] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await api.get("farm", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        console.log(res.data);
-        setFarmList(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+  // const [FarmList, setFarmList] = useState([]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await api.get("farm");
+  //       console.log(res.data);
+  //       setFarmList(res.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -51,7 +47,7 @@ function Home() {
 
         {/* <ContentCard title="List Farm" dataList={dataCard} /> */}
         {/* for 2 type of list : "koi" and "farm" */}
-        <ContentCard title="List Farms" dataList={FarmList} typeList="koi" />
+        {/* <ContentCard title="List Farms" dataList={FarmList} typeList="koi" /> */}
 
         <Divider
           orientation="left"
