@@ -97,7 +97,7 @@ const ManagerKoi = () => {
         <button title="Create new Koi" className="manager-koi-create-search-button" onClick={() => handleCreateKoi()}><MdOutlineCreateNewFolder className="manager-koi-create-search-icon" /></button>
         <input
           type="text"
-          placeholder="Search Koi by name... "
+          placeholder="Search Koi fish by name... "
           value={search}
           onChange={handleSearchChange}
           className="search-bar-manager-koi"
