@@ -6,7 +6,6 @@ import Home from "./Pages/Home/Home.jsx";
 import PrivateRoute from "./Components/private-rout/PrivateRoute.jsx";
 import Account from "./Pages/Account/Account.jsx";
 import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
-import { Layout } from "antd";
 import ManagerHome from "./Pages/Manager/ManagerHome";
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
 import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
@@ -14,8 +13,6 @@ import ManagerFarm from "./Pages/Manager/ManagerFarm";
 import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import TestUpFile from "./utils/testUpFile";
-
-const { Content, Sider } = Layout;
 
 const routes = [
   { path: "/", element: <Home /> },

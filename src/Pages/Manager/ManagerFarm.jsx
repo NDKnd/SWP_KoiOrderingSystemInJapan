@@ -1,9 +1,8 @@
-import { Button, message, Modal, Upload } from "antd";
+import { message, Modal } from "antd";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
 import { useEffect, useState } from "react";
 import "./ManagerFarm.css";
 import api from "../../services/axios";
-import upLoad from "../../utils/file";
 import upFile from "../../utils/file";
 
 const ManagerFarm = () => {
@@ -11,7 +10,6 @@ const ManagerFarm = () => {
   const [koiFarmList, setKoiFarmList] = useState([]);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentKoiFarm, setCurrentKoiFarm] = useState(null);
@@ -313,7 +311,7 @@ const ManagerFarm = () => {
                     }
                   />
                 </div>
-                <div className="edit-detail-manager-koi">
+                {/* <div className="edit-detail-manager-koi">
                   <label>Image URL: </label>
                   <input
                     type="text"
@@ -324,6 +322,13 @@ const ManagerFarm = () => {
                         image: e.target.value,
                       })
                     }
+                  />
+                </div> */}
+                <div className="edit-detail-manager-koi">
+                  <label>Upload Image: </label>
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChange(e.target.files[0])} // Xử lý file upload
                   />
                 </div>
                 <div className="popup-but-edit-manager-koi">
@@ -400,7 +405,7 @@ const ManagerFarm = () => {
                     }
                   />
                 </div>
-                <div className="edit-detail-manager-koi">
+                {/* <div className="edit-detail-manager-koi">
                   <label>Image URL: </label>
                   <input
                     type="text"
@@ -409,7 +414,7 @@ const ManagerFarm = () => {
                       setNewFarm({ ...newFarm, image: e.target.value })
                     }
                   />
-                </div>
+                </div> */}
                 <div className="edit-detail-manager-koi">
                   <label>Upload Image: </label>
                   <input
