@@ -1,99 +1,200 @@
-
 // import api from "./../../services/axios";
 import "./ManagerKoi.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "./../../services/axios";
+import upFile from "../../utils/file";
+import storage from "../../config/firebase";
+import { deleteObject, ref } from "firebase/storage";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
+import { message, Modal, Select } from "antd";
+import { Option } from "antd/es/mentions";
 
 const ManagerKoi = () => {
-
+  const [search, setSearch] = useState("");
   const [koiList, setKoiList] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentKoi, setCurrentKoi] = useState(null);
 
-  const [search, setSearch] = useState("");
   const [newKoi, setNewKoi] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+  const [koiFarmList, setKoiFarmList] = useState([]);
 
   useEffect(() => {
-    const fetchKoiData = async () => {
+    const fetchFarms = async () => {
       try {
-        axios.get("https://66faa67eafc569e13a9ca1fc.mockapi.io/koi")
-          .then(response => setKoiList(response.data))
+        setLoading(true);
+        const response = await api.get("farm");
+        console.log(response);
+        setKoiFarmList(response.data);
+        console.log("koiFarmList: ", response.data);
+        message.success("Fetch farm data successfully");
       } catch (err) {
-        setError("Failed to fetch Koi data. Please try again.");
+        console.log(err);
+        message.error("Cannot fetch farm data");
       } finally {
         setLoading(false);
       }
     };
+    const fetchKoiData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("koi");
+        console.log(response);
+        setKoiList(response.data);
+        console.log("koiList: ", response.data);
+        message.success("Fetch Koi data successfully");
+      } catch (err) {
+        message.error("Cannot fetch Koi data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFarms();
     fetchKoiData();
   }, []);
 
-  if (error) return <p>{error}</p>;
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const filteredKoiList = Array.isArray(koiList)
+    ? koiList.filter((koi) =>
+        koi.koiName.toLowerCase().includes(search.toLowerCase())
+      )
+    : [];
 
   const handleEdit = (koi) => {
     setCurrentKoi(koi);
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      // Delete Koi data via API
-      await axios.delete(`https://66faa67eafc569e13a9ca1fc.mockapi.io/koi/${id}`);
-
-      // Update Koi list state to remove the deleted Koi
-      setKoiList((prevList) => prevList.filter(koi => koi.id !== id));
-    } catch (err) {
-      console.error("Failed to delete Koi data", err);
-    }
-  };
-  //update
   const handleSave = async (event) => {
     event.preventDefault();
     try {
       // Update Koi data via API
-      await axios.put(`https://66faa67eafc569e13a9ca1fc.mockapi.io/koi/${currentKoi.id}`, currentKoi);
-      setKoiList((prevList) => prevList.map(koi => (koi.id === currentKoi.id ? currentKoi : koi)));
+      console.log("currentKoi: ", currentKoi);
+      await api.put(`koi/${currentKoi.id}`, currentKoi);
+
+      const oldImageUrl = currentKoi.image;
+      if (file) {
+        if (oldImageUrl) {
+          const oldImageRef = ref(storage, oldImageUrl);
+          await deleteObject(oldImageRef);
+        }
+
+        const downloadURL = await upFile(file, "koi"); // Tải file lên Firebase
+        if (downloadURL) {
+          // Cập nhật Koi với URL của ảnh
+          currentKoi.image = downloadURL;
+          await api.put(`koi/${currentKoi.id}`, currentKoi);
+        }
+      }
+
+      setKoiList((prevList) =>
+        prevList.map((koi) => (koi.id === currentKoi.id ? currentKoi : koi))
+      );
+
+      message.success("Update Koi data successfully");
     } catch (err) {
-      console.error("Failed to update Koi data", err);
+      if (err.response.status === 400) {
+        message.error(err.response.data.message);
+      } else {
+        console.error("Failed to update Koi data", err);
+        message.error("Failed to update Koi data");
+      }
     } finally {
       setIsModalOpen(false);
       setCurrentKoi(null);
     }
   };
 
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+  const handleDelete = async (id) => {
+    try {
+      console.log("koi id: ", id);
+
+      const ImageUrl = koiList.find((koi) => koi.id === id).image;
+      // Delete Koi data via API
+      const res = await api.delete(`koi/${id}`);
+
+      if (ImageUrl) {
+        const ImageRef = ref(storage, ImageUrl); // Tham chiếu định nghĩa ảnh trong Firebase
+        await deleteObject(ImageRef); // Xóa ảnh
+      }
+      // Update Koi list state to remove the deleted Koi
+      setKoiList((prevList) => prevList.filter((koi) => koi.id !== id));
+      message.success("Koi deleted successfully");
+      console.log("after delete: ", res.data);
+    } catch (err) {
+      message.error("Failed to delete Koi data");
+      console.error("Failed to delete Koi data", err);
+    }
+  };
+  //update
+  const handleCreateKoi = () => {
+    setIsCreateModalOpen((prev) => !prev);
   };
 
-  const filteredKoiList = koiList.filter(koi =>
-    koi.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const [file, setFile] = useState(null);
 
-  const handleCreateKoi = () => {
-    setIsCreateModalOpen(true);
-  }
+  const handleFileChange = async (selectedFile) => {
+    if (!selectedFile) return;
+    setFile(selectedFile);
+    const downloadURL = await upFile(selectedFile, "kois");
+    if (downloadURL) {
+      setNewKoi((prevKoi) => ({ ...prevKoi, image: downloadURL }));
+      message.success("File uploaded successfully");
+    } else {
+      message.error("File upload failed");
+    }
+  };
 
   const handleCreate = async (event) => {
     event.preventDefault();
     try {
-      await axios.post(`https://66faa67eafc569e13a9ca1fc.mockapi.io/koi`, newKoi);
+      console.log("newKoi: ", newKoi);
+      setNewKoi((prevKoi) => ({ ...prevKoi, farmId: newKoi.farmId }));
+      console.log("newKoi: ", newKoi);
+      const res = await api.post("koi", newKoi);
+      const koicreated = res.data;
+      console.log("koicreated: ", koicreated);
+
+      // Sau khi Koi tao thanh cong, tien hanh upload anh vao firebase
+      if (file) {
+        const downloadURL = await upFile(file, "kois");
+        if (downloadURL) {
+          koicreated.image = downloadURL;
+          console.log("koi created: ", koicreated);
+          await api.put(`koi/${koicreated.id}`, koicreated);
+        }
+      }
       setKoiList((prevList) => [...prevList, newKoi]);
+      message.success("Create new Koi successfully");
+      setNewKoi(null);
+      setFile(null);
     } catch (err) {
+      if (err.response.status === 400) {
+        message.error("Wrong input data");
+      }
       console.error("Failed to create new Koi", err);
     } finally {
-      setIsCreateModalOpen(false);
-      setNewKoi(null);
+      handleCreateKoi();
     }
   };
   return (
     <>
       <div className="manager-koi-create-search">
-        <button title="Create new Koi" className="manager-koi-create-search-button" onClick={() => handleCreateKoi()}><MdOutlineCreateNewFolder className="manager-koi-create-search-icon" /></button>
+        <button
+          title="Create new Koi"
+          className="manager-koi-create-search-button"
+          onClick={() => handleCreateKoi()}
+        >
+          <MdOutlineCreateNewFolder className="manager-koi-create-search-icon" />
+        </button>
         <input
           type="text"
           placeholder="Search Koi fish by name... "
@@ -104,32 +205,65 @@ const ManagerKoi = () => {
       </div>
 
       <div className="koiList">
-        {filteredKoiList.length == 0 && search.length == 0 ?
-          <p style={{ display: 'flex', justifyContent: 'center', fontSize: '2em', }}>
-            Loading... {search}
-          </p> : filteredKoiList.length == 0 ?
-            <p style={{ display: 'flex', justifyContent: 'center', fontSize: '2em', }}>
-              There are no Koi with name {search}
-            </p> : filteredKoiList.map((koi) => (
-              <div className="manager-koi-card" key={koi.id}>
-                <div className="manager-koi-img">
-                  <img src={koi.image} alt={koi.name}></img>
-                </div>
-                <div className="manager-koi-name">
-                  <h2>{koi.name}</h2>
-                </div>
-                <div className="manager-koi-button">
-                  <button onClick={() => handleEdit(koi)}>Edit</button>
-                  <button onClick={() => {
-                    if (window.confirm("Do you really want to delete?")) {
-                      handleDelete(koi.id);
-                    }
-                  }}>
-                    Delete
-                  </button>
-                </div>
+        {filteredKoiList.length == 0 && search.length == 0 ? (
+          <p
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              fontSize: "2em",
+            }}
+          >
+            There are no Kois
+          </p>
+        ) : filteredKoiList.length == 0 ? (
+          <p
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              fontSize: "2em",
+            }}
+          >
+            There are no Koi with name {search}
+          </p>
+        ) : (
+          filteredKoiList.map((koi) => (
+            <div className="manager-koi-card" key={koi.id}>
+              <div className="manager-koi-img">
+                <img src={koi.image} alt={koi.koiName}></img>
               </div>
-            ))}
+              <div className="manager-koi-name">
+                <h2>{koi.name}</h2>
+              </div>
+              <div className="manager-koi-name">
+                <h2>{koi.type}</h2>
+              </div>
+              <div className="manager-koi-name">
+                <h2>{koi.price}</h2>
+              </div>
+              <div className="manager-koi-name">
+                <h2>{koi.description}</h2>
+              </div>
+              <div className="manager-koi-name">
+                <h2>{koi.farm.farmName}</h2>
+              </div>
+              <div className="manager-koi-button">
+                <button onClick={() => handleEdit(koi)}>Edit</button>
+                <button
+                  onClick={() => {
+                    Modal.confirm({
+                      title: "Do you want to delete this Koi?",
+                      onOk: () => handleDelete(koi.id),
+                      okText: "Delete",
+                      cancelText: "Cancel",
+                    });
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
         {isModalOpen && currentKoi && (
           <div className="manager-koi-modal">
             <div className="manager-koi-modal-content">
@@ -139,8 +273,10 @@ const ManagerKoi = () => {
                   <label>Koi Name: </label>
                   <input
                     type="text"
-                    value={currentKoi.name}
-                    onChange={(e) => setCurrentKoi({ ...currentKoi, name: e.target.value })}
+                    value={currentKoi.koiName}
+                    onChange={(e) =>
+                      setCurrentKoi({ ...currentKoi, koiName: e.target.value })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -148,7 +284,9 @@ const ManagerKoi = () => {
                   <input
                     type="text"
                     value={currentKoi.type}
-                    onChange={(e) => setCurrentKoi({ ...currentKoi, type: e.target.value })}
+                    onChange={(e) =>
+                      setCurrentKoi({ ...currentKoi, type: e.target.value })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -156,27 +294,63 @@ const ManagerKoi = () => {
                   <input
                     type="number"
                     value={currentKoi.price}
-                    onChange={(e) => setCurrentKoi({ ...currentKoi, price: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setCurrentKoi({
+                        ...currentKoi,
+                        price: Number(e.target.value),
+                      })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
                   <label>Description: </label>
                   <textarea
                     value={currentKoi.description}
-                    onChange={(e) => setCurrentKoi({ ...currentKoi, description: e.target.value })}
+                    onChange={(e) =>
+                      setCurrentKoi({
+                        ...currentKoi,
+                        description: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
-                  <label>Image URL: </label>
+                  <Select
+                    defaultValue={
+                      koiFarmList.find((farm) => farm.id === currentKoi.farmId)
+                        ?.farmName
+                    }
+                    onChange={(e) =>
+                      setNewKoi({ ...currentKoi, farmId: e.target.value })
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    {koiFarmList.map((farm) => (
+                      <Select.Option key={farm.id} value={farm.farmName}>
+                        {farm.farmName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="edit-detail-manager-koi">
+                  <label>Image: </label>
                   <input
-                    type="text"
+                    type="file"
                     value={currentKoi.image}
-                    onChange={(e) => setCurrentKoi({ ...currentKoi, image: e.target.value })}
+                    onChange={(e) => handleFileChange(e.target.files[0])}
                   />
                 </div>
                 <div className="popup-but-edit-manager-koi">
-                  <button className="manager-koi-button-popup" type="submit">Save</button>
-                  <button className="manager-koi-button-popup" type="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <button className="manager-koi-button-popup" type="submit">
+                    Save
+                  </button>
+                  <button
+                    className="manager-koi-button-popup"
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </form>
             </div>
@@ -186,13 +360,18 @@ const ManagerKoi = () => {
           <div className="manager-koi-modal">
             <div className="manager-koi-modal-content">
               <h2 className="manager-koi-title-edit">Create Koi</h2>
-              <form onSubmit={handleCreate} className="edit-manager-koi-contents">
+              <form
+                onSubmit={handleCreate}
+                className="edit-manager-koi-contents"
+              >
                 <div className="edit-detail-manager-koi">
                   <label>Koi Name: </label>
                   <input
                     type="text"
-                    value={newKoi?.name || ""}
-                    onChange={(e) => setNewKoi({ ...newKoi, name: e.target.value })}
+                    value={newKoi?.koiName || ""}
+                    onChange={(e) =>
+                      setNewKoi({ ...newKoi, koiName: e.target.value })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -200,7 +379,9 @@ const ManagerKoi = () => {
                   <input
                     type="text"
                     value={newKoi?.type || ""}
-                    onChange={(e) => setNewKoi({ ...newKoi, type: e.target.value })}
+                    onChange={(e) =>
+                      setNewKoi({ ...newKoi, type: e.target.value })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -208,27 +389,54 @@ const ManagerKoi = () => {
                   <input
                     type="number"
                     value={newKoi?.price || 0}
-                    onChange={(e) => setNewKoi({ ...newKoi, price: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setNewKoi({ ...newKoi, price: Number(e.target.value) })
+                    }
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
                   <label>Description: </label>
                   <textarea
                     value={newKoi?.description || ""}
-                    onChange={(e) => setNewKoi({ ...newKoi, description: e.target.value })}
+                    onChange={(e) =>
+                      setNewKoi({ ...newKoi, description: e.target.value })
+                    }
                   />
+                </div>
+                <div className="edit-detail-manager-koi">
+                  <label>Farm: </label>
+                  <Select
+                    defaultValue={newKoi?.farmId || ""}
+                    onChange={(value) =>
+                      setNewKoi({ ...newKoi, farmId: value })
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    {koiFarmList.map((farm) => (
+                      <Option key={farm.id} value={farm.id}>
+                        {farm.farmName}
+                      </Option>
+                    ))}
+                  </Select>
                 </div>
                 <div className="edit-detail-manager-koi">
                   <label>Image URL: </label>
                   <input
-                    type="text"
-                    value={newKoi?.image || ""}
-                    onChange={(e) => setNewKoi({ ...newKoi, image: e.target.value })}
+                    type="file"
+                    onChange={(e) => handleFileChange(e.target.files[0])} // Xử lý file upload
                   />
                 </div>
                 <div className="popup-but-edit-manager-koi">
-                  <button className="manager-koi-button-popup" type="submit">Create</button>
-                  <button className="manager-koi-button-popup" type="button" onClick={() => setIsCreateModalOpen(false)}>Cancel</button>
+                  <button className="manager-koi-button-popup" type="submit">
+                    Create
+                  </button>
+                  <button
+                    className="manager-koi-button-popup"
+                    type="button"
+                    onClick={() => setIsCreateModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </form>
             </div>

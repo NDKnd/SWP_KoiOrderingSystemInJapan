@@ -62,7 +62,7 @@ const ManagerFarm = () => {
   const handleSave = async (event) => {
     event.preventDefault();
     try {
-      // Update Koi data via API
+      // Update farm data via API
       await api.put(`farm/${currentKoiFarm.id}`, currentKoiFarm);
 
       // Lưu lại URL của ảnh cũ
@@ -116,7 +116,7 @@ const ManagerFarm = () => {
         await deleteObject(ImageRef); // Xóa ảnh
       }
       console.log("response: ", response);
-      // Remove Koi from state
+      // Remove farm from state
       setKoiFarmList((prevList) => prevList.filter((farm) => farm.id !== id));
       message.success("Koi Farm deleted successfully");
     } catch (err) {
@@ -151,18 +151,9 @@ const ManagerFarm = () => {
     event.preventDefault();
     try {
       console.log("newFarm: ", newFarm);
-      const newFarm2 = {
-        farmName: newFarm.farmName,
-        location: newFarm.location,
-        description: newFarm.description,
-        phone: newFarm.phone || "",
-        email: newFarm.email || "",
-        // image: newFarm.image,
-        image: "", // Không gán image ở đây, sẽ gán sau
-      };
-      console.log("farm after: ", newFarm2);
-      const response = await api.post("farm", newFarm2);
+      const response = await api.post("farm", newFarm);
       const farmCreated = response.data;
+      console.log("response: ", farmCreated);
 
       // Nếu tạo farm thành công, tiến hành upload ảnh
       if (file) {

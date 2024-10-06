@@ -11,8 +11,8 @@ function Header() {
   // localStorage.setItem("token", "hehe I am here");
   const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
-  console.log(token);
-  const userInfo = JSON.parse(user);
+  // console.log(token);
+  const userInfo = JSON.parse(user); // data user
   // console.log(userInfo);
   const [quantity, setQuantity] = useState(0);
 
@@ -105,7 +105,7 @@ function Header() {
                 <NavLink to="/login">Login</NavLink>
               </li>
               <li className="opt">
-                <NavLink to="/register">Register</NavLink>
+                <NavLink to="/login">Register</NavLink>
               </li>
             </div>
           </ul>
