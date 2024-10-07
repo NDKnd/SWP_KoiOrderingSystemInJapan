@@ -3,6 +3,7 @@ import "./LoginForm.css";
 import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen } from "react-icons/fa";
 import api from "./../../services/axios";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 
 const LoginForm = () => {
   //for tranfsition from login to regis
@@ -102,6 +103,7 @@ const LoginForm = () => {
         password: password,
         role: "CUSTOMER",
       });
+      message.success("Register success!");
       loginLink();
     } catch (err) {
       console.log(err);
