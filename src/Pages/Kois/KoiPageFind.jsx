@@ -121,7 +121,7 @@ function KoiPageFind() {
               </div>
             </Col>
 
-            <Col xs={24} className="button-container">
+            <Col xs={24} className="search-button">
               <Button type="primary" onClick={handleSearch}>Search</Button>
             </Col>
           </Row>
@@ -164,7 +164,7 @@ function KoiPageFind() {
                           </>
                         }
                       />
-                      <div className="order-button-container">
+                      <div className="order-button">
                         <Button type="primary">Order</Button>
                       </div>
                     </Card>
@@ -172,7 +172,7 @@ function KoiPageFind() {
                 ))
               ) : (
                 <Col span={24}>
-                  <p>No Koi fishes found matching your findings .</p>
+                  <p>No Koi fishes found matching your findings.</p>
                 </Col>
               )}
             </Row>
