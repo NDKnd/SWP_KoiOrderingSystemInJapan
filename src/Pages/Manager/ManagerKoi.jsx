@@ -1,6 +1,6 @@
 // import api from "./../../services/axios";
 import "./ManagerKoi.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "./../../services/axios";
 import upFile from "../../utils/file";
 import storage from "../../config/firebase";
@@ -10,6 +10,7 @@ import { message, Modal, Select } from "antd";
 import { Option } from "antd/es/mentions";
 
 const ManagerKoi = () => {
+  const [file, setFile] = useState(null);
   const [search, setSearch] = useState("");
   const [koiList, setKoiList] = useState([]);
 
@@ -18,7 +19,14 @@ const ManagerKoi = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentKoi, setCurrentKoi] = useState(null);
 
-  const [newKoi, setNewKoi] = useState(null);
+  const [newKoi, setNewKoi] = useState({
+    koiName: "",
+    type: "",
+    price: 0,
+    description: "",
+    image: "",
+    farmId: 0,
+  });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [koiFarmList, setKoiFarmList] = useState([]);
@@ -70,46 +78,88 @@ const ManagerKoi = () => {
 
   const handleEdit = (koi) => {
     setCurrentKoi(koi);
-    setIsModalOpen(true);
+    setIsModalOpen((prevState) => !prevState);
   };
 
   const handleSave = async (event) => {
     event.preventDefault();
     try {
       // Update Koi data via API
-      console.log("currentKoi: ", currentKoi);
-      await api.put(`koi/${currentKoi.id}`, currentKoi);
+      console.log("Koi before edit: ", currentKoi);
 
-      const oldImageUrl = currentKoi.image;
+      console.log("file:", file);
+      const oldImageUrl = koiList.find((koi) => koi.id === currentKoi.id).image;
+      console.log("oldImageUrl: ", oldImageUrl);
+
+      const koiEdit = {
+        koiName: currentKoi.koiName,
+        type: currentKoi.type,
+        price: currentKoi.price,
+        description: currentKoi.description,
+        image: oldImageUrl,
+        farmId: currentKoi.farm.id,
+      };
+      const res = await api.put(`koi/${currentKoi.id}`, koiEdit);
+
+      //after update on database
+      console.log("koi after edit: ", res.data);
+      const koiEdit2 = {
+        id: res.data.id,
+        koiName: res.data.koiName,
+        type: res.data.type,
+        price: res.data.price,
+        description: res.data.description,
+        image: res.data.image,
+        farm: res.data.farm,
+      };
+
       if (file) {
-        if (oldImageUrl) {
-          const oldImageRef = ref(storage, oldImageUrl);
-          await deleteObject(oldImageRef);
-        }
-
-        const downloadURL = await upFile(file, "koi"); // Tải file lên Firebase
-        if (downloadURL) {
+        let failURL = "";
+        try {
+          const downloadURL = await upFile(file, "kois"); // Tải file lên Firebase
+          console.log("downloadURL: ", downloadURL);
           // Cập nhật Koi với URL của ảnh
-          currentKoi.image = downloadURL;
-          await api.put(`koi/${currentKoi.id}`, currentKoi);
+          if (downloadURL) {
+            failURL = downloadURL;
+            let KoiForUpImage = {
+              id: koiEdit2.id,
+              koiName: koiEdit2.koiName,
+              type: koiEdit2.type,
+              price: koiEdit2.price,
+              description: koiEdit2.description,
+              image: downloadURL,
+              farmId: koiEdit2.farm.id,
+            };
+            const res = await api.put(`koi/${KoiForUpImage.id}`, KoiForUpImage);
+            console.log("koi after edit image: ", res.data);
+            const KoiFinalUpImage = res.data;
+            if (oldImageUrl) {
+              deleteImage(oldImageUrl);
+            }
+            setKoiList((prevList) =>
+              prevList.map((koi) =>
+                koi.id === KoiFinalUpImage.id ? KoiFinalUpImage : koi
+              )
+            );
+            message.success("Koi updated successfully");
+            return;
+          }
+        } catch (error) {
+          failURL !== "" && deleteImage(failURL);
+          message.error("Failed to upload image");
+          console.error("Failed to upload image", error);
         }
       }
 
       setKoiList((prevList) =>
-        prevList.map((koi) => (koi.id === currentKoi.id ? currentKoi : koi))
+        prevList.map((koi) => (koi.id === koiEdit2.id ? koiEdit2 : koi))
       );
-
-      message.success("Update Koi data successfully");
+      message.success("Koi updated successfully");
     } catch (err) {
-      if (err.response.status === 400) {
-        message.error(err.response.data.message);
-      } else {
-        console.error("Failed to update Koi data", err);
-        message.error("Failed to update Koi data");
-      }
+      console.error("Failed to update Koi data", err);
     } finally {
+      setFile(null);
       setIsModalOpen(false);
-      setCurrentKoi(null);
     }
   };
 
@@ -122,8 +172,7 @@ const ManagerKoi = () => {
       const res = await api.delete(`koi/${id}`);
 
       if (ImageUrl) {
-        const ImageRef = ref(storage, ImageUrl); // Tham chiếu định nghĩa ảnh trong Firebase
-        await deleteObject(ImageRef); // Xóa ảnh
+        deleteImage(ImageUrl);
       }
       // Update Koi list state to remove the deleted Koi
       setKoiList((prevList) => prevList.filter((koi) => koi.id !== id));
@@ -139,49 +188,70 @@ const ManagerKoi = () => {
     setIsCreateModalOpen((prev) => !prev);
   };
 
-  const [file, setFile] = useState(null);
+  const deleteImage = async (url) => {
+    if (url) {
+      const ImageRef = ref(storage, url);
+      await deleteObject(ImageRef);
+    }
+  };
 
   const handleFileChange = async (selectedFile) => {
-    if (!selectedFile) return;
+    console.log("file image: ", selectedFile);
     setFile(selectedFile);
-    const downloadURL = await upFile(selectedFile, "kois");
-    if (downloadURL) {
-      setNewKoi((prevKoi) => ({ ...prevKoi, image: downloadURL }));
-      message.success("File uploaded successfully");
-    } else {
-      message.error("File upload failed");
-    }
   };
 
   const handleCreate = async (event) => {
     event.preventDefault();
     try {
-      console.log("newKoi: ", newKoi);
-      setNewKoi((prevKoi) => ({ ...prevKoi, farmId: newKoi.farmId }));
-      console.log("newKoi: ", newKoi);
-      const res = await api.post("koi", newKoi);
-      const koicreated = res.data;
-      console.log("koicreated: ", koicreated);
+      console.log("newKoi before: ", newKoi);
 
-      // Sau khi Koi tao thanh cong, tien hanh upload anh vao firebase
+      console.log("file image: ", file);
+
+      const res = await api.post("koi", newKoi);
+
+      const createdKoi = res.data;
+      console.log("created Koi: ", createdKoi);
+
+      const koiUpdate = {
+        id: createdKoi.id,
+        koiName: createdKoi.koiName,
+        type: createdKoi.type,
+        price: createdKoi.price,
+        description: createdKoi.description,
+        image: createdKoi.image,
+        farmId: createdKoi.farm.id,
+      };
+      console.log("created Koi after: ", koiUpdate);
+
+      // //Nếu toạ Koi thành công thì upload ảnh
       if (file) {
-        const downloadURL = await upFile(file, "kois");
+        const downloadURL = await upFile(file, "kois"); // Tải file lên Firebase
+
         if (downloadURL) {
-          koicreated.image = downloadURL;
-          console.log("koi created: ", koicreated);
-          await api.put(`koi/${koicreated.id}`, koicreated);
+          // Cập nhật Koi với URL của ảnh
+          koiUpdate.image = downloadURL;
+          console.log("Koi image: ", koiUpdate.image);
+          await api.put(`koi/${koiUpdate.id}`, koiUpdate);
         }
       }
-      setKoiList((prevList) => [...prevList, newKoi]);
-      message.success("Create new Koi successfully");
-      setNewKoi(null);
-      setFile(null);
-    } catch (err) {
-      if (err.response.status === 400) {
-        message.error("Wrong input data");
-      }
-      console.error("Failed to create new Koi", err);
+      const finalNewKoi = {
+        id: koiUpdate.id,
+        koiName: koiUpdate.koiName,
+        type: koiUpdate.type,
+        price: koiUpdate.price,
+        description: koiUpdate.description,
+        image: koiUpdate.image,
+        farm: createdKoi.farm,
+      };
+      console.log("koi new final: ", finalNewKoi);
+
+      setKoiList((prevList) => [...prevList, finalNewKoi]);
+      message.success("Koi created successfully");
+    } catch (error) {
+      message.error("Failed to create Koi");
+      console.error("Failed to create Koi", error);
     } finally {
+      setFile(null);
       handleCreateKoi();
     }
   };
@@ -232,7 +302,7 @@ const ManagerKoi = () => {
                 <img src={koi.image} alt={koi.koiName}></img>
               </div>
               <div className="manager-koi-name">
-                <h2>{koi.name}</h2>
+                <h2>{koi.koiName}</h2>
               </div>
               <div className="manager-koi-name">
                 <h2>{koi.type}</h2>
@@ -244,7 +314,7 @@ const ManagerKoi = () => {
                 <h2>{koi.description}</h2>
               </div>
               <div className="manager-koi-name">
-                <h2>{koi.farm.farmName}</h2>
+                <h2>{koi.farm?.farmName || "No farm"}</h2>
               </div>
               <div className="manager-koi-button">
                 <button onClick={() => handleEdit(koi)}>Edit</button>
@@ -316,17 +386,17 @@ const ManagerKoi = () => {
                 </div>
                 <div className="edit-detail-manager-koi">
                   <Select
-                    defaultValue={
-                      koiFarmList.find((farm) => farm.id === currentKoi.farmId)
-                        ?.farmName
-                    }
+                    defaultValue={currentKoi.farm.farmName || "no farm"}
                     onChange={(e) =>
-                      setNewKoi({ ...currentKoi, farmId: e.target.value })
+                      setNewKoi({
+                        ...currentKoi,
+                        farmId: e || currentKoi.farm.id,
+                      })
                     }
                     style={{ width: "100%" }}
                   >
                     {koiFarmList.map((farm) => (
-                      <Select.Option key={farm.id} value={farm.farmName}>
+                      <Select.Option key={farm.id} value={farm.id}>
                         {farm.farmName}
                       </Select.Option>
                     ))}
@@ -336,7 +406,6 @@ const ManagerKoi = () => {
                   <label>Image: </label>
                   <input
                     type="file"
-                    value={currentKoi.image}
                     onChange={(e) => handleFileChange(e.target.files[0])}
                   />
                 </div>
@@ -413,9 +482,9 @@ const ManagerKoi = () => {
                     style={{ width: "100%" }}
                   >
                     {koiFarmList.map((farm) => (
-                      <Option key={farm.id} value={farm.id}>
+                      <Select.Option key={farm.id} value={farm.id}>
                         {farm.farmName}
-                      </Option>
+                      </Select.Option>
                     ))}
                   </Select>
                 </div>
