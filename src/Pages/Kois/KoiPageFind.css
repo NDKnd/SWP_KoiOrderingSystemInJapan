@@ -1,0 +1,38 @@
+.layout {
+    padding: 20px 24px;
+  }
+  
+  .card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .price-range {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .koi-list-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .order-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px; 
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
