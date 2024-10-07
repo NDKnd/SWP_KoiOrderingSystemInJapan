@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
-import { Divider, Layout, Input, Select, Slider, Button, Row, Col, message, Card, Spin, Pagination } from "antd";
+import { Divider, Layout, Input, Select, Slider, Button, Row, Col, message, Card, Spin, Pagination, Popover } from "antd";
 import "./KoiPageFind.css";
 import api from "../../services/axios";
 
@@ -140,7 +140,19 @@ function KoiPageFind() {
                   <Col xs={24} sm={12} md={8} lg={6} key={koi.id}>
                     <Card
                       hoverable
-                      cover={<img alt={koi.name} src={koi.image} />}
+                      cover={
+                        <Popover
+                          content={
+                            <div className="popover-content">
+                              Description: {koi.description}
+                            </div>
+                          }
+                          title={koi.name}
+                          trigger="hover"
+                        >
+                          <img alt={koi.name} src={koi.image} />
+                        </Popover>
+                      }
                     >
                       <Card.Meta
                         title={<a href={`/koi/${koi.id}`}>{koi.name}</a>}
@@ -164,7 +176,7 @@ function KoiPageFind() {
                 </Col>
               )}
             </Row>
-            
+
             <Pagination
               current={currentPage}
               pageSize={koiPerPage}
