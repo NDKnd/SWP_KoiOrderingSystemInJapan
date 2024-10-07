@@ -164,8 +164,7 @@ function KoiPageFind() {
                 </Col>
               )}
             </Row>
-
-            {/* Pagination Controls */}
+            
             <Pagination
               current={currentPage}
               pageSize={koiPerPage}
