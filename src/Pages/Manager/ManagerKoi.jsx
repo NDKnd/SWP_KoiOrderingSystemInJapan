@@ -6,7 +6,7 @@ import upFile from "../../utils/file";
 import storage from "../../config/firebase";
 import { deleteObject, ref } from "firebase/storage";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
-import { message, Modal, Select } from "antd";
+import { message, Modal, Select, Tooltip } from "antd";
 import { Option } from "antd/es/mentions";
 
 const ManagerKoi = () => {
@@ -310,9 +310,14 @@ const ManagerKoi = () => {
               <div className="manager-koi-name">
                 <h2>{koi.price}</h2>
               </div>
-              <div className="manager-koi-name">
-                <h2>{koi.description}</h2>
-              </div>
+              <Tooltip title={koi.description} placement="bottom">
+                <p className="manager-koi-description">
+                  {koi.description.length > 20
+                    ? koi.description.substring(0, 20) + "..."
+                    : koi.description}
+                </p>
+              </Tooltip>
+
               <div className="manager-koi-name">
                 <h2>{koi.farm?.farmName || "No farm"}</h2>
               </div>

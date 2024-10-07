@@ -1,4 +1,4 @@
-import { message, Modal } from "antd";
+import { message, Modal, Tooltip } from "antd";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
 import { useEffect, useState } from "react";
 import "./ManagerFarm.css";
@@ -266,25 +266,36 @@ const ManagerFarm = () => {
               <div className="manager-farm-text">
                 <div className="manager-farm-content">
                   <div className="manager-farm-name">
-                    <h2>{farm.farmName}</h2>
+                    <h1>{farm.farmName}</h1>
                   </div>
 
-                  <div className="manager-farm-description">
-                    <p>{farm.description}</p>
-                  </div>
+                  <Tooltip title={farm.description} placement="bottom">
+                    <p className="manager-farm-description">
+                      <b>Descriptions: </b>
+                      {farm.description.length > 40
+                        ? farm.description.substring(0, 40) + "..."
+                        : farm.description}
+                    </p>
+                  </Tooltip>
 
                   {/* phone  */}
                   <div className="manager-farm-description">
-                    <p>{farm.phone}</p>
+                    <p>
+                      <b>Phone: </b> {farm.phone}
+                    </p>
                   </div>
 
                   {/* email  */}
                   <div className="manager-farm-description">
-                    <p>{farm.email}</p>
+                    <p>
+                      <b>Email: </b> {farm.email}
+                    </p>
                   </div>
 
                   <div className="manager-farm-location">
-                    <p>Location: {farm.location}</p>
+                    <p>
+                      <b>Location: </b> {farm.location}
+                    </p>
                   </div>
 
                   <div className="manager-farm-button">

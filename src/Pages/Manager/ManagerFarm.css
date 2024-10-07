@@ -1,206 +1,208 @@
-.manager-farm-create-search{
-    display: flex;
-    justify-content: space-between;
-    padding-right: 40px;
-    width: 100%;
+/* Style for the create and search section */
+.manager-farm-create-search {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.manager-farm-create-search-button{
-    border: none;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    font-size: 40px;
-    background-color: #fff;
-    margin-left: 10px;
+.manager-farm-create-search-button {
+  background-color: var(--purple3);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
-.manager-farm-create-search-icon{
-    width: 100%;
+.manager-farm-create-search-button:hover {
+  background-color: var(--purple4);
 }
 
-.manager-farm-create-search-icon:hover{
-    background-color: #ccc;
+.manager-farm-create-search-icon {
+  margin-right: 8px;
+  font-size: 2rem;
 }
 
-.search-bar-manager-farm{
-    border: 1px solid hsl(0, 0%, 80%);
-    width: 30%;
-    height: 40px;
-    font-size: 1em;
-    border-radius: 5px;
-    padding: 10px;
-    margin-left: 10px;
+.search-bar-manager-farm {
+  width: 300px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--purple2);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-.manager-farm-card{
-    border: 1px solid hsl(0, 0%, 80%);
-    border-radius: 10px;
-    box-shadow: 5px 5px 5px hsl(0, 0%, 0%, 0.1);
-    padding: 10px;
-    margin: 10px;
-    width: 95%;
-    height: 500px;
-    display: flex;
-    margin-bottom: 30px;
+.search-bar-manager-farm:focus {
+  border-color: var(--purple3);
+  outline: none;
 }
 
-.manager-farm-img img{
-    width: 480px;
-    height: 480px;
+/* Style for the farm list and individual farm cards */
+.koiFarmList {
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.manager-farm-text{
-    width: 100%;
+.manager-farm-card {
+  display: flex;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--purple5);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.manager-farm-content{
-    display: inline-block;
-    width: 100%;
-    justify-content: center;
-    padding: 10px;
+.manager-farm-card:hover {
+  transform: translateY(-5px);
 }
 
-.manager-farm-name{
- display: flex;
- justify-content: center;
- width: 100%;
- height: 100px;
- align-items: center;
+.manager-farm-img img {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
-.manager-farm-description{
-    display: flex;
-    justify-content: center;
-    height: 280px;
-    margin-bottom: 10px;
-    padding-right: 10px;
-    padding-left: 10px;
+.manager-farm-text {
+  margin-left: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.manager-farm-location{
-    padding-right: 10px;
-    padding-left: 10px;
-    height: 40px;
+.manager-farm-name h2 {
+  color: var(--purple1);
 }
 
-.manager-farm-button{
-    justify-content: center;
-    display: flex;
+.manager-farm-description {
+  color: var(--purple2);
+  margin-bottom: 8px;
 }
 
-.manager-farm-button button{
-    border: 1px solid hsl(0, 0%, 80%);
-    cursor: pointer;
-    width: 60px;
-    height: 30px;
-    font-size: 15px;
-    border-radius: 5px;
-    margin: 5px;
+.manager-farm-location p {
+  font-weight: bold;
+  color: var(--colora);
 }
 
-.manager-farm-button button:hover{
-    background-color: #ccc;
+.manager-farm-description {
+  font-size: 1.1rem;
+  color: var(--purple1);
+  cursor: pointer;
 }
 
-.manager-farm-modal{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+.manager-farm-button {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
 }
 
-.manager-koi-modal-content{
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    max-width: 1000px;
-    width: 90%;
-    animation: fadeIn 0.3s;
+/* Style for the buttons inside the farm card */
+.manager-farm-button button {
+  background-color: var(--colora);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.manager-farm-title-edit{
-    margin-bottom: 20px;
-    font-size: 24px;
-    text-align: center;
-    color: #333;
+.manager-farm-button button:hover {
+  background-color: #6fbf73;
 }
 
-.edit-manager-koi-contents{
-    display: flex;
-    flex-direction: column;
+.manager-farm-button button:nth-child(2) {
+  background-color: var(--colora2);
 }
 
-.edit-manager-koi-contents label{
-    margin: 10px 0 5px;
-    font-weight: bold;
+.manager-farm-button button:nth-child(2):hover {
+  background-color: #f76161;
 }
 
-.edit-manager-koi-contents input[type="text"],
-  .edit-manager-koi-contents input[type="number"],
-  .edit-manager-koi-contents textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    font-size: 16px;
-  }
+/* Modal styles */
+.manager-farm-modal {
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-  .edit-manager-koi-contents textarea {
-    resize: none; 
-    height: 80px;
-  }
+.manager-koi-modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-  .manager-farm-button-popup{
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 16px;
-    width: 30%;
-    display: flex;
-    justify-content: center;
-  }
+.manager-farm-title-edit {
+  color: var(--purple1);
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: var(--h3);
+}
 
-  .manager-farm-button-popup:hover{
-    background-color: #0056b3;
-  }
+.edit-manager-koi-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+.edit-detail-manager-koi label {
+  margin-bottom: 4px;
+  font-weight: bold;
+  color: var(--purple1);
+}
 
-  .edit-detail-manager-koi input{
-    width: 100%;
-    margin-top: 10px;
-  }
+.edit-detail-manager-koi input,
+.edit-detail-manager-koi textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--purple2);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
 
-  .edit-detail-manager-koi textarea{
-    font-family: sans-serif;
-    width: 100%;
-    margin-top: 10px;
-  }
+.edit-detail-manager-koi input:focus,
+.edit-detail-manager-koi textarea:focus {
+  border-color: var(--purple3);
+  outline: none;
+}
 
-  .edit-manager-koi-contents .popup-but-edit-manager-koi{
-    display: flex;
-    justify-content: center;
-  }
+.popup-but-edit-manager-koi {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
 
-  .popup-but-edit-manager-koi button{margin: 5px;}
+.manager-farm-button-popup {
+  background-color: var(--purple3);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  
+.manager-farm-button-popup:hover {
+  background-color: var(--purple4);
+}
