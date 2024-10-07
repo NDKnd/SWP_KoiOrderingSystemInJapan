@@ -155,7 +155,7 @@ function KoiPageFind() {
                       }
                     >
                       <Card.Meta
-                        title={<a href={`/koi/${koi.id}`}>{koi.name}</a>}
+                        title={koi.name}
                         description={
                           <>
                             <div>Farm: {koi.farmName}</div>
