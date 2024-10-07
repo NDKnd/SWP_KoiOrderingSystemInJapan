@@ -11,7 +11,7 @@ const { Option } = Select;
 function KoiPageFind() {
   const [koiName, setKoiName] = useState("");
   const [farmName, setFarmName] = useState("");
-  const [type, setType] = useState(null);
+  const [type, setType] = useState("");
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [koiList, setKoiList] = useState([]);
   const [filteredKoiList, setFilteredKoiList] = useState([]);
@@ -98,7 +98,7 @@ function KoiPageFind() {
                 onChange={(value) => setType(value)}
                 style={{ width: "100%" }}
               >
-                <Option value={null}>All</Option>
+                <Option value="">All</Option>
                 {koiTypes.map((type) => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
