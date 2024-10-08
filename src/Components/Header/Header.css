@@ -1,136 +1,141 @@
 .navbar {
-    background-color: var(--purple5);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    line-height: 3em;
-    display: flex;
-    align-items: center;
+  background-color: var(--purple5);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  line-height: 3em;
+  display: flex;
+  align-items: center;
 }
 
-.nav-item:nth-child(1){
-    margin-right: auto;
+.nav-item:nth-child(1) {
+  margin-right: auto;
+}
+
+.nav-item:last-child {
+  /* background-color: blue; */
+  width: 6em;
 }
 
 .nav-item {
-    width: 6.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
+  width: 6.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
 
-    a {
-        text-decoration: none;
-        color: var(--purple1);
-        width: 100%;
-        height: 100%;
-        display: block; /* Biến NavLink thành một khối */
-    }
+  a {
+    text-decoration: none;
+    color: var(--purple1);
+    width: 100%;
+    height: 100%;
+    display: block; /* Biến NavLink thành một khối */
+  }
 
-    a svg{
-        display: block;
-        padding: 0.8em;
-        width: 100%;
-        height: 3em;
-    }
+  a svg {
+    display: block;
+    padding: 0.8em;
+    width: 100%;
+    height: 3em;
+  }
 }
 
-.nav-item.card{
-    width: 3em;
+.nav-item.card {
+  width: 3em;
+  height: 3em;
+  a {
+    text-decoration: none;
+    color: var(--purple1);
+    width: 100%;
+    height: 100%;
+    display: block; /* Biến NavLink thành một khối */
+  }
+
+  a svg {
+    display: block;
+    padding: 0.8em;
+    width: 100%;
     height: 3em;
-    a {
-        text-decoration: none;
-        color: var(--purple1);
-        width: 100%;
-        height: 100%;
-        display: block; /* Biến NavLink thành một khối */
-    }
+    position: relative;
+    top: 0.2em;
+  }
 
-    a svg{
-        display: block;
-        padding: 0.8em;
-        width: 100%;
-        height: 3em;
-        position: relative;
-        top: 0.2em;
-    }
-
-    sup{
-        position: relative;
-        left:1.5em;
-        top: -2.3em;
-    }
+  sup {
+    position: relative;
+    left: 1.5em;
+    top: -2.3em;
+  }
 }
 
 .nav-item::after {
-    content: '';
-    width: 0;
-    height: 0.1em;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    transition: width 200ms ease-in-out;
+  content: "";
+  width: 0;
+  height: 0.1em;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transition: width 200ms ease-in-out;
 }
 
 .nav-item:hover::after {
-    width: 100%;
-    background-color: blueviolet;
+  width: 100%;
+  background-color: blueviolet;
 }
 
 .nav-item:hover {
-    background-color: rgba(137, 43, 226, 0.174);
+  background-color: rgba(137, 43, 226, 0.174);
 }
 
 .dropdown {
-    list-style: none;
-    position: absolute;
-    top: 3em;
-    left: 0;
-    min-width: 9em;
-    z-index: 1000;
-    display: none;
+  list-style: none;
+  position: absolute;
+  top: 3em;
+  left: 0;
+  min-width: 9em;
+  z-index: 1000;
+  display: none;
 }
 
 .nav-item:hover .dropdown {
-    display: block;
+  display: block;
 }
 
 .drop-conts {
-    background-color: whitesmoke;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    margin-top: 5px;
-    padding: 0.3em;
-    color: var(--purple1);
-    text-align: center;
-    border-radius: 0.5em;
+  background-color: whitesmoke;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  margin-top: 5px;
+  padding: 0.3em;
+  color: var(--purple1);
+  text-align: center;
+  border-radius: 0.5em;
 }
 
 .drop-conts .opt {
-    width: 100%;
-    line-height: 2em;
-    border: 1px solid rgba(35, 1, 35, 0.375);
-    border-radius: 0.5em;
-    cursor: pointer;
+  width: 100%;
+  line-height: 2em;
+  border: 1px solid rgba(35, 1, 35, 0.375);
+  border-radius: 0.5em;
+  cursor: pointer;
 }
 
 .drop-conts .opt:hover {
-    border: 1px solid rgba(35, 1, 35, 0.523);
-    background-color: rgba(137, 43, 226, 0.174);
+  border: 1px solid rgba(35, 1, 35, 0.523);
+  background-color: rgba(137, 43, 226, 0.174);
 }
 
-.drop-conts .opt:nth-child(n+1) {
-    margin-top: 0.3em;
+.drop-conts .opt:nth-child(n + 1) {
+  margin-top: 0.3em;
 }
 
 /* For last dropdown */
 .dropdown.last {
-    left: -3em;
+  left: -3em;
 }
 
 .drop-conts.last {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    margin-top: 5px;
-    padding: 0.3em;
-    color: var(--purple1);
-    text-align: center;
-    border-radius: 0.5em;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  margin-top: 5px;
+  padding: 0.3em;
+  color: var(--purple1);
+  text-align: center;
+  border-radius: 0.5em;
 }

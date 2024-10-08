@@ -1,147 +1,149 @@
 .login-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: url('./src/image/KoiFish.jpg') no-repeat;
-    background-size: cover;
-    background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url("https://i.pinimg.com/564x/3e/dc/51/3edc5125fa7e43aac91f419e38e10edf.jpg")
+    no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
-
 .wrapper {
-    position: relative;
-    width: calc(450px - 10px);
-    height: 445px;
-    background: rgba(19, 0, 0, 0.238);
-    border: 2px solid rgba(255, 255, 255, .1);
-    backdrop-filter: blur(30px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.489);
-    color: var(--purple5);
-    border-radius: 10px;
-    padding: 30px 40px;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
+  position: relative;
+  width: calc(450px - 10px);
+  height: 445px;
+  background: rgba(19, 0, 0, 0.238);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(30px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.489);
+  color: var(--purple5);
+  border-radius: 10px;
+  padding: 30px 40px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 }
 
 .wrapper.active {
-    height: 700px;
-    width: calc(500px - 10px);
+  height: 700px;
+  width: calc(500px - 10px);
 }
 
 .wrapper .form-box {
-    width: 100%;
-    padding: 20px;
+  width: 100%;
+  padding: 20px;
 }
 
 .wrapper .form-box.login {
-    transition: translate .18s ease;
-    translate: 0;
+  transition: translate 0.18s ease;
+  translate: 0;
 }
 
 .wrapper.active .form-box.login {
-    transition: none;
-    translate: -450px;
+  transition: none;
+  translate: -450px;
 }
 
 .wrapper.active .form-box.register {
-    transition: translate .18s ease;
-    translate: 0;
-    padding-right: 90px;
+  transition: translate 0.18s ease;
+  translate: 0;
+  padding-right: 90px;
 }
 
 .wrapper .form-box.register {
-    position: absolute;
-    transition: none;
-    translate: 400px;
+  position: absolute;
+  transition: none;
+  translate: 400px;
 }
 
 .wrapper h1 {
-    font-size: 36px;
-    text-align: center;
+  font-size: 36px;
+  text-align: center;
 }
 
-.wrapper .input-box, .wrapper .input-box2 {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
+.wrapper .input-box,
+.wrapper .input-box2 {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
 }
 
-.input-box input{
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: 2px solid rgb(255, 255, 255);
-    outline: none;
-    border-radius: 40px;
-    font-size: 16px;
-    color: white;
-    font-weight: bold;
-    padding: 20px 50px 20px 20px;
+.input-box input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 2px solid rgb(255, 255, 255);
+  outline: none;
+  border-radius: 40px;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  padding: 20px 50px 20px 20px;
 }
 
-.input-box input::placeholder, .input-box{
-    color: #fff;
+.input-box input::placeholder,
+.input-box {
+  color: #fff;
 }
 
 .input-box .icon {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    font-size: 16px;
-    text-align: center;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  text-align: center;
 }
 
 .wrapper .remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14.5px;
-    margin: -15px 0 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14.5px;
+  margin: -15px 0 15px;
 }
 
 .remember-forgot label input {
-    accent-color: hsl(75, 100%, 96%);
-    margin-right: 10px;
+  accent-color: hsl(75, 100%, 96%);
+  margin-right: 10px;
 }
 
 .remember-forgot a {
-    color: hsl(75, 100%, 96%);
-    text-decoration: none;
+  color: hsl(75, 100%, 96%);
+  text-decoration: none;
 }
 
 .remember-forgot a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .wrapper button {
-    width: 100%;
-    height: 45px;
-    background: hsl(75, 100%, 96%);
-    border: none;
-    outline: none;
-    border-radius: 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    cursor: pointer;
-    font-size: 16px;
-    color: #333;
-    font-weight: 700;
+  width: 100%;
+  height: 45px;
+  background: hsl(75, 100%, 96%);
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  font-weight: 700;
 }
 
 .wrapper .register-link {
-    font-size: 14.5px;
-    text-align: center;
-    margin: 20px 0 15px;
+  font-size: 14.5px;
+  text-align: center;
+  margin: 20px 0 15px;
 }
 
 .register-link p a {
-    color: hsl(75, 100%, 96%);
-    text-decoration: none;
-    font-weight: 600;
+  color: hsl(75, 100%, 96%);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .register-link p a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }

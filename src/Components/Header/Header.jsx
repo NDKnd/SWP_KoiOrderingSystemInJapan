@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Avatar, Badge } from "antd";
 import "./Header.css";
+import path_css from "./Header.module.css";
 import { FaHome, FaAngleDown, FaShoppingBag } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import api from "../../services/axios";
@@ -77,7 +78,9 @@ function Header() {
             <li className="opt">
               <NavLink to="/KoiPageFind">Kois</NavLink>
             </li>
-            <li className="opt">Opt2</li>
+            <li className="opt">
+              <NavLink to="/FarmFindPage">Farms</NavLink>
+            </li>
             <li className="opt">Opt3</li>
             <li className="opt">Opt4</li>
             <li className="opt">Opt5</li>
@@ -112,9 +115,9 @@ function Header() {
         </div>
       ) : (
         <>
-          <div className="nav-item card">
+          <div className={path_css.nav_item}>
             <NavLink to="/orders">
-              <Badge count={quantity}>
+              <Badge count={quantity} className={path_css.badge}>
                 <FaShoppingBag />
               </Badge>
             </NavLink>

@@ -1,61 +1,56 @@
-import { Carousel } from 'antd';
-import { useState } from 'react';
+import { Carousel } from "antd";
+import { useState } from "react";
 
 function Carousels() {
-    const contentList = [
-        {
-            title: 'Japna Buy Trip',
-            indx: 0,
-        },
-        {
-            title: 'Hello',
-            indx: 1,
-        },
-        {
-            title: 'hello3',
-            indx: 2,
-        }
-    ];
+  const contentList = [
+    {
+      title: "Japna Buy Trip",
+      indx: 0,
+    },
+    {
+      title: "Hello",
+      indx: 1,
+    },
+    {
+      title: "hello3",
+      indx: 2,
+    },
+  ];
 
-    const heightSlide = '60vh';
-    const urlPicBackGround = './src/image/KoiFish.jpg';
+  const heightSlide = "60vh";
+  const urlPicBackGround =
+    "https://i.pinimg.com/564x/25/6f/64/256f64b9362c3f834e59f3bc27683c74.jpg";
 
-    const contentStyle = {
-        height: heightSlide,
-        lineHeight: heightSlide,
+  const contentStyle = {
+    height: heightSlide,
+    lineHeight: heightSlide,
 
-        color: 'var(--purple5)',
-        fontSize: '3em',
-        textShadow: '0 0 5px rgba(1, 0, 0, 1)',
+    color: "var(--purple5)",
+    fontSize: "3em",
+    textShadow: "0 0 5px rgba(1, 0, 0, 1)",
 
-        textAlign: 'center',
-        backgroundImage: `url(${urlPicBackGround})`,
+    textAlign: "center",
+    backgroundImage: `url(${urlPicBackGround})`,
 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backdropFilter: 'blur(10px) saturate(200%)',
-    };
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backdropFilter: "blur(10px) saturate(200%)",
+  };
 
-    return (
-        <div style={{ height: heightSlide }}>
-            <Carousel
-                startIndex={0}
-                autoplaySpeed={4000}
-                autoplay
-                arrows
-            >   {
-                    contentList.map((content, indx) => (
-                        <div key={indx}>
-                            <h3 style={contentStyle}>
-                                <span>{content.title}</span>
-                            </h3>
-                        </div>
-                    ))
-                }
-            </Carousel>
-        </div>
-    );
+  return (
+    <div style={{ height: heightSlide }}>
+      <Carousel startIndex={0} autoplaySpeed={4000} autoplay arrows>
+        {" "}
+        {contentList.map((content, indx) => (
+          <div key={indx}>
+            <h3 style={contentStyle}>
+              <span>{content.title}</span>
+            </h3>
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
 }
 
 export default Carousels;
-
