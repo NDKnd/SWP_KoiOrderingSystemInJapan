@@ -113,8 +113,17 @@ const ManagerFarm = () => {
               "after edit farm with new image: ",
               newFarmWithNewImage
             );
+
+            console.log("oldImageUrl: ", oldImageUrl);
+            console.log("newImageUrl: ", newImageUrl);
+            //after split
+            const oldURL = oldImageUrl.split("&")[0];
+            const newURL = newImageUrl.split("&")[0];
+            console.log("old: ", oldURL);
+            console.log("new: ", newURL);
+            console.log("is the same ", oldURL === newURL);
             // Xóa ảnh cũ nếu có
-            if (oldImageUrl) {
+            if (oldImageUrl && oldURL !== newURL) {
               deleteImage(oldImageUrl);
             }
             setKoiFarmList((prevList) =>
