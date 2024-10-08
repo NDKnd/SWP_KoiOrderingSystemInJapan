@@ -15,8 +15,8 @@
 
   .search-button .ant-btn-primary {
     font-size: 18px;
-    width: 100px;
-    height: 50px;
+    max-width: 100px;
+    max-height: 50px;
 }
   
   .price-range {
