@@ -11,6 +11,8 @@ import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
 import ManagerFarm from "./Pages/Manager/ManagerFarm";
 import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
+import TestUpFile from "./utils/testUpFile";
+import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
 
 const routes = [
   { path: "/", element: <Home /> },
@@ -34,8 +36,11 @@ const routes = [
   },
   {
     path: "KoiPageFind",
-    element: <PrivateRoute />,
-    children: [{ path: "", element: <KoiPageFind /> }],
+    element: <KoiPageFind />,
+  },
+  {
+    path: "FarmFindPage",
+    element: <FarmFindPage />,
   },
   {
     path: "profile",

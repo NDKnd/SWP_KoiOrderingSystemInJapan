@@ -13,7 +13,6 @@ const ManagerFarm = () => {
   const [koiFarmList, setKoiFarmList] = useState([]);
 
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentKoiFarm, setCurrentKoiFarm] = useState(null);
