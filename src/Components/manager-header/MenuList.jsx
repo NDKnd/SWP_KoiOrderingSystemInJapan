@@ -1,7 +1,7 @@
 import { Menu } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { PiFarmBold } from "react-icons/pi";
-import { IoCarSharp, IoFish } from "react-icons/io5";
+import { IoCarSharp, IoFish, IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { RiBillFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +17,12 @@ const MenuList = () => {
     },
     [navigate]
   );
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
   const menuItems = [
     { key: "/admin", label: "Home", icon: <HomeOutlined />, path: "/admin" },
@@ -61,6 +67,12 @@ const MenuList = () => {
       icon: <IoMdSettings />,
       path: "/admin/Setting",
     },
+    {
+      key: "logout",
+      label: "Logout",
+      icon: <IoLogOut />,
+      onClick: () => handleLogOut(),
+    },
   ];
 
   return (
@@ -81,7 +93,9 @@ const MenuList = () => {
           <Menu.Item
             key={item.key}
             icon={item.icon}
-            onClick={() => handleNavigate(item.path)}
+            onClick={
+              item.onClick ? item.onClick : () => handleNavigate(item.path)
+            }
           >
             {item.label}
           </Menu.Item>
