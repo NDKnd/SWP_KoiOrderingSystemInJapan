@@ -42,7 +42,7 @@ function KoiPageFind() {
   // Function to search
   const handleSearch = () => {
     const filtered = koiList.filter((koi) => {
-      const matchesKoiName = koi.name.toLowerCase().includes(koiName.toLowerCase());
+      const matchesKoiName = koi.koiName.toLowerCase().includes(koiName.toLowerCase());
       const matchesFarmName = koi.farmName.toLowerCase().includes(farmName.toLowerCase());
       const matchesType = type ? koi.type === type : true;
       const matchesPrice = koi.price >= priceRange[0] && koi.price <= priceRange[1];
@@ -147,15 +147,15 @@ function KoiPageFind() {
                               Description: {koi.description}
                             </div>
                           }
-                          title={koi.name}
+                          title={koi.koiName}
                           trigger="hover"
                         >
-                          <img alt={koi.name} src={koi.image} />
+                          <img alt={koi.koiName} src={koi.image} />
                         </Popover>
                       }
                     >
                       <Card.Meta
-                        title={koi.name}
+                        title={koi.koiName}
                         description={
                           <>
                             <div>Farm: {koi.farmName}</div>
