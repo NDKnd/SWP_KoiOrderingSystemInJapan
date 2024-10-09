@@ -117,7 +117,7 @@ const ManagerKoi = () => {
         let failURL = "";
         try {
           const downloadURL = await upFile(file, "kois"); // Tải file lên Firebase
-          console.log("downloadURL: ", downloadURL);
+          console.log("new imag URL: ", downloadURL);
           // Cập nhật Koi với URL của ảnh
           if (downloadURL) {
             failURL = downloadURL;
@@ -133,7 +133,17 @@ const ManagerKoi = () => {
             const res = await api.put(`koi/${KoiForUpImage.id}`, KoiForUpImage);
             console.log("koi after edit image: ", res.data);
             const KoiFinalUpImage = res.data;
-            if (oldImageUrl) {
+
+            console.log("oldImageUrl: ", oldImageUrl);
+            console.log("newImageUrl: ", downloadURL);
+            //after split
+            const oldURL = oldImageUrl.split("&")[0];
+            const newURL = downloadURL.split("&")[0];
+            console.log("old: ", oldURL);
+            console.log("new: ", newURL);
+            console.log("is the same ", oldURL === newURL);
+
+            if (oldImageUrl && oldURL !== newURL) {
               deleteImage(oldImageUrl);
             }
             setKoiList((prevList) =>
@@ -391,13 +401,15 @@ const ManagerKoi = () => {
                 </div>
                 <div className="edit-detail-manager-koi">
                   <Select
-                    defaultValue={currentKoi.farm.farmName || "no farm"}
-                    onChange={(e) =>
-                      setNewKoi({
+                    defaultValue={currentKoi?.farm.farmName || "no farm"}
+                    onChange={(value) => {
+                      console.log(value);
+                      setCurrentKoi({
                         ...currentKoi,
-                        farmId: e || currentKoi.farm.id,
-                      })
-                    }
+                        farm: koiFarmList.find((f) => f.id == value),
+                      });
+                      console.log(currentKoi);
+                    }}
                     style={{ width: "100%" }}
                   >
                     {koiFarmList.map((farm) => (
