@@ -4,18 +4,23 @@ import LoginForm from "./Pages/Login/LoginForm.jsx";
 import Home from "./Pages/Home/Home.jsx";
 import PrivateRoute from "./Components/private-rout/PrivateRoute.jsx";
 import Account from "./Pages/Account/Account.jsx";
+import Trips from "./Pages/Account/Account_trips.jsx";
 import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
 import ManagerHome from "./Pages/Manager/ManagerHome";
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
 import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
 import ManagerFarm from "./Pages/Manager/ManagerFarm";
 import ManagerKoi from "./Pages/Manager/ManagerKoi";
+import ManagerTrip from "./Pages/Manager/ManagerTrip";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
-import TestUpFile from "./utils/testUpFile";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
 
 const routes = [
-  { path: "/", element: <Home /> },
+  {
+    path: "/",
+    element: <PrivateRoute />,
+    children: [{ path: "/", element: <Home /> }],
+  },
   { path: "login", element: <LoginForm /> },
   {
     path: "admin",
@@ -28,6 +33,7 @@ const routes = [
           { path: "", element: <ManagerHome /> },
           { path: "ManagerFarm", element: <ManagerFarm /> },
           { path: "ManagerKoi", element: <ManagerKoi /> },
+          { path: "ManagerTrip", element: <ManagerTrip /> },
           { path: "ManagerPendingOrder", element: <PendingOrder /> },
           { path: "ManagerOrderHistory", element: <OrderHistory /> },
         ],
@@ -36,16 +42,21 @@ const routes = [
   },
   {
     path: "KoiPageFind",
-    element: <KoiPageFind />,
+    element: <PrivateRoute />,
+    children: [{ path: "", element: <KoiPageFind /> }],
   },
   {
     path: "FarmFindPage",
-    element: <FarmFindPage />,
+    element: <PrivateRoute />,
+    children: [{ path: "", element: <FarmFindPage /> }],
   },
   {
     path: "profile",
     element: <PrivateRoute />,
-    children: [{ path: "", element: <Account /> }],
+    children: [
+      { path: "", element: <Account /> },
+      { path: "trips", element: <Trips /> },
+    ],
   },
   { path: "*", element: <Error /> },
 ];

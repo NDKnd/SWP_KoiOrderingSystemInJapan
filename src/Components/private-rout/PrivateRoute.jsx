@@ -7,9 +7,17 @@ const PrivateRoute = () => {
   useEffect(() => {
     // Kiểm tra người dùng đã đăng nhập hay chưa
     const token = localStorage.getItem("token");
-    if (!token || tokenExpired(token)) {
+    if (!token || tokenExpired(token) == true) {
       // Nếu chưa đăng nhập thì chuyển đến trang login
-      navigate("/login");
+      navigate("/");
+    } else {
+      const role = JSON.parse(localStorage.getItem("user")).role;
+      console.log("role through privateRouter:", role);
+      if (["MANAGER", "DELEVIRING_STAFF", "SALE_STAFF"].includes(role)) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     }
   }, [navigate]);
   // Kiểm tra token đã hết hạn hay ch?

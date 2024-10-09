@@ -1,29 +1,19 @@
-// import React, { useEffect } from "react";
-// import axios from "axios";
-import api from "../../services/axios";
-import Headers from "../../Components/Header/Header";
-import { Tabs, Layout, Menu, Divider, ConfigProvider } from "antd";
+import { Layout, Menu, Divider, ConfigProvider, Tabs } from "antd";
 import {
   FaHistory,
   FaShoppingBag,
   FaSignOutAlt,
   FaUserCog,
-  FaShippingFast,
-  FaBox,
   FaUserAlt,
+  FaTruckPickup,
 } from "react-icons/fa";
+import Headers from "../../Components/Header/Header";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../Components/SideMenu/SideMenu.css";
 
 function Account() {
-  // const fetchData = async () => {
-  //   const res = await axios.post(api);
+  const navigate = useNavigate(); // Khai báo useNavigate
 
-  //   console.log(res.data);
-  // };
-  console.log(api);
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
   const contentAccount = [
     {
       key: 1,
@@ -34,19 +24,19 @@ function Account() {
           key: 1.0,
           label: "Profile",
           icon: <FaUserCog />,
-          path: "/profile",
+          path: "/profile", // Đường dẫn tới trang Profile
         },
         {
           key: 1.1,
           label: "History",
           icon: <FaHistory />,
-          path: "/profile/history",
+          path: "/profile/history", // Đường dẫn tới trang History
         },
         {
           key: 1.2,
-          label: "Order",
-          icon: <FaShoppingBag />,
-          path: "/profile/card",
+          label: "Trips",
+          icon: <FaTruckPickup />,
+          path: "/profile/trips", // Đường dẫn tới trang Orders
         },
       ],
     },
@@ -54,18 +44,21 @@ function Account() {
       key: 2,
       label: "Logout",
       icon: <FaSignOutAlt />,
-      path: "#",
+      path: "/logout", // Đường dẫn tới trang Logout
     },
   ];
-  const handleMenuSelect = ({ item }) => {
-    // Tìm item được chọn từ menu
-    console.log(item);
-    console.log(item.props);
 
-    const selectedItem = item.props; // Props của menu chứa đầy đủ thông tin
-    if (selectedItem.path) {
-      // navigate(selectedItem.path);
-      console.log(selectedItem.path);
+  const handleMenuSelect = ({ keyPath }) => {
+    // Dùng keyPath để tìm menu được chọn
+    const selectedKey = keyPath[0]; // Lấy key của menu item
+
+    // Tìm trong contentAccount
+    const selectedItem = contentAccount
+      .flatMap((item) => [item, ...(item.children || [])])
+      .find((item) => item.key == selectedKey);
+
+    if (selectedItem?.path) {
+      navigate(selectedItem.path); // Điều hướng đến path tương ứng
     }
   };
 
@@ -103,36 +96,7 @@ function Account() {
               background: "#fff",
               borderRadius: 10,
             }}
-          >
-            <Divider orientation="right">
-              <h3>Orders</h3>
-            </Divider>
-            <ConfigProvider
-              theme={{
-                components: {
-                  Tabs: {
-                    colorPrimary: "var(--purple1)",
-                    itemHoverColor: "var(--purple2)",
-                    itemActiveColor: "var(--purple5)",
-                  },
-                },
-              }}
-            >
-              <Tabs
-                defaultActiveKey="1"
-                inkBarColor="var(--purple5)"
-                items={[FaBox, FaShippingFast].map((Icon, i) => {
-                  const id = String(i + 1);
-                  return {
-                    key: id,
-                    label: `Tab ${id}`,
-                    children: `Tab ${id}`,
-                    icon: <Icon />,
-                  };
-                })}
-              />
-            </ConfigProvider>
-          </Content>
+          ></Content>
         </Layout>
       </Layout>
     </Layout>

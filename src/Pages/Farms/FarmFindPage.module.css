@@ -9,14 +9,14 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.search-button {
+.search_button {
   text-align: center;
 }
 
-.search-button .ant-btn-primary {
+.search_button .ant-btn-primary {
   font-size: 18px;
-  width: 100px;
-  height: 50px;
+  max-width: 100px;
+  max-height: 50px;
 }
 
 .price-range {
@@ -42,7 +42,7 @@
   margin-top: 20px;
 }
 
-.popover-content {
+.popover_content {
   max-width: 300px;
   white-space: normal;
   word-wrap: break-word;

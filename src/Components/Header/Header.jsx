@@ -12,7 +12,7 @@ function Header() {
   // localStorage.setItem("token", "hehe I am here");
   const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
-  // console.log(token);
+  console.log(token);
   const userInfo = JSON.parse(user); // data user
   // console.log(userInfo);
   const [quantity, setQuantity] = useState(0);
@@ -27,13 +27,13 @@ function Header() {
         // } catch (error) {
         //   console.log(error);
         // }
-        console.log(`user name: ${userInfo.username}`);
+        console.log(`user role: ${userInfo.email}`);
       } else {
         console.log("not login yet");
       }
     };
     fetchData();
-  }, [user]);
+  }, []);
 
   const handleLogout = () => {
     const navigate = useNavigate;
@@ -106,9 +106,6 @@ function Header() {
             <div className="drop-conts last">
               <li className="opt">
                 <NavLink to="/login">Login</NavLink>
-              </li>
-              <li className="opt">
-                <NavLink to="/login">Register</NavLink>
               </li>
             </div>
           </ul>
