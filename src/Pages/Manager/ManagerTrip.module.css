@@ -1,81 +1,69 @@
-.manager-trip-create-search {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.manager-trip-create-button {
+.manager_trip_create_button {
   background-color: var(--purple1);
   border: none;
-  padding: 10px;
+  padding: 5px;
   border-radius: 8px;
   cursor: pointer;
   color: #fff;
+  width: 45px;
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 }
 
-.search-bar-manager-trip {
-  width: 100%;
-  max-width: 300px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.tripList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.manager-trip-card {
+.manager_trip_card {
   border: 1px solid #ddd;
   padding: 16px;
-  width: 300px;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.manager-trip-img img {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
   border-radius: 8px;
+  margin-bottom: 16px;
+  max-height: 50em;
+  .ant-card-body {
+    padding: 0;
+  }
 }
 
-.manager-trip-name h2 {
-  margin: 10px 0;
-  font-size: 18px;
-  font-family: var(--ff);
+.manager_trip_title {
+  font-size: 1.3em;
+  color: var(--purple1);
+  margin-bottom: 8px;
+  b {
+    color: rgb(19, 6, 32);
+  }
+}
+.manager_trip_list {
+  max-height: 238px; /* Chiều cao tối đa cho danh sách */
+  overflow-y: auto; /* Kích hoạt scrollbar */
+  scroll-snap-type: y mandatory; /* Bật chế độ snap scrolling theo chiều dọc */
+  padding-right: 10px; /* Tạo khoảng trống tránh che bởi scrollbar */
 }
 
-.manager-trip-description {
-  font-size: 14px;
-  color: #888;
-}
-
-.manager-trip-buttons {
+.manager_trip_item {
   display: flex;
-  justify-content: space-between;
-}
-
-.manager-trip-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
   align-items: center;
+  scroll-snap-type: center;
 }
 
-.manager-trip-modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  width: 500px;
-  max-width: 100%;
+.manager_trip_image {
+  width: 60px; /* Chiều rộng ảnh nhỏ */
+  height: 60px; /* Chiều cao ảnh nhỏ */
+  object-fit: cover; /* Giữ tỷ lệ ảnh */
+  margin-right: 16px; /* Khoảng cách giữa ảnh và nội dung */
+}
+
+.manager_trip_content {
+  flex-grow: 1;
+}
+
+.manager_trip_action {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.manager_trip_button {
+  width: 8rem;
+  font-size: medium;
+  background-color: var(--purple1);
 }

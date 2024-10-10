@@ -7,7 +7,6 @@ import storage from "../../config/firebase";
 import { deleteObject, ref } from "firebase/storage";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
 import { message, Modal, Select, Tooltip } from "antd";
-import { Option } from "antd/es/mentions";
 
 const ManagerKoi = () => {
   const [file, setFile] = useState(null);
