@@ -12,6 +12,24 @@ function Header() {
   // localStorage.setItem("token", "hehe I am here");
   const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
+  const tokenExpired = (token) => {
+    try {
+      const parts = token.split(".");
+      if (parts.length !== 3) {
+        throw new Error("Token không hợp lệ: phải có 3 phần."); // token kieu SWT
+      }
+      // const header = JSON.parse(atob(parts[0]));
+      const payload = JSON.parse(atob(parts[1]));
+      // console.log("Header:", header);
+      // console.log("Payload:", payload);
+      const IsExp = payload.exp * 1000 < Date.now(); // Kiểm tra thời gian hết hạn
+      // console.log("Token hết hợp lệ:", expTime);
+      return IsExp;
+    } catch (e) {
+      console.error("Token không hợp lệ:", e); // Nếu có lỗi, in ra lỗi
+      return true;
+    }
+  };
   console.log(token);
   const userInfo = JSON.parse(user); // data user
   // console.log(userInfo);
@@ -98,7 +116,7 @@ function Header() {
           </div>
         </ul>
       </div>
-      {!token ? (
+      {!token || tokenExpired(token) ? (
         <div className="nav-item">
           <p className="title">Join Us</p>
           <FaAngleDown />
