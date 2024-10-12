@@ -15,8 +15,6 @@ const PrivateRoute = () => {
       console.log("role through privateRouter:", role);
       if (["MANAGER", "DELEVIRING_STAFF", "SALE_STAFF"].includes(role)) {
         navigate("/admin");
-      } else {
-        navigate("/");
       }
     }
   }, [navigate]);
