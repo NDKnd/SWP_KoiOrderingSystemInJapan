@@ -1,17 +1,18 @@
-import { Layout, Menu, Divider, ConfigProvider, Tabs } from "antd";
+import { Layout, Menu } from "antd";
 import {
   FaHistory,
-  FaShoppingBag,
   FaSignOutAlt,
   FaUserCog,
   FaUserAlt,
   FaTruckPickup,
 } from "react-icons/fa";
 import Headers from "../../Components/Header/Header";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../Components/SideMenu/SideMenu.css";
 
 function Account() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const navigate = useNavigate(); // Khai báo useNavigate
 
   const contentAccount = [
@@ -21,19 +22,19 @@ function Account() {
       icon: <FaUserAlt />,
       children: [
         {
-          key: 1.0,
-          label: "Profile",
-          icon: <FaUserCog />,
-          path: "/profile", // Đường dẫn tới trang Profile
-        },
-        {
           key: 1.1,
-          label: "History",
-          icon: <FaHistory />,
-          path: "/profile/history", // Đường dẫn tới trang History
+          label: "Detail",
+          icon: <FaUserCog />,
+          path: "/profile/detail", // Đường dẫn tới trang Profile
         },
         {
           key: 1.2,
+          label: "History",
+          icon: <FaHistory />,
+          path: "#", // Đường dẫn tới trang History
+        },
+        {
+          key: 1.3,
           label: "Trips",
           icon: <FaTruckPickup />,
           path: "/profile/trips", // Đường dẫn tới trang Orders
@@ -51,6 +52,7 @@ function Account() {
   const handleMenuSelect = ({ keyPath }) => {
     // Dùng keyPath để tìm menu được chọn
     const selectedKey = keyPath[0]; // Lấy key của menu item
+    console.log("selectedKey: ", selectedKey);
 
     // Tìm trong contentAccount
     const selectedItem = contentAccount
@@ -65,7 +67,7 @@ function Account() {
   const { Content, Sider } = Layout;
 
   return (
-    <Layout>
+    <Layout style={{ minHeight: "100vh" }}>
       <Headers />
       <Layout>
         <Sider
@@ -75,7 +77,6 @@ function Account() {
           }}
         >
           <Menu
-            defaultSelectedKeys={["1.0"]}
             defaultOpenKeys={["1"]}
             className="custom-menu"
             mode="inline"
@@ -96,7 +97,9 @@ function Account() {
               background: "#fff",
               borderRadius: 10,
             }}
-          ></Content>
+          >
+            <Outlet />
+          </Content>
         </Layout>
       </Layout>
     </Layout>

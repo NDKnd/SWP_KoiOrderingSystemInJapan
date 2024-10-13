@@ -7,11 +7,16 @@ import { NavLink, useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 
 function Header() {
-  //for getting user token
-  // for example
-  // localStorage.setItem("token", "hehe I am here");
-  const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
+  if (token) {
+    // showing how many time left for valid token
+    const parts = token.split(".");
+    const payload = JSON.parse(atob(parts[1]));
+    // console.log("payload: ", payload);
+    console.log("expired  token when : ", payload.exp * 1000);
+    console.log("current time: ", Date.now());
+    console.log("payload - token exp: ", payload.exp * 1000 - Date.now());
+  }
   const tokenExpired = (token) => {
     try {
       const parts = token.split(".");
@@ -30,28 +35,8 @@ function Header() {
       return true;
     }
   };
-  console.log(token);
-  const userInfo = JSON.parse(user); // data user
   // console.log(userInfo);
   const [quantity, setQuantity] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user) {
-        // try {
-        //   const res = await api.get("/cart");
-        //   console.log(res.data);
-        //   setQuantity(res.data.length);
-        // } catch (error) {
-        //   console.log(error);
-        // }
-        console.log(`user role: ${userInfo.email}`);
-      } else {
-        console.log("not login yet");
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleLogout = () => {
     const navigate = useNavigate;

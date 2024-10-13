@@ -14,17 +14,24 @@ import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import ManagerTrip from "./Pages/Manager/ManagerTrip";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
+import Account_profile from "./Pages/Account/Account_profile.jsx";
+import ForgotPass from "./Pages/Login/ForgotPass.jsx";
+
+const List_Imp_Role = [
+  "MANAGER",
+  "SALE_STAFF",
+  "CONSULTING_STAFF",
+  "DELIVERING_STAFF",
+];
+const Less_Role = ["CUSTOMER"];
 
 const routes = [
-  {
-    path: "/",
-    element: <PrivateRoute />,
-    children: [{ path: "/", element: <Home /> }],
-  },
-  { path: "login", element: <LoginForm /> },
+  { path: "/", element: <Home /> }, // not need token
+  { path: "login", element: <LoginForm /> }, // not need token
+  { path: "forgot", element: <ForgotPass /> },
   {
     path: "admin",
-    element: <PrivateRoute />, //Bảo vệ trang
+    element: <PrivateRoute allow_Role={List_Imp_Role} />, //Bảo vệ trang
     children: [
       {
         path: "",
@@ -40,22 +47,20 @@ const routes = [
       },
     ],
   },
-  {
-    path: "KoiPageFind",
-    element: <PrivateRoute />,
-    children: [{ path: "", element: <KoiPageFind /> }],
-  },
-  {
-    path: "FarmFindPage",
-    element: <PrivateRoute />,
-    children: [{ path: "", element: <FarmFindPage /> }],
-  },
+  { path: "KoiPageFind", element: <KoiPageFind /> }, // not need token
+  { path: "FarmFindPage", element: <FarmFindPage /> }, // not need token
   {
     path: "profile",
-    element: <PrivateRoute />,
+    element: <PrivateRoute allow_Role={Less_Role} />,
     children: [
-      { path: "", element: <Account /> },
-      { path: "trips", element: <Trips /> },
+      {
+        path: "",
+        element: <Account />,
+        children: [
+          { path: "detail", element: <Account_profile /> },
+          { path: "trips", element: <Trips /> },
+        ],
+      },
     ],
   },
   { path: "*", element: <Error /> },

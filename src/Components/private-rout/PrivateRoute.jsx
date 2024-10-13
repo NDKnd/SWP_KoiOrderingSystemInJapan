@@ -1,23 +1,11 @@
+import { message } from "antd";
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import PropType from "prop-types";
 
-const PrivateRoute = () => {
+const PrivateRoute = ({ allow_Role = [] }) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Kiểm tra người dùng đã đăng nhập hay chưa
-    const token = localStorage.getItem("token");
-    if (!token || tokenExpired(token) == true) {
-      // Nếu chưa đăng nhập thì chuyển đến trang login
-      navigate("/");
-    } else {
-      const role = JSON.parse(localStorage.getItem("user")).role;
-      console.log("role through privateRouter:", role);
-      if (["MANAGER", "DELEVIRING_STAFF", "SALE_STAFF"].includes(role)) {
-        navigate("/admin");
-      }
-    }
-  }, [navigate]);
+  console.log("allow_Role :", allow_Role);
   // Kiểm tra token đã hết hạn hay ch?
   const tokenExpired = (token) => {
     try {
@@ -38,7 +26,36 @@ const PrivateRoute = () => {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    // handle not login
+    if (!token || tokenExpired(token)) {
+      navigate("/");
+      return;
+    }
+
+    let userInfo;
+    if (token) {
+      userInfo = JSON.parse(localStorage.getItem("user"));
+      console.log("role current:", userInfo.role);
+      if (tokenExpired(token)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+    // handle role
+    if (!allow_Role.includes(userInfo.role)) {
+      navigate("/");
+      message.error("You are not allowed to access this page");
+      return;
+    }
+  }, [navigate]);
+
   return <Outlet />; // Render các component con nếu đã đăng nhập
+};
+
+PrivateRoute.propTypes = {
+  allow_Role: PropType.array,
 };
 
 export default PrivateRoute;
