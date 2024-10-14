@@ -45,7 +45,11 @@ function Account() {
       key: 2,
       label: "Logout",
       icon: <FaSignOutAlt />,
-      path: "/logout", // Đường dẫn tới trang Logout
+      render: () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/");
+      },
     },
   ];
 
@@ -60,7 +64,10 @@ function Account() {
       .find((item) => item.key == selectedKey);
 
     if (selectedItem?.path) {
+      // Nếu selectedItem có path
       navigate(selectedItem.path); // Điều hướng đến path tương ứng
+    } else {
+      selectedItem.render();
     }
   };
 

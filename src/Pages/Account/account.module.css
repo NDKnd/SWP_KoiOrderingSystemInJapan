@@ -1,0 +1,8 @@
+.account_profile {
+  /* background-color: rgba(142, 127, 109, 0.39); */
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: first baseline;
+  height: 100vh;
+}

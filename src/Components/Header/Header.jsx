@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, navigate } from "react";
 import { Avatar, Badge } from "antd";
 import "./Header.css";
 import path_css from "./Header.module.css";
@@ -16,6 +16,11 @@ function Header() {
     console.log("expired  token when : ", payload.exp * 1000);
     console.log("current time: ", Date.now());
     console.log("payload - token exp: ", payload.exp * 1000 - Date.now());
+    if (payload.exp * 1000 - Date.now() < 0) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/");
+    }
   }
   const tokenExpired = (token) => {
     try {
@@ -44,7 +49,7 @@ function Header() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     // Điều hướng người dùng về trang đăng nhập
-    navigate("/login");
+    navigate("/");
   };
 
   const activeNav = () => {
