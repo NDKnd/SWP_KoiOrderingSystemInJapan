@@ -133,8 +133,11 @@ function Header() {
                 size={{
                   xs: 24,
                   sm: 32,
-                  md: 40,
+                  md: 35,
+                  lg: 37,
+                  xl: 43,
                 }}
+                src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/defAvatar%2Fkoi-4371460.svg?alt=media&token=e7c71b00-3b9f-4b54-af1f-4e4d580f6877"
               />
             </p>
             <ul className="dropdown last">
