@@ -3,19 +3,20 @@ import { FaEnvelope } from "react-icons/fa";
 import styles from "./Forgot.module.css";
 import { Button, Form, Input, message } from "antd";
 import api from "../../services/axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function ForgotPass() {
+  const navigate = useNavigate();
   const handleForgot = (values) => {
     try {
       console.log("Email: ", values.email);
-      //   const email = {
-      //     email: values.email,
-      //   };
       const res = api.post("forgot-password", { email: values.email });
       console.log("res: ", res);
       message.success("Email sent successfully");
     } catch (error) {
       console.log("Error: ", error);
+    } finally {
+      navigate("/");
     }
   };
 

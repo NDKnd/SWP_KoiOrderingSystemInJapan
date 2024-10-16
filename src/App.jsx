@@ -15,7 +15,8 @@ import ManagerTrip from "./Pages/Manager/ManagerTrip";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
 import Account_profile from "./Pages/Account/Account_profile.jsx";
-import ForgotPass from "./Pages/Login/ForgotPass.jsx";
+import ForgotPass from "./Pages/Account/ForgotPass.jsx";
+import ResetPass from "./Pages/Account/Reset_password.jsx";
 
 const List_Imp_Role = [
   "MANAGER",
@@ -29,6 +30,7 @@ const routes = [
   { path: "/", element: <Home /> }, // not need token
   { path: "login", element: <LoginForm /> }, // not need token
   { path: "forgot", element: <ForgotPass /> },
+  { path: "reset-password", element: <ResetPass /> },
   {
     path: "admin",
     element: <PrivateRoute allow_Role={List_Imp_Role} />, //Bảo vệ trang

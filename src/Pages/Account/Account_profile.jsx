@@ -25,12 +25,12 @@ function Account_profile() {
   const updateProfile = async (values) => {
     try {
       const formData = {
-        profile: values.profile,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        address: values.address,
-        phone: values.phone,
-        email: values.email,
+        profile: values.profile.trim(),
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        address: values.address.trim(),
+        phone: values.phone.trim(),
+        email: values.email.trim(),
       };
       console.log("formData: ", formData);
       const res = await api.put(`${user.id}`, formData);
@@ -39,7 +39,10 @@ function Account_profile() {
       localStorage.setItem("user", JSON.stringify(res.data));
       message.success("Update profile successfully");
     } catch (error) {
-      message.error(error.message.data);
+      console.log("Error: ", error?.message?.data || error);
+      message.error(error?.message?.data || "Failed to update profile");
+    } finally {
+      setVisible(false);
     }
   };
 
@@ -66,7 +69,9 @@ function Account_profile() {
                 {item.content !== "N/A" ? (
                   item.content
                 ) : (
-                  <span style={{ color: "gray" }}>{item.content}</span>
+                  <span style={{ color: "rgba(0, 0, 0, 0.25)" }}>
+                    {item.content}
+                  </span>
                 )}
               </Col>
             </Row>
