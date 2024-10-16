@@ -1,20 +1,21 @@
 .manager-koi-create-search {
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  align-items: center;
 }
 
 .manager-koi-create-search-button {
   background-color: var(--purple3);
+  color: #fff;
   border: none;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 2rem;
   cursor: pointer;
-  font-size: var(--big);
+  transition: background-color 0.3s ease;
   display: flex;
   align-items: center;
-  transition: background-color 0.3s;
 }
 
 .manager-koi-create-search-button:hover {
@@ -22,15 +23,17 @@
 }
 
 .manager-koi-create-search-icon {
-  margin-right: 0.5rem;
+  margin-right: 8px;
+  font-size: 2rem;
 }
 
 .search-bar-manager-koi {
-  padding: 0.5rem;
-  border: 2px solid var(--purple2);
-  border-radius: 5px;
   width: 300px;
-  font-size: var(--p);
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--purple2);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
 .koiList {

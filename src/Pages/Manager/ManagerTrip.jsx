@@ -15,7 +15,7 @@ import {
 import styles from "./ManagerTrip.module.css";
 import { useEffect, useState } from "react";
 import api from "../../services/axios";
-import { FaFolderPlus } from "react-icons/fa";
+import { MdOutlineCreateNewFolder } from "react-icons/md";
 import dayjs from "dayjs";
 import { Navigate } from "react-router-dom";
 
@@ -265,17 +265,17 @@ function ManagerTrip() {
 
   return (
     <div>
-      <Row>
+      <div className={styles.manager_trip_create_search}>
         <Col span={4}>
           <button
             onClick={handleOpenModal}
             className={styles.manager_trip_create_button}
           >
-            <FaFolderPlus />
+            <MdOutlineCreateNewFolder className={styles.manager_trip_create_button_icon}/>
           </button>
         </Col>
-        <Col span={20}>search</Col>
-      </Row>
+        <input placeholder="Search Trips" className={styles.manager_trip_search_bar}></input>
+      </div>
       <Row justify="center">
         <Col span={24}>
           <h1>List of trips</h1>

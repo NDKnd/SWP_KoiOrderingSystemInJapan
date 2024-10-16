@@ -95,8 +95,6 @@ const ManagerHome = () => {
                                 <th className="manager-dashboard-home-content-user-header-4">Email</th>
                                 <th className="manager-dashboard-home-content-user-header-5">Number of Orders</th>
                                 <th className="manager-dashboard-home-content-user-header-6">Total Payment ($)</th>
-                                <th className="manager-dashboard-home-content-user-header-7">Status</th>
-                                <th className="manager-dashboard-home-content-user-header-8">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="manager-dashboard-home-content-user-body">
@@ -107,13 +105,7 @@ const ManagerHome = () => {
                                     <td>{user.lastName}</td>
                                     <td>{user.email}</td>
                                     <td>{user.numberOfOrder}</td>
-                                    <td>{user.totalPayment}</td>
-                                    <td>{user.status === 1 ? 'Active' : 'Inactive'}</td>
-                                    <td>
-                                        <button onClick={() => toggleStatus(index)}>
-                                            {user.status === 1 ? 'Set Inactive' : 'Set Active'}
-                                        </button>
-                                    </td>
+                                    <td>{user.totalPayment}</td>                              
                                 </tr>
                             ))}
                         </tbody>
