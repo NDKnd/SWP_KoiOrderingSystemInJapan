@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, navigate } from "react";
 import { Avatar, Badge } from "antd";
 import "./Header.css";
 import path_css from "./Header.module.css";
@@ -7,11 +7,21 @@ import { NavLink, useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 
 function Header() {
-  //for getting user token
-  // for example
-  // localStorage.setItem("token", "hehe I am here");
-  const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
+  if (token) {
+    // showing how many time left for valid token
+    const parts = token.split(".");
+    const payload = JSON.parse(atob(parts[1]));
+    // console.log("payload: ", payload);
+    console.log("expired  token when : ", payload.exp * 1000);
+    console.log("current time: ", Date.now());
+    console.log("payload - token exp: ", payload.exp * 1000 - Date.now());
+    if (payload.exp * 1000 - Date.now() < 0) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/");
+    }
+  }
   const tokenExpired = (token) => {
     try {
       const parts = token.split(".");
@@ -30,28 +40,8 @@ function Header() {
       return true;
     }
   };
-  console.log(token);
-  const userInfo = JSON.parse(user); // data user
   // console.log(userInfo);
   const [quantity, setQuantity] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user) {
-        // try {
-        //   const res = await api.get("/cart");
-        //   console.log(res.data);
-        //   setQuantity(res.data.length);
-        // } catch (error) {
-        //   console.log(error);
-        // }
-        console.log(`user role: ${userInfo.email}`);
-      } else {
-        console.log("not login yet");
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleLogout = () => {
     const navigate = useNavigate;
@@ -59,7 +49,7 @@ function Header() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     // Điều hướng người dùng về trang đăng nhập
-    navigate("/login");
+    navigate("/");
   };
 
   const activeNav = () => {
@@ -143,8 +133,11 @@ function Header() {
                 size={{
                   xs: 24,
                   sm: 32,
-                  md: 40,
+                  md: 35,
+                  lg: 37,
+                  xl: 43,
                 }}
+                src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/defAvatar%2Fkoi-4371460.svg?alt=media&token=e7c71b00-3b9f-4b54-af1f-4e4d580f6877"
               />
             </p>
             <ul className="dropdown last">

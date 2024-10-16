@@ -1,0 +1,123 @@
+.manager-dashboard-title {
+    display: flex;
+    justify-content: center;
+}
+
+.manager-dashboard-title h3 {
+    font-size: 30px;
+}
+
+.manager-dashboard-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.manager-dashboard-card-item {
+    width: 25%;
+    border: 1px solid 70%;
+    padding: 20px;
+    border-radius: 20px;
+    height: 150px;
+    display: inline-block;
+    padding-top: 40px;
+    margin: 5px;
+    color: black;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.manager-dashboard-card-item:hover {
+    position: relative;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding-top: 35px;
+    transition: all 0.3s ease-in-out;
+}
+
+#manager-dashboard-card-item-1 {
+    background: linear-gradient(145deg, #ffffff, rgb(207, 111, 219));
+
+}
+
+#manager-dashboard-card-item-2 {
+    background: linear-gradient(145deg, #ffffff, rgb(65, 247, 247));
+
+}
+
+#manager-dashboard-card-item-3 {
+    background: linear-gradient(145deg, #ffffff, rgb(68, 247, 187));
+}
+
+#manager-dashboard-card-item-4 {
+    background: linear-gradient(145deg, #ffffff, orange);
+
+}
+
+.manager-dashborad-card-title {
+    font-size: 25px;
+    font-style: normal;
+    display: flex;
+    justify-content: space-between;
+}
+
+.manager-dashborad-card-title-icon {
+    margin-top: -10px;
+    font-size: 50px;
+}
+
+.manager-dashboard-home-content h3{
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.manager-dashboard-home-content-user{
+    width: 100%;
+}
+.manager-dashboard-home-content-user-header{
+    background-color: rgb(207, 228, 248);
+}
+
+.manager-dashboard-home-content-user-header th {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #ccc;
+    color: #333;
+    font-weight: bold;
+}
+
+.manager-dashboard-home-content-user-header-1{
+    width: 20%;
+}
+.manager-dashboard-home-content-user-header-2{
+    width: 20%;
+}
+
+.manager-dashboard-home-content-user-header-3{
+    width: 20%;
+}
+
+.manager-dashboard-home-content-user-header-4{
+    width: 10%;
+}
+
+.manager-dashboard-home-content-user-header-5{
+    width: 10%;
+}
+
+.manager-dashboard-home-content-user-header-6{
+    width: 10%;
+}
+
+.manager-dashboard-home-content-user-body tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.manager-dashboard-home-content-user-body td {
+    padding: 10px;
+}
+
+.manager-dashboard-home-content-user-body tr:hover {
+    background-color: #f1f1f1;
+}

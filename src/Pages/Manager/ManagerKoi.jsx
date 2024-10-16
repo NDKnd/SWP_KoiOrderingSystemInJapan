@@ -261,6 +261,7 @@ const ManagerKoi = () => {
       console.error("Failed to create Koi", error);
     } finally {
       setFile(null);
+      setNewKoi(null);
       handleCreateKoi();
     }
   };

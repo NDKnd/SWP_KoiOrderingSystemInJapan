@@ -222,6 +222,7 @@ const ManagerFarm = () => {
       message.error(err.response.data);
     } finally {
       setFile(null);
+      setNewFarm(null);
       handleCreateFarm(); //dong modal create farm
     }
   };
