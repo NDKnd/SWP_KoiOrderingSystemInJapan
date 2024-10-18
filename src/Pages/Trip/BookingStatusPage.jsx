@@ -60,10 +60,15 @@ function BookingStatusPage() {
     if (file.status === 'done' || file.status === 'uploading') {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setUploadedImage(e.target.result); // Set uploaded image as preview
+        setUploadedImage(e.target.result);
       };
       reader.readAsDataURL(file.originFileObj);
     }
+  };
+
+  const handleCheckout = () => {
+    // Add VNPAY check out here
+    message.success("Proceeding to checkout...");
   };
 
   return (
@@ -87,20 +92,26 @@ function BookingStatusPage() {
             </Steps>
 
             <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-              <Col xs={24} md={12}>
+            <Col xs={24} md={12}>
                 <Card title="Farm & Trip Information" className="information-card" bordered>
-                  {booking.trip.farms && booking.trip.farms.length > 0 && (
-                    <>
-                      <p><strong>Farm Name:</strong> {booking.trip.farms[0].farmName}</p>
-                      <p><strong>Farm Location:</strong> {booking.trip.farms[0].location}</p>
-                      <p><strong>Farm Contact:</strong> {booking.trip.farms[0].phone} / {booking.trip.farms[0].email}</p>
-                      <p><strong>Farm Description:</strong> {booking.trip.farms[0].description}</p>
-                    </>
-                  )}
-                  <p><strong>Trip Start Date:</strong> {booking.trip.startDate}</p>
-                  <p><strong>Trip End Date:</strong> {booking.trip.endDate}</p>
-                  <p><strong>Start Location:</strong> {booking.trip.startLocation}</p>
-                  <p><strong>End Location:</strong> {booking.trip.endLocation}</p>
+                  <div style={{ marginBottom: "16px" }}>
+                    <h3>Farm Information</h3>
+                    {booking.trip.farms && booking.trip.farms.length > 0 && (
+                      <>
+                        <p><strong>Farm Name:</strong> {booking.trip.farms[0].farmName}</p>
+                        <p><strong>Location:</strong> {booking.trip.farms[0].location}</p>
+                        <p><strong>Contact:</strong> {booking.trip.farms[0].phone} / {booking.trip.farms[0].email}</p>
+                        <p><strong>Description:</strong> {booking.trip.farms[0].description}</p>
+                      </>
+                    )}
+                  </div>
+                  <div>
+                    <h3>Trip Information</h3>
+                    <p><strong>Start Date:</strong> {booking.trip.startDate}</p>
+                    <p><strong>End Date:</strong> {booking.trip.endDate}</p>
+                    <p><strong>Start Location:</strong> {booking.trip.startLocation}</p>
+                    <p><strong>End Location:</strong> {booking.trip.endLocation}</p>
+                  </div>
                 </Card>
               </Col>
               <Col xs={24} md={12}>
@@ -110,6 +121,11 @@ function BookingStatusPage() {
                   <p><strong>Status:</strong> <Tag color={statusColors[booking.status]}>{booking.status.replace("_", " ")}</Tag></p>
                   <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
                   <p><strong>Note:</strong> {booking.note}</p>
+                  {booking.status === "AWAITING_PAYMENT" && (
+                    <Button className="checkout-button" type="primary" onClick={handleCheckout}>
+                      Check Out
+                    </Button>
+                  )}
                 </Card>
               </Col>
             </Row>
