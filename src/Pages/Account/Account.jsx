@@ -5,17 +5,22 @@ import {
   FaUserCog,
   FaUserAlt,
   FaTruckPickup,
+  FaCogs,
 } from "react-icons/fa";
 import Headers from "../../Components/Header/Header";
 import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../Components/SideMenu/SideMenu.css";
 
 function Account() {
-  const user = JSON.parse(localStorage.getItem("user"));
-
   const navigate = useNavigate(); // Khai báo useNavigate
 
   const contentAccount = [
+    {
+      key: 0,
+      label: "General",
+      icon: <FaCogs />,
+      path: "/profile/general",
+    },
     {
       key: 1,
       label: "Account",

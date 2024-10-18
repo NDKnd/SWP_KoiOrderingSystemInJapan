@@ -4,7 +4,10 @@ import LoginForm from "./Pages/Login/LoginForm.jsx";
 import Home from "./Pages/Home/Home.jsx";
 import PrivateRoute from "./Components/private-rout/PrivateRoute.jsx";
 import Account from "./Pages/Account/Account.jsx";
-import Trips from "./Pages/Account/Account_trips.jsx";
+import Account_profile from "./Pages/Account/Account_profile.jsx";
+import Account_trips from "./Pages/Account/Account_trips.jsx";
+import Account_generall from "./Pages/Account/Account_generall.jsx";
+import BookingStatusPage from "./Pages/Trip/BookingStatusPage.jsx";
 import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
 import ManagerHome from "./Pages/Manager/ManagerHome";
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
@@ -14,7 +17,6 @@ import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import ManagerTrip from "./Pages/Manager/ManagerTrip";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
-import Account_profile from "./Pages/Account/Account_profile.jsx";
 import ForgotPass from "./Pages/Account/ForgotPass.jsx";
 import ResetPass from "./Pages/Account/Reset_password.jsx";
 
@@ -51,6 +53,7 @@ const routes = [
   },
   { path: "KoiPageFind", element: <KoiPageFind /> }, // not need token
   { path: "FarmFindPage", element: <FarmFindPage /> }, // not need token
+  { path: "booking-status", element: <BookingStatusPage /> },
   {
     path: "profile",
     element: <PrivateRoute allow_Role={Less_Role} />,
@@ -59,8 +62,9 @@ const routes = [
         path: "",
         element: <Account />,
         children: [
+          { path: "general", element: <Account_generall /> },
           { path: "detail", element: <Account_profile /> },
-          { path: "trips", element: <Trips /> },
+          { path: "trips", element: <Account_trips /> },
         ],
       },
     ],

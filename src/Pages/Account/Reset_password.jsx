@@ -32,9 +32,11 @@ function Reset_password() {
       );
     } finally {
       localStorage.removeItem("token");
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
+      if (!localStorage.getItem("token")) {
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      }
     }
   };
 

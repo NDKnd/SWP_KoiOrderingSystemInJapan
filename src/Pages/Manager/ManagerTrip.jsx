@@ -17,27 +17,34 @@ import { useEffect, useState } from "react";
 import api from "../../services/axios";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
 import dayjs from "dayjs";
-import { Navigate } from "react-router-dom";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+// Kích hoạt plugin
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY-MM-DD";
 
 function ManagerTrip() {
   const [tripList, setTripList] = useState([]);
-  const [farmList, setFarmList] = useState([]);
   const [infoTripDefault, setInfoTripDefault] = useState({});
 
   const [farmsOpts, setFarmsOpts] = useState([]);
   const [isCreateModalOpen, setisCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const [searchStartLocation, setSearchStartLocation] = useState("");
+  const [searchEndLocation, setSearchEndLocation] = useState("");
+  const [searchDateRange, setSearchDateRange] = useState([]);
+  const [searchFarms, setSearchFarms] = useState([]);
+
   const fetchFarms = async () => {
     try {
       const res = await api.get("farm");
-      console.log("res data:", res.data);
       const farmsSelect = res.data;
       setFarmsOpts(farmsSelect);
-      console.log("farmsSelect: ", farmsSelect);
+      console.log("farmsSelect: ", res.data);
     } catch (error) {
       message.error("Error fetching farms");
       console.log(error.message.toString());
@@ -47,12 +54,8 @@ function ManagerTrip() {
     try {
       const res = await api.get("trip");
       const data = await res.data;
+      console.log("list of trips:", res.data);
       setTripList(data); // Cập nhật trạng thái trips với dữ liệu từ API
-      console.log("list of trips: ", tripList);
-      // tripList.map((trip) => {
-      //   console.log("trip: ", trip);
-      //   console.log("trip.farms: ", trip.farms);
-      // });
     } catch (error) {
       message.error("Error fetching trips");
       console.log(error.message.toString());
@@ -86,8 +89,7 @@ function ManagerTrip() {
 
       const res = await api.post("trip", newTrip);
       console.log("res data:", res);
-      setTripList([...tripList, res.data]);
-      setFarmList([...farmList, res.data.farms]);
+      fetchTrips();
       message.success("Create trip successfully");
     } catch (error) {
       message.error("Error create trips");
@@ -105,8 +107,7 @@ function ManagerTrip() {
       const res = await api.delete(`trip/${changetoInteger}`);
       console.log("res data:", res);
       message.success("Delete trip successfully");
-      setTripList(tripList.filter((trip) => trip.id !== tripId));
-      setFarmList(farmList.map((farm) => farm.id !== changetoInteger));
+      fetchTrips();
     } catch (error) {
       message.error("Error delete trips");
       console.log(error.message.data);
@@ -135,20 +136,7 @@ function ManagerTrip() {
       console.log("Change for edit: ", infoTripForEdit);
       const res = await api.put(`trip/${infoTripDefault.id}`, infoTripForEdit);
       console.log("res data:", res);
-      setTripList(
-        tripList.map((trip) =>
-          trip.id === infoTripDefault.id
-            ? { ...trip, ...infoTripForEdit }
-            : trip
-        )
-      );
-      setFarmList(
-        farmList.map((farm) =>
-          farm.id === infoTripDefault.id
-            ? { ...farm, ...infoTripForEdit }
-            : farm
-        )
-      );
+      fetchTrips();
       message.success("Edit trip successfully");
     } catch (error) {
       message.error("Error edit trips");
@@ -167,8 +155,8 @@ function ManagerTrip() {
       endLocation: trip.endLocation,
     };
     const EachFarm = trip.farms;
-    console.log("eachTrip: ", Eachtrip);
-    console.log("list farms of the above trip: ", EachFarm);
+    // console.log("eachTrip: ", Eachtrip);
+    // console.log("list farms of the above trip: ", EachFarm);
     return (
       <Card
         className={styles.manager_trip_card}
@@ -257,6 +245,50 @@ function ManagerTrip() {
     );
   };
 
+  const handleSearch = () => {
+    const filteredTrips =
+      searchFarms.length === 0 &&
+      searchStartLocation.trim() === "" &&
+      searchEndLocation.trim() === ""
+        ? tripList
+        : tripList.filter((trip) => {
+            // search startLocation and endLocation
+            const matchesStartLocation = trip.startLocation // case-sensitive
+              .toLowerCase()
+              .includes(searchStartLocation.toLowerCase());
+            const matchesEndLocation = trip.endLocation //case-sensitive
+              .toLowerCase()
+              .includes(searchEndLocation.toLowerCase());
+
+            // search date
+            // const matchesDateRange =
+            //   searchDateRange.length === 0
+            //     ? trip.startDate && trip.endDate
+            //     : dayjs(trip.startDate).isSameOrAfter(searchDateRange[1], "day") &&
+            //       dayjs(trip.endDate).isSameOrBefore(searchDateRange[0], "day");
+
+            // search farms
+            const matchesFarms = searchFarms.every((farmId) =>
+              trip.farms.map((farm) => farm.id).includes(farmId)
+            );
+
+            // searchFarms.length === 0 &&
+            // searchStartLocation.trim() === "" &&
+            // searchEndLocation.trim() === "" &&
+            // searchDateRange === null &&
+            // searchFarms.length === 0 &&
+
+            return (
+              matchesStartLocation &&
+              matchesEndLocation &&
+              // matchesDateRange &&
+              matchesFarms
+            );
+          });
+    console.log("filteredTrips: ", filteredTrips);
+    setTripList(filteredTrips);
+  };
+
   useEffect(() => {
     console.log("token", localStorage.getItem("token"));
     fetchTrips();
@@ -266,16 +298,58 @@ function ManagerTrip() {
   return (
     <div>
       <div className={styles.manager_trip_create_search}>
-        <Col span={4}>
-          <button
-            onClick={handleOpenModal}
-            className={styles.manager_trip_create_button}
-          >
-            <MdOutlineCreateNewFolder className={styles.manager_trip_create_button_icon}/>
-          </button>
-        </Col>
-        <input placeholder="Search Trips" className={styles.manager_trip_search_bar}></input>
+        <Row gutter={16}>
+          <Col span={4}>
+            <button
+              onClick={handleOpenModal}
+              className={styles.manager_trip_create_button}
+            >
+              <MdOutlineCreateNewFolder
+                className={styles.manager_trip_create_button_icon}
+              />
+            </button>
+          </Col>
+          <Col span={20}>
+            <Input
+              placeholder="Tìm kiếm theo điểm bắt đầu"
+              value={searchStartLocation}
+              onChange={(e) => setSearchStartLocation(e.target.value)}
+            />
+
+            <Input
+              placeholder="Tìm kiếm theo điểm đến"
+              value={searchEndLocation}
+              onChange={(e) => setSearchEndLocation(e.target.value)}
+            />
+
+            {/* <RangePicker
+              value={searchDateRange}
+              onChange={(dates) => setSearchDateRange(dates)}
+              format={dateFormat}
+            /> */}
+
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: "100%" }}
+              placeholder="Tìm kiếm theo farms"
+              value={searchFarms}
+              onChange={(values) => setSearchFarms(values)}
+            >
+              {farmsOpts.map((farm) => (
+                <Select.Option key={farm.id} value={farm.id}>
+                  {farm.farmName}
+                </Select.Option>
+              ))}
+            </Select>
+
+            <Button type="primary" onClick={handleSearch}>
+              Tìm kiếm
+            </Button>
+          </Col>
+        </Row>
       </div>
+
       <Row justify="center">
         <Col span={24}>
           <h1>List of trips</h1>
