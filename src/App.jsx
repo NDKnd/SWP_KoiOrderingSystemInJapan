@@ -19,12 +19,13 @@ import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
 import ForgotPass from "./Pages/Account/ForgotPass.jsx";
 import ResetPass from "./Pages/Account/Reset_password.jsx";
+import DeliverLayOut from "./Pages/Deliver/DeliverLayOut.jsx"
 
 const List_Imp_Role = [
   "MANAGER",
   "SALE_STAFF",
   "CONSULTING_STAFF",
-  "DELIVERING_STAFF",
+  "DELEVIRING_STAFF",
 ];
 const Less_Role = ["CUSTOMER"];
 
@@ -35,7 +36,7 @@ const routes = [
   { path: "reset-password", element: <ResetPass /> },
   {
     path: "admin",
-    element: <PrivateRoute allow_Role={List_Imp_Role} />, //Bảo vệ trang
+    element: <PrivateRoute allow_Role={List_Imp_Role[0]} />, //Bảo vệ trang
     children: [
       {
         path: "",
@@ -47,6 +48,21 @@ const routes = [
           { path: "ManagerTrip", element: <ManagerTrip /> },
           { path: "ManagerPendingOrder", element: <PendingOrder /> },
           { path: "ManagerOrderHistory", element: <OrderHistory /> },
+        ],
+      },
+    ],
+    
+  },
+  {
+    path: "deliver",
+    element: <PrivateRoute allow_Role={List_Imp_Role[3]} />, //Bảo vệ trang
+    children: [
+      {
+        path: "",
+        element: <DeliverLayOut />, // Layout của trang quản lý
+        children: [
+          { path: "", element: <ManagerHome /> },
+          { path: "ManagerFarm", element: <ManagerFarm /> },
         ],
       },
     ],
