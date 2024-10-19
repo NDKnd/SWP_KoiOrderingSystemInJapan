@@ -5,16 +5,7 @@ import { Content } from "antd/es/layout/layout";
 import { Outlet } from "react-router-dom";
 
 const DeliverLayOut = () => (
-  <Layout style={{ minHeight: "100vh" }}>
-    <Sider>
-      <MenuList />
-    </Sider>
-    <Layout>
-      <Content style={{ padding: "24px", backgroundColor: "#fff" }}>
-        <Outlet />
-      </Content>
-    </Layout>
-  </Layout>
+  <p>this is deliver pages</p>
 );
 
 export default DeliverLayOut;

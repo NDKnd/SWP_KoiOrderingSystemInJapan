@@ -74,7 +74,13 @@ const LoginForm = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(response.data));
       const role = JSON.parse(localStorage.getItem("user")).role;
-      role === "CUSTOMER" ? navigate("/") : navigate("/admin");
+      if (role == "CUSTOMER") {
+        navigate("/");
+      } else if (role == "DELEVIRING_STAFF") {
+        navigate("/deliver");
+      } else {
+        navigate("/admin");
+      }
     } catch (err) {
       console.log(err);
       alert(err.response.data); // nhận thông báo lỗi từ backend
