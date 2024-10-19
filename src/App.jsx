@@ -41,7 +41,7 @@ const routes = [
   { path: "reset-password", element: <ResetPass /> },
   {
     path: "admin",
-    element: <PrivateRoute allow_Role={List_Imp_Role[0]} />, //Bảo vệ trang
+    element: <PrivateRoute allow_Role="MANAGER" />, //Bảo vệ trang
     children: [
       {
         path: "",
@@ -81,14 +81,13 @@ const routes = [
   },
   {
     path: "deliver",
-    element: <PrivateRoute allow_Role={List_Imp_Role[3]} />, //Bảo vệ trang
+    element: <PrivateRoute allow_Role="DELEVIRING_STAFF" />, //Bảo vệ trang
     children: [
       {
         path: "",
         element: <DeliverLayOut />, // Layout của trang quản lý
         children: [
-          { path: "", element: <ManagerHome /> },
-          { path: "ManagerFarm", element: <ManagerFarm /> },
+          
         ],
       },
     ],
