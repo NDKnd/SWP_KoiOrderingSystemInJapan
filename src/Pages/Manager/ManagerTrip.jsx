@@ -250,41 +250,42 @@ function ManagerTrip() {
       searchFarms.length === 0 &&
       searchStartLocation.trim() === "" &&
       searchEndLocation.trim() === ""
-        ? tripList
-        : tripList.filter((trip) => {
-            // search startLocation and endLocation
-            const matchesStartLocation = trip.startLocation // case-sensitive
-              .toLowerCase()
-              .includes(searchStartLocation.toLowerCase());
-            const matchesEndLocation = trip.endLocation //case-sensitive
-              .toLowerCase()
-              .includes(searchEndLocation.toLowerCase());
+        ? fetchTrips().then((tripList) => tripList)
+        : fetchTrips();
+    tripList.filter((trip) => {
+      // search startLocation and endLocation
+      const matchesStartLocation = trip.startLocation // case-sensitive
+        .toLowerCase()
+        .includes(searchStartLocation.toLowerCase());
+      const matchesEndLocation = trip.endLocation //case-sensitive
+        .toLowerCase()
+        .includes(searchEndLocation.toLowerCase());
 
-            // search date
-            // const matchesDateRange =
-            //   searchDateRange.length === 0
-            //     ? trip.startDate && trip.endDate
-            //     : dayjs(trip.startDate).isSameOrAfter(searchDateRange[1], "day") &&
-            //       dayjs(trip.endDate).isSameOrBefore(searchDateRange[0], "day");
+      // search date
+      // const matchesDateRange =
+      //   searchDateRange.length === 0
+      //     ? trip.startDate && trip.endDate
+      //     : dayjs(trip.startDate).isSameOrAfter(searchDateRange[1], "day") &&
+      //       dayjs(trip.endDate).isSameOrBefore(searchDateRange[0], "day");
 
-            // search farms
-            const matchesFarms = searchFarms.every((farmId) =>
-              trip.farms.map((farm) => farm.id).includes(farmId)
-            );
+      // search farms
+      const matchesFarms = searchFarms.every((farmId) =>
+        trip.farms.map((farm) => farm.id).includes(farmId)
+      );
 
-            // searchFarms.length === 0 &&
-            // searchStartLocation.trim() === "" &&
-            // searchEndLocation.trim() === "" &&
-            // searchDateRange === null &&
-            // searchFarms.length === 0 &&
+      // searchFarms.length === 0 &&
+      // searchStartLocation.trim() === "" &&
+      // searchEndLocation.trim() === "" &&
+      // searchDateRange === null &&
+      // searchFarms.length === 0 &&
 
-            return (
-              matchesStartLocation &&
-              matchesEndLocation &&
-              // matchesDateRange &&
-              matchesFarms
-            );
-          });
+      return (
+        matchesStartLocation &&
+        matchesEndLocation &&
+        // matchesDateRange &&
+        matchesFarms
+      );
+    });
     console.log("filteredTrips: ", filteredTrips);
     setTripList(filteredTrips);
   };

@@ -8,6 +8,7 @@ import Account_profile from "./Pages/Account/Account_profile.jsx";
 import Account_trips from "./Pages/Account/Account_trips.jsx";
 import Account_generall from "./Pages/Account/Account_generall.jsx";
 import BookingStatusPage from "./Pages/Trip/BookingStatusPage.jsx";
+
 import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
 import ManagerHome from "./Pages/Manager/ManagerHome";
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
@@ -35,7 +36,7 @@ const routes = [
   { path: "reset-password", element: <ResetPass /> },
   {
     path: "admin",
-    element: <PrivateRoute allow_Role={List_Imp_Role} />, //Bảo vệ trang
+    element: <PrivateRoute allow_Role={List_Imp_Role[0]} />, //Bảo vệ trang
     children: [
       {
         path: "",
