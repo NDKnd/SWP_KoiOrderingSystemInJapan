@@ -23,8 +23,11 @@ import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
 import ForgotPass from "./Pages/Account/ForgotPass.jsx";
 import ResetPass from "./Pages/Account/Reset_password.jsx";
-import DeliverLayOut from "./Pages/Deliver/DeliverLayOut.jsx";
+
 import SaleLayOut from "./Pages/Sale_staff/SaleLayOut.jsx";
+import Sale_Booking from "./Pages/Sale_staff/Sale_Booking.jsx";
+
+import DeliverLayOut from "./Pages/Deliver/DeliverLayOut.jsx";
 
 const List_Imp_Role = [
   "MANAGER",
@@ -64,7 +67,7 @@ const routes = [
       {
         path: "",
         element: <SaleLayOut />, // Layout của trang quản lý
-        children: [{ path: "", element: <ManagerHome /> }],
+        children: [{ path: "", element: <Sale_Booking /> }],
       },
     ],
   },
@@ -86,9 +89,7 @@ const routes = [
       {
         path: "",
         element: <DeliverLayOut />, // Layout của trang quản lý
-        children: [
-          
-        ],
+        children: [],
       },
     ],
   },

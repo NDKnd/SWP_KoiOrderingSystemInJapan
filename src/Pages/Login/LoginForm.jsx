@@ -78,6 +78,8 @@ const LoginForm = () => {
         navigate("/");
       } else if (role == "DELEVIRING_STAFF") {
         navigate("/deliver");
+      } else if (role == "SALE_STAFF") {
+        navigate("/sale");
       } else {
         navigate("/admin");
       }

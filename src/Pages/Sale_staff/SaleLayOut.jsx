@@ -7,7 +7,6 @@ import {
   FaTruckPickup,
   FaCogs,
 } from "react-icons/fa";
-import Headers from "../../Components/Header/Header";
 import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../Components/SideMenu/SideMenu.css";
 
@@ -61,7 +60,6 @@ function SaleLayOut() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Headers />
       <Layout>
         <Sider
           width={200}
