@@ -7,11 +7,10 @@ import {
   FaTruckPickup,
   FaCogs,
 } from "react-icons/fa";
-import Headers from "../../Components/Header/Header";
 import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../Components/SideMenu/SideMenu.css";
 
-function Account() {
+function SaleLayOut() {
   const navigate = useNavigate(); // Khai báo useNavigate
 
   const contentAccount = [
@@ -19,33 +18,14 @@ function Account() {
       key: 0,
       label: "General",
       icon: <FaCogs />,
-      path: "/profile/general",
+      path: "/sale",
     },
-    {
-      key: 1,
-      label: "Account",
-      icon: <FaUserAlt />,
-      children: [
-        {
-          key: 1.1,
-          label: "Detail",
-          icon: <FaUserCog />,
-          path: "/profile/detail", // Đường dẫn tới trang Profile
-        },
-        {
-          key: 1.2,
-          label: "History",
-          icon: <FaHistory />,
-          path: "#", // Đường dẫn tới trang History
-        },
-        {
-          key: 1.3,
-          label: "Trips",
-          icon: <FaTruckPickup />,
-          path: "/profile/trips", // Đường dẫn tới trang Orders
-        },
-      ],
-    },
+    // {
+    //   key: 1,
+    //   label: "Booking",
+    //   icon: <FaUserAlt />,
+    //   path: "/profile/detail",
+    // },
     {
       key: 2,
       label: "Logout",
@@ -63,7 +43,7 @@ function Account() {
     const selectedKey = keyPath[0]; // Lấy key của menu item
     console.log("selectedKey: ", selectedKey);
 
-    // Tìm trong contentAccount
+    // Tìm trong content
     const selectedItem = contentAccount
       .flatMap((item) => [item, ...(item.children || [])])
       .find((item) => item.key == selectedKey);
@@ -80,7 +60,6 @@ function Account() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Headers />
       <Layout>
         <Sider
           width={200}
@@ -118,4 +97,4 @@ function Account() {
   );
 }
 
-export default Account;
+export default SaleLayOut;

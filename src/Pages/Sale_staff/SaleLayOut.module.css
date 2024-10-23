@@ -1,0 +1,15 @@
+.container {
+  height: 100vh;
+  background-color: transparent;
+}
+.box {
+  /* background-color: blueviolet; */
+  margin-bottom: 10px;
+  border: 1px solid rgba(179, 158, 158, 0.349);
+  border-radius: 10px;
+  background-color: hsla(0, 22%, 86%, 0.182);
+}
+.divider {
+  /* background-color: brown; */
+  color: white;
+}

@@ -35,7 +35,7 @@ const ManagerFarm = () => {
         console.log(response);
         setKoiFarmList(response.data);
         console.log("koiFarmList: ", response.data);
-        message.success("Fetch farm data successfully");
+        // message.success("Fetch farm data successfully");
       } catch (err) {
         console.log(err);
         message.error("Cannot fetch farm data");

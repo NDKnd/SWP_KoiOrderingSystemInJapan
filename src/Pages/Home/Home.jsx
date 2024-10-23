@@ -38,6 +38,7 @@ function Home() {
   //   };
   //   fetchData();
   // }, []);
+  console.log("token", localStorage.getItem("token"));
 
   return (
     <Layout>
