@@ -89,7 +89,9 @@ function Header() {
             <li className="opt">
               <NavLink to="/FarmFindPage">Farms</NavLink>
             </li>
-            <li className="opt">Opt3</li>
+            <li className="opt">
+              <NavLink to="/TripPage">Trips</NavLink>
+            </li>
             <li className="opt">Opt4</li>
             <li className="opt">Opt5</li>
           </div>

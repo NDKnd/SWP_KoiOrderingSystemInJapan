@@ -23,6 +23,7 @@ import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
 import ForgotPass from "./Pages/Account/ForgotPass.jsx";
 import ResetPass from "./Pages/Account/Reset_password.jsx";
+import TripPage from "./Pages/Trip/TripPage.jsx";
 
 import SaleLayOut from "./Pages/Sale_staff/SaleLayOut.jsx";
 import Sale_Booking from "./Pages/Sale_staff/Sale_Booking.jsx";
@@ -95,7 +96,8 @@ const routes = [
   },
   { path: "KoiPageFind", element: <KoiPageFind /> }, // not need token
   { path: "FarmFindPage", element: <FarmFindPage /> }, // not need token
-  { path: "booking-status", element: <BookingStatusPage /> },
+  { path: "book-status", element: <BookingStatusPage /> },
+  { path: "TripPage", element: <TripPage /> },
   {
     path: "profile",
     element: <PrivateRoute allow_Role={Less_Role} />,
