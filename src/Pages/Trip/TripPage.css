@@ -77,3 +77,7 @@
 .book-button .ant-btn-primary:hover {
   background-color: #d35400;
 }
+
+.search-bar{
+  margin-bottom: 20px;
+}
