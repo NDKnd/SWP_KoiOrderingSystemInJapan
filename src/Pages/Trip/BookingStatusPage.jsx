@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Layout,
-  Row,
-  Col,
-  Card,
-  Spin,
-  message,
-  Tag,
-  Steps,
-  Upload,
-  Button,
-} from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import api from "../../services/axios"; // Your axios service
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
+import { useLocation } from "react-router-dom";
 import "../Trip/BookingStatusPage.css";
 
 const { Content } = Layout;
@@ -32,6 +22,7 @@ function BookingStatusPage() {
   const [booking, setBooking] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +32,6 @@ function BookingStatusPage() {
 
         if (bookingData && bookingData.length > 0) {
           bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
-
           setBooking(bookingData[0]);
         } else {
           message.error("No booking found.");
@@ -53,9 +43,29 @@ function BookingStatusPage() {
         setLoading(false);
       }
     };
-    console.log(fetchData);
+
+    const checkPaymentStatus = async () => {
+      const queryParams = new URLSearchParams(location.search);
+      const transactionStatus = queryParams.get("vnp_TransactionStatus");
+      const bookingId = queryParams.get("bookingId");
+
+      if (transactionStatus === "00" && bookingId) {
+        try {
+          await api.put(`/booking/status/${bookingId}`, {
+            status: "IN_PROGRESS",
+          });
+          message.success("Check out successfully.");
+        } catch (error) {
+          console.error("Error updating booking status:", error);
+          message.error("Failed to update booking status.");
+        }
+      }
+      window.history.replaceState({}, document.title, window.location.pathname);
+    };
+
     fetchData();
-  }, []);
+    checkPaymentStatus();
+  }, [location]);
 
   const getCurrentStep = (status) => {
     const statusIndex = {
@@ -80,8 +90,18 @@ function BookingStatusPage() {
   };
 
   const handleCheckout = () => {
-    // Add VNPAY check out here
-    message.success("Proceeding to checkout...");
+    api.post(`/booking/payment`, { id: booking.id })
+      .then((response) => {
+        if (response.data) {
+          window.location.href = response.data;
+        } else {
+          message.error("Failed to retrieve payment link.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error during checkout:", error);
+        message.error("Failed to proceed to checkout.");
+      });
   };
 
   return (
@@ -99,79 +119,34 @@ function BookingStatusPage() {
             >
               <Steps.Step
                 title="Pending Confirmation"
-                description={
-                  booking.status === "CANCELED"
-                    ? "This trip has been canceled"
-                    : ""
-                }
+                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
               />
               <Steps.Step
                 title="Awaiting Payment"
-                description={
-                  booking.status === "CANCELED"
-                    ? "This trip has been canceled"
-                    : ""
-                }
+                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
               />
               <Steps.Step
                 title="In Progress"
-                description={
-                  booking.status === "CANCELED"
-                    ? "This trip has been canceled"
-                    : ""
-                }
+                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
               />
               <Steps.Step
                 title="Check In"
-                description={
-                  booking.status === "CANCELED"
-                    ? "This trip has been canceled"
-                    : ""
-                }
+                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
               />
               <Steps.Step
                 title="Completed"
-                description={
-                  booking.status === "CANCELED"
-                    ? "This trip has been canceled"
-                    : ""
-                }
+                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
               />
             </Steps>
 
             <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
               <Col xs={24} md={12}>
                 <Card
-                  title="Farm & Trip Information"
+                  title="Trip Information"
                   className="information-card"
                   bordered
                 >
-                  <div style={{ marginBottom: "16px" }}>
-                    <h3>Farm Information</h3>
-                    {booking.trip.farms && booking.trip.farms.length > 0 && (
-                      <>
-                        <p>
-                          <strong>Farm Name:</strong>{" "}
-                          {booking.trip.farms[0].farmName}
-                        </p>
-                        <p>
-                          <strong>Location:</strong>{" "}
-                          {booking.trip.farms[0].location}
-                        </p>
-                        <p>
-                          <strong>Contact:</strong>{" "}
-                          {booking.trip.farms[0].phone} /{" "}
-                          {booking.trip.farms[0].email}
-                        </p>
-                        <p>
-                          <strong>Description:</strong>{" "}
-                          {booking.trip.farms[0].description}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                  <div>
-                    <h3>Trip Information</h3>
+                  <div> 
                     <p>
                       <strong>Start Date:</strong> {booking.trip.startDate}
                     </p>
@@ -228,16 +203,16 @@ function BookingStatusPage() {
 
             <Row style={{ marginTop: "20px" }}>
               <Col xs={24}>
-                <Card title="Upload Booking Image" bordered>
+                <Card title="Upload Ticket Image" bordered>
                   <Upload onChange={handleUploadChange} showUploadList={false}>
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                   </Upload>
                   {uploadedImage && (
-                    <div style={{ marginTop: "20px" }}>
+                    <div className="upload-btn">
                       <img
+                        className="ticket-img"
                         src={uploadedImage}
                         alt="Uploaded"
-                        style={{ maxWidth: "100%", height: "auto" }}
                       />
                     </div>
                   )}

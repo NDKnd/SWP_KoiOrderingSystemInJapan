@@ -90,10 +90,10 @@ function TripPage() {
                 <Col xs={24} sm={12} md={8} lg={6} key={trip.tripId}>
                   <Card hoverable className="trip-card">
                     <div className="trip-image">
-                      <img src={trip.image} alt={trip.farms.farmName} />
+                      <img src={trip.image} alt={trip.id} />
                     </div>
                     <Card.Meta
-                      title={trip.farms.farmName}
+                      title={trip.id}
                       description={
                         <>
                         <div>farm: {trip.id}</div>
