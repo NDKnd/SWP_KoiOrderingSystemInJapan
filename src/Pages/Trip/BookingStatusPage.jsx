@@ -40,6 +40,8 @@ function BookingStatusPage() {
         const bookingData = bookingResponse.data;
 
         if (bookingData && bookingData.length > 0) {
+          bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+
           setBooking(bookingData[0]);
         } else {
           message.error("No booking found.");
