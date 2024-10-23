@@ -51,7 +51,7 @@ function BookingStatusPage() {
       IN_PROGRESS: 2,
       CHECK_IN: 3,
       COMPLETED: 4,
-      CANCELED: 4,
+      CANCELED: 5,
     };
     return statusIndex[status] || 0;
   };
