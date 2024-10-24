@@ -146,20 +146,32 @@ function BookingStatusPage() {
                 description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
               />
             </Steps>
-
             <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
               <Col xs={24} md={12}>
                 <Card
-                  title="Trip Information"
+                  title="Trip and Farm Information"
                   className="information-card"
                   bordered
                 >
-                  <div> 
+                  <div style={{ marginBottom: "24px" }}> 
+                    <h3>Trip Information</h3>
                     <p><strong>Start Date:</strong> {booking.trip.startDate}</p>
                     <p><strong>End Date:</strong> {booking.trip.endDate}</p>
                     <p><strong>Start Location:</strong> {booking.trip.startLocation}</p>
                     <p><strong>End Location:</strong> {booking.trip.endLocation}</p>
                   </div>
+                  <h3>Farm Information</h3>
+                  {booking.trip.farms && booking.trip.farms.length > 0 ? (
+                    booking.trip.farms.map((farm) => (
+                      <div key={farm.id}>
+                        <p><strong>Location:</strong> {farm.location}</p>
+                        <p><strong>Phone:</strong> {farm.phone}</p>
+                        <p><strong>Email:</strong> {farm.email}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No farms selected for this trip.</p>
+                  )}
                 </Card>
               </Col>
               <Col xs={24} md={12}>
@@ -186,10 +198,9 @@ function BookingStatusPage() {
                 </Card>
               </Col>
             </Row>
-
             <Row style={{ marginTop: "20px" }}>
               <Col xs={24}>
-                <Card title="Upload Ticket Image" bordered> 
+                <Card title="Upload Ticket Image" bordered>
                   <Upload onChange={handleUploadChange} showUploadList={false}>
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                   </Upload>
