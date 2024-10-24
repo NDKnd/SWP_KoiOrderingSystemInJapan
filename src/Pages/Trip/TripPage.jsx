@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Button, Spin, message, Pagination, Modal } from "antd";
+import {
+  Layout,
+  Row,
+  Col,
+  Card,
+  Button,
+  Spin,
+  message,
+  Pagination,
+  Modal,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -42,10 +52,10 @@ function TripPage() {
       const response = await api.post(
         "/booking",
         {
-        image: "",
-        status: "PENDING_CONFIRMATION",
-        note: "",
-        tripId: trip.id
+          image: "",
+          status: "PENDING_CONFIRMATION",
+          note: "",
+          tripId: trip.id,
         },
         {
           headers: {
@@ -93,10 +103,10 @@ function TripPage() {
                       <img src={trip.image} alt={trip.id} />
                     </div>
                     <Card.Meta
-                      title={trip.id}
+                      title={`Id: ${trip.id}`}
                       description={
                         <>
-                        <div>farm: {trip.id}</div>
+                          <div>farm: {trip.id}</div>
                           <div>From: {trip.startDate}</div>
                           <div>To: {trip.endDate}</div>
                           <div>Depart location: {trip.startLocation}</div>
@@ -105,7 +115,10 @@ function TripPage() {
                       }
                     />
                     <div className="book-button">
-                      <Button type="primary" onClick={() => handleBookTrip(trip)}>
+                      <Button
+                        type="primary"
+                        onClick={() => handleBookTrip(trip)}
+                      >
                         Book Now
                       </Button>
                     </div>
