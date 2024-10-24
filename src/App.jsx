@@ -38,11 +38,24 @@ const List_Imp_Role = [
 ];
 const Less_Role = ["CUSTOMER"];
 
+const AllRole = [...List_Imp_Role, ...Less_Role];
+
 const routes = [
-  { path: "/", element: <Home /> }, // not need token
   { path: "login", element: <LoginForm /> }, // not need token
   { path: "forgot", element: <ForgotPass /> },
   { path: "reset-password", element: <ResetPass /> },
+  {
+    path: "/",
+    element: <PrivateRoute allow_Role={AllRole} />,
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "KoiPageFind", element: <KoiPageFind /> },
+      { path: "FarmFindPage", element: <FarmFindPage /> },
+      { path: "book-status", element: <BookingStatusPage /> },
+      { path: "TripPage", element: <TripPage /> },
+    ]
+  },
+
   {
     path: "admin",
     element: <PrivateRoute allow_Role="MANAGER" />, //Bảo vệ trang
@@ -94,10 +107,6 @@ const routes = [
       },
     ],
   },
-  { path: "KoiPageFind", element: <KoiPageFind /> }, // not need token
-  { path: "FarmFindPage", element: <FarmFindPage /> }, // not need token
-  { path: "book-status", element: <BookingStatusPage /> },
-  { path: "TripPage", element: <TripPage /> },
   {
     path: "profile",
     element: <PrivateRoute allow_Role={Less_Role} />,

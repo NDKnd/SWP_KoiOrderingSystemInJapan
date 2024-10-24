@@ -30,25 +30,31 @@ const PrivateRoute = ({ allow_Role = [] }) => {
     const token = localStorage.getItem("token");
     // handle not login
     if (!token || tokenExpired(token)) {
-      navigate("/");
+      navigate("/login");
+      message.warning("Please login first");
       return;
     }
 
-    let userInfo;
+
     if (token) {
+      let userInfo;
       userInfo = JSON.parse(localStorage.getItem("user"));
+
+      // handle role
+      if (!allow_Role.includes(userInfo.role)) {
+        message.error("You are not allowed to access that page");
+        navigate("/");
+        return;
+      }
+
       console.log("role current:", userInfo.role);
       if (tokenExpired(token)) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        navigate("/login");
       }
     }
-    // handle role
-    if (!allow_Role.includes(userInfo.role)) {
-      navigate("/");
-      message.error("You are not allowed to access this page");
-      return;
-    }
+
   }, [navigate]);
 
   return <Outlet />; // Render các component con nếu đã đăng nhập

@@ -49,7 +49,7 @@ function Header() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     // Điều hướng người dùng về trang đăng nhập
-    navigate("/");
+    navigate("/login");
   };
 
   const activeNav = () => {

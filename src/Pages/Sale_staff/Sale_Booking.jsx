@@ -15,6 +15,8 @@ const statusIndex = {
 };
 
 function Sale_Booking() {
+  console.log("token", localStorage.getItem("token"));
+
   const [loading, setLoading] = useState(true);
 
   const [bookingList, setBookingList] = useState([]);
@@ -30,21 +32,20 @@ function Sale_Booking() {
     fetchBookingManger();
   }, []);
 
-  const handleSearch = () => {};
+  const handleSearch = () => { };
 
   const handleStatus = (status) => {
     return (
       <div
-        className={`${styles.status} ${
-          styles[`status_${status.toLowerCase().trim()}`]
-        }`}
+        className={`${styles.status} ${styles[`status_${status.toLowerCase().trim()}`]
+          }`}
       >
         {status}
       </div>
     );
   };
 
-  const handleUpdate = (values) => { 
+  const handleUpdate = (values) => {
     console.log("update", values);
 
     Modal.info({
@@ -81,7 +82,7 @@ function Sale_Booking() {
       cancelText: "No",
       onOk: async () => {
         try {
-          
+
 
           message.success({
             content: "Delete booking successfully!",
@@ -121,7 +122,7 @@ function Sale_Booking() {
               dataIndex: "image",
               key: "image",
               render: (image) => (
-                <img className={styles.image} src={image} alt="img" />
+                <img className={styles.img_first_farm} src={image} alt="img" />
               ),
             },
             {
@@ -167,13 +168,13 @@ function Sale_Booking() {
               render: (_, record) => (
                 <>
                   <button
-                    className={styles.update_btn}
+                    className={styles.update_btn + " " + styles.button}
                     onClick={() => handleUpdate(record)}
                   >
                     Update Price
                   </button>
                   <button
-                    className={styles.delete_btn}
+                    className={styles.delete_btn + " " + styles.button}
                     onClick={() => handleDelete(record)}
                   >
                     Delete
