@@ -78,8 +78,12 @@ const LoginForm = () => {
         navigate("/");
       } else if (role == "DELEVIRING_STAFF") {
         navigate("/deliver");
-      } else {
+      } else if (role == "SALE_STAFF") {
+        navigate("/sale");
+      } else if (role == "MANAGER") {
         navigate("/admin");
+      } else if (role == "CONSULTING_STAFF") {
+        navigate("consulting");
       }
     } catch (err) {
       console.log(err);

@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   Col,
+  ConfigProvider,
   DatePicker,
   Form,
   Input,
@@ -19,6 +20,7 @@ import { MdOutlineCreateNewFolder } from "react-icons/md";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import { IoSearchOutline } from "react-icons/io5";
 // Kích hoạt plugin
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -34,6 +36,7 @@ function ManagerTrip() {
   const [isCreateModalOpen, setisCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const [searchTrips, setSearchTrips] = useState([]);
   const [searchStartLocation, setSearchStartLocation] = useState("");
   const [searchEndLocation, setSearchEndLocation] = useState("");
   const [searchDateRange, setSearchDateRange] = useState([]);
@@ -246,48 +249,54 @@ function ManagerTrip() {
   };
 
   const handleSearch = () => {
-    const filteredTrips =
+    if (
       searchFarms.length === 0 &&
       searchStartLocation.trim() === "" &&
-      searchEndLocation.trim() === ""
-        ? fetchTrips().then((tripList) => tripList)
-        : fetchTrips();
-    tripList.filter((trip) => {
-      // search startLocation and endLocation
-      const matchesStartLocation = trip.startLocation // case-sensitive
+      searchEndLocation.trim() === "" &&
+      searchDateRange === null
+    ) {
+      fetchTrips();
+      setSearchTrips(tripList);
+      return;
+    }
+
+    const filteredTrips = tripList.filter((trip) => {
+      // Check for start location match
+      const matchesStartLocation = trip.startLocation
         .toLowerCase()
         .includes(searchStartLocation.toLowerCase());
-      const matchesEndLocation = trip.endLocation //case-sensitive
+
+      // Check for end location match
+      const matchesEndLocation = trip.endLocation
         .toLowerCase()
         .includes(searchEndLocation.toLowerCase());
 
-      // search date
-      // const matchesDateRange =
-      //   searchDateRange.length === 0
-      //     ? trip.startDate && trip.endDate
-      //     : dayjs(trip.startDate).isSameOrAfter(searchDateRange[1], "day") &&
-      //       dayjs(trip.endDate).isSameOrBefore(searchDateRange[0], "day");
+      // Check for date range match
+      const matchesDateRange =
+        searchDateRange === null
+          ? true
+          : dayjs(trip.startDate).isSameOrAfter(searchDateRange[0], "day") &&
+            dayjs(trip.endDate).isSameOrBefore(searchDateRange[1], "day");
 
-      // search farms
-      const matchesFarms = searchFarms.every((farmId) =>
-        trip.farms.map((farm) => farm.id).includes(farmId)
-      );
-
-      // searchFarms.length === 0 &&
-      // searchStartLocation.trim() === "" &&
-      // searchEndLocation.trim() === "" &&
-      // searchDateRange === null &&
-      // searchFarms.length === 0 &&
+      // Check for farms match
+      const matchesFarms =
+        searchFarms.length === 0 ||
+        searchFarms.every((farmId) =>
+          trip.farms.map((farm) => farm.id).includes(farmId)
+        );
 
       return (
         matchesStartLocation &&
         matchesEndLocation &&
-        // matchesDateRange &&
+        matchesDateRange &&
         matchesFarms
       );
     });
+
     console.log("filteredTrips: ", filteredTrips);
-    setTripList(filteredTrips);
+    filteredTrips.length > 0
+      ? setSearchTrips(filteredTrips)
+      : message.warning("Cannot find trips");
   };
 
   useEffect(() => {
@@ -298,65 +307,74 @@ function ManagerTrip() {
 
   return (
     <div>
-      <div className={styles.manager_trip_create_search}>
-        <Row gutter={16}>
-          <Col span={4}>
-            <button
-              onClick={handleOpenModal}
-              className={styles.manager_trip_create_button}
-            >
-              <MdOutlineCreateNewFolder
-                className={styles.manager_trip_create_button_icon}
-              />
-            </button>
-          </Col>
-          <Col span={20}>
-            <Input
-              placeholder="Tìm kiếm theo điểm bắt đầu"
-              value={searchStartLocation}
-              onChange={(e) => setSearchStartLocation(e.target.value)}
+      <Row className={styles.manager_trip_create_search}>
+        {/* create button  */}
+        <Col xs={24} md={4} className={styles.manager_trip_create}>
+          <button
+            onClick={handleOpenModal}
+            className={styles.manager_trip_create_button}
+          >
+            <MdOutlineCreateNewFolder
+              className={styles.manager_trip_create_button_icon}
             />
+          </button>
+        </Col>
+        {/* search input  */}
+        <Col xs={24} md={20} className={styles.manager_trip_search}>
+          <Input
+            className={styles.manager_trip_search_input}
+            placeholder="Start Location"
+            value={searchStartLocation}
+            onChange={(e) => setSearchStartLocation(e.target.value)}
+          />
 
-            <Input
-              placeholder="Tìm kiếm theo điểm đến"
-              value={searchEndLocation}
-              onChange={(e) => setSearchEndLocation(e.target.value)}
-            />
+          <Input
+            className={styles.manager_trip_search_input}
+            placeholder="End location"
+            value={searchEndLocation}
+            onChange={(e) => setSearchEndLocation(e.target.value)}
+          />
 
-            {/* <RangePicker
-              value={searchDateRange}
-              onChange={(dates) => setSearchDateRange(dates)}
-              format={dateFormat}
-            /> */}
+          <RangePicker
+            className={styles.manager_trip_search_select}
+            value={searchDateRange}
+            onChange={(dates) => setSearchDateRange(dates)}
+            format={dateFormat}
+          />
 
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "100%" }}
-              placeholder="Tìm kiếm theo farms"
-              value={searchFarms}
-              onChange={(values) => setSearchFarms(values)}
-            >
-              {farmsOpts.map((farm) => (
-                <Select.Option key={farm.id} value={farm.id}>
-                  {farm.farmName}
-                </Select.Option>
-              ))}
-            </Select>
+          <Select
+            className={styles.manager_trip_search_select}
+            mode="multiple"
+            allowClear
+            style={{ width: "100%" }}
+            placeholder="Farms"
+            value={searchFarms}
+            onChange={(values) => setSearchFarms(values)}
+          >
+            {farmsOpts.map((farm) => (
+              <Select.Option key={farm.id} value={farm.id}>
+                {farm.farmName}
+              </Select.Option>
+            ))}
+          </Select>
 
-            <Button type="primary" onClick={handleSearch}>
-              Tìm kiếm
-            </Button>
-          </Col>
-        </Row>
-      </div>
+          <Button
+            className={styles.manager_trip_search_button}
+            type="primary"
+            onClick={handleSearch}
+          >
+            Tìm kiếm
+          </Button>
+        </Col>
+      </Row>
 
       <Row justify="center">
         <Col span={24}>
           <h1>List of trips</h1>
-          {tripList.length > 0 ? (
-            tripList.map((trip) => dispalyListTrips(trip))
-          ) : (
+          {(searchTrips.length > 0 ? searchTrips : tripList).map((trip) =>
+            dispalyListTrips(trip)
+          )}
+          {searchTrips.length === 0 && tripList.length === 0 && (
             <p>No trips available</p>
           )}
         </Col>

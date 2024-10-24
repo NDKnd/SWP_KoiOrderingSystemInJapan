@@ -1,0 +1,101 @@
+.container {
+  height: 100vh;
+  background-color: transparent;
+}
+
+.box_table {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 0.5rem;
+}
+
+.img_first_farm {
+  width: 3rem;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  border: 1px solid #ccc;
+  border-radius: 7%;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+.status.status_pending_confirmation {
+  background-color: #f2c94c;
+}
+.status.status_awaiting_payment {
+  background-color: #9baff0;
+}
+.status.status_in_progress {
+  background-color: #8bc34a;
+}
+.status.status_check_in {
+  background-color: #4caf50;
+}
+.status.status_completed {
+  background-color: #4caf50;
+}
+.status.status_canceled {
+  background-color: #e53935;
+}
+
+.button{
+  border:none;
+  padding:0.5rem;
+  margin:0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.button:hover{
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.038);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.538);
+  transition: background-color 0.3s;
+}
+
+.update_btn{
+  background-color:hsla(226, 74%, 77%, 0.525);
+}
+.update_btn:hover{
+  background-color: hsla(226, 74%, 77%, 0.757);
+}
+
+.delete_btn {
+  border: 0.1rem dashed #e53935;
+  color: #e53935;
+}
+.delete_btn:hover {
+  background-color: #e14643;
+  color: #fff;
+}
+
+.modal_content{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 0.5rem;
+}
+
+label{
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+input{
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem;
+  background-color: #f2f2f288;
+  border: 1px solid #ccc;
+}
+

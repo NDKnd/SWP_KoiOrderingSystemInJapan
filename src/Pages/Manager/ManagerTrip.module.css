@@ -11,29 +11,58 @@
   align-items: center;
 }
 
-.manager_trip_create_button:hover{
+.manager_trip_create_button:hover {
   background-color: var(--purple4);
 }
 
-.manager_trip_create_button_icon{
+.manager_trip_create_button_icon {
   margin-right: 8px;
   font-size: 2rem;
 }
 
-.manager_trip_create_search{
-  margin-bottom: 24px;
+.manager_trip_create_search {
+  /* background-color: rebeccapurple; */
+  display: flex;
+}
+
+.manager_trip_create {
+  /* background-color: aqua; */
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 16px;
 }
 
-.manager_trip_search_bar{
-  width: 300px;
-  padding: 10px;
+.manager_trip_search {
+  /* background-color: rgba(0, 128, 0, 0.434); */
+  display: flex;
+  padding: 16px;
   border-radius: 8px;
-  border: 2px solid var(--purple2);
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+  border: 1px solid #6c8c7b48;
+}
+
+.manager_trip_search_input {
+  color: var(--purple1);
+  font-size: 300;
+  width: 210px;
+  margin: 5px;
+}
+
+.manager_trip_search_select {
+  font-size: 300;
+  width: 20rem !important;
+  margin: 5px;
+}
+
+.manager_trip_search_button {
+  margin: auto 16px;
+  background-color: var(--purple3);
+  transition: background-color 0.3s ease;
+}
+
+.manager_trip_search_button:hover {
+  background-color: var(--purple2) !important;
 }
 
 .manager_trip_card {
