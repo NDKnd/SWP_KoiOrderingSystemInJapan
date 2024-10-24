@@ -38,12 +38,6 @@ const ManagerHome = () => {
         fetchData();
     }, []);
 
-    const toggleStatus = (index) => {
-        const updatedUserList = [...userList];
-        updatedUserList[index].status = updatedUserList[index].status === 1 ? 0 : 1;
-        setUserList(updatedUserList);
-    };
-
     return (
         <>
             <div className="manager-dashboard-title">
@@ -74,6 +68,7 @@ const ManagerHome = () => {
                     </div>
                     <h1>{tripList.length}</h1>
                 </div>
+                
                 <div className="manager-dashboard-card-item" id="manager-dashboard-card-item-4">
                     <div className="manager-dashborad-card-title">
                         <h3>USERS</h3>
