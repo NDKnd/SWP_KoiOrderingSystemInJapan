@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import api from "../../services/axios"; // Your axios service
+import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
 import { useLocation } from "react-router-dom";
@@ -25,14 +25,19 @@ function BookingStatusPage() {
   const location = useLocation();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchBookingData = async (bookingId) => {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
         const bookingData = bookingResponse.data;
 
         if (bookingData && bookingData.length > 0) {
-          bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
-          setBooking(bookingData[0]);
+          if (bookingId) {
+            const specificBooking = bookingData.find((b) => b.id === parseInt(bookingId));
+            setBooking(specificBooking || bookingData[0]);
+          } else {
+            bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+            setBooking(bookingData[0]);
+          }
         } else {
           message.error("No booking found.");
         }
@@ -63,7 +68,10 @@ function BookingStatusPage() {
       window.history.replaceState({}, document.title, window.location.pathname);
     };
 
-    fetchData();
+    const queryParams = new URLSearchParams(location.search);
+    const bookingId = queryParams.get("bookingId");
+
+    fetchBookingData(bookingId);
     checkPaymentStatus();
   }, [location]);
 
@@ -147,19 +155,10 @@ function BookingStatusPage() {
                   bordered
                 >
                   <div> 
-                    <p>
-                      <strong>Start Date:</strong> {booking.trip.startDate}
-                    </p>
-                    <p>
-                      <strong>End Date:</strong> {booking.trip.endDate}
-                    </p>
-                    <p>
-                      <strong>Start Location:</strong>{" "}
-                      {booking.trip.startLocation}
-                    </p>
-                    <p>
-                      <strong>End Location:</strong> {booking.trip.endLocation}
-                    </p>
+                    <p><strong>Start Date:</strong> {booking.trip.startDate}</p>
+                    <p><strong>End Date:</strong> {booking.trip.endDate}</p>
+                    <p><strong>Start Location:</strong> {booking.trip.startLocation}</p>
+                    <p><strong>End Location:</strong> {booking.trip.endLocation}</p>
                   </div>
                 </Card>
               </Col>
@@ -169,31 +168,18 @@ function BookingStatusPage() {
                   className="information-card"
                   bordered
                 >
-                  <p>
-                    <strong>Booking ID:</strong> {booking.id}
-                  </p>
-                  <p>
-                    <strong>Booking Date:</strong>{" "}
-                    {new Date(booking.bookingDate).toLocaleDateString()}
-                  </p>
+                  <p><strong>Booking ID:</strong> {booking.id}</p>
+                  <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
                   <p>
                     <strong>Status:</strong>{" "}
                     <Tag color={statusColors[booking.status]}>
                       {booking.status.replace("_", " ")}
                     </Tag>
                   </p>
-                  <p>
-                    <strong>Total Price:</strong> ${booking.totalPrice}
-                  </p>
-                  <p>
-                    <strong>Note:</strong> {booking.note}
-                  </p>
+                  <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                  <p><strong>Note:</strong> {booking.note}</p>
                   {booking.status === "AWAITING_PAYMENT" && (
-                    <Button
-                      className="checkout-button"
-                      type="primary"
-                      onClick={handleCheckout}
-                    >
+                    <Button className="checkout-button" type="primary" onClick={handleCheckout}>
                       Check Out
                     </Button>
                   )}
@@ -203,17 +189,13 @@ function BookingStatusPage() {
 
             <Row style={{ marginTop: "20px" }}>
               <Col xs={24}>
-                <Card title="Upload Ticket Image" bordered>
+                <Card title="Upload Ticket Image" bordered> 
                   <Upload onChange={handleUploadChange} showUploadList={false}>
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                   </Upload>
                   {uploadedImage && (
                     <div className="upload-btn">
-                      <img
-                        className="ticket-img"
-                        src={uploadedImage}
-                        alt="Uploaded"
-                      />
+                      <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
                     </div>
                   )}
                 </Card>
