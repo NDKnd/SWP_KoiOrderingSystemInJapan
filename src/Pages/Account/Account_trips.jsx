@@ -16,7 +16,6 @@ const tabPanels = [{ id: 1, label: "All", content: <Trips /> }];
 
 function Trips() {
   const [bookings, setBookings] = useState([]);
-  const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -25,12 +24,9 @@ function Trips() {
       try {
         const bookingResponse = await api.get("/booking/customer");
         setBookings(bookingResponse.data);
-
-        const farmResponse = await api.get("/farm");
-        setFarms(farmResponse.data);
       } catch (error) {
-        console.error("Error fetching bookings or farms:", error);
-        message.error("Failed to fetch bookings or farms.");
+        console.error("Error fetching bookings:", error);
+        message.error("Failed to fetch bookings.");
       } finally {
         setLoading(false);
       }
@@ -41,11 +37,6 @@ function Trips() {
 
   const handleDetails = (bookingId) => {
     navigate(`/book-status?bookingId=${bookingId}`);
-  };
-
-  const getFarmImageByTripId = (tripId) => {
-    const farm = farms.find((farm) => farm.trips.some((trip) => trip.id === tripId));
-    return farm.image;
   };
 
   return (
@@ -75,13 +66,20 @@ function Trips() {
                     <Card
                       hoverable
                       cover={
-                        <img
-                          alt="trip"
-                          src={getFarmImageByTripId(booking.trip.id)}
-                        />
+                        booking.trip.farms && booking.trip.farms[0] && booking.trip.farms[0].image ? (
+                          <img
+                            alt="trip"
+                            src={booking.trip.farms[0].image}
+                            style={{ height: "200px", objectFit: "cover" }}
+                          />
+                        ) : (
+                          <div>
+                            No Image Available
+                          </div>
+                        )
                       }
                       actions={[
-                        <Button 
+                        <Button
                           key={booking.id}
                           type="primary"
                           onClick={() => handleDetails(booking.id)}
@@ -102,7 +100,7 @@ function Trips() {
                                 {booking.status.replace("_", " ")}
                               </Tag>
                             </p>
-                            <p><strong>Note:</strong> {booking.note}</p>
+                            <p><strong>Note:</strong> {booking.note || "No additional notes"}</p>
                           </>
                         }
                       />
