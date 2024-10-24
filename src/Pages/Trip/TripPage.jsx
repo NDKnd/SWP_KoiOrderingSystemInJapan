@@ -86,7 +86,7 @@ function TripPage() {
 
   const getFarmByTripId = (tripId) => {
     const farm = farms.find((farm) => farm.trips.some((trip) => trip.id === tripId));
-    return farm;
+    return farm || { farmName: "", image: "" };
   };
 
   const handleSearch = () => {
