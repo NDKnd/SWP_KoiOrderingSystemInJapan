@@ -31,7 +31,10 @@ import ManagerBooking from "./Pages/Manager/ManagerBooking.jsx";
 import SaleLayOut from "./Pages/Sale_staff/SaleLayOut.jsx";
 import Sale_Booking from "./Pages/Sale_staff/Sale_Booking.jsx";
 
-import DeliverLayOut from "./Pages/Deliver/DeliverLayOut.jsx";
+import DeliverLayOut from "./Pages/Deliver/DeliverLayOut.jsx"
+import DeliverHome from "./Pages/Deliver/DeliverHome.jsx";
+import DeliverPendingOrder from "./Pages/Deliver/DeliverPendingOrder.jsx";
+import DeliverOrderHistory from "./Pages/Deliver/DeliverOrderHistory.jsx";
 
 const List_Imp_Role = [
   "MANAGER",
@@ -107,7 +110,11 @@ const routes = [
       {
         path: "",
         element: <DeliverLayOut />, // Layout của trang quản lý
-        children: [],
+        children: [
+          { path: "", element: <DeliverHome /> },
+          { path: "DeliverPendingOrder", element: <DeliverPendingOrder /> },
+          { path: "DeliverOrderHistory", element: <DeliverOrderHistory /> },
+        ],
       },
     ],
   },
