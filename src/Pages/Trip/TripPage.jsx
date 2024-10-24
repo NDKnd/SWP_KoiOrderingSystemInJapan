@@ -190,7 +190,10 @@ function TripPage() {
                       }
                     />
                     <div className="book-button">
-                      <Button type="primary" onClick={() => handleBookTrip(trip)}>
+                      <Button
+                        type="primary"
+                        onClick={() => handleBookTrip(trip)}
+                      >
                         Book Now
                       </Button>
                     </div>
