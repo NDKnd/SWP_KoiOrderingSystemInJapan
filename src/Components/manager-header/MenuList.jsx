@@ -1,7 +1,7 @@
 import { Menu } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { PiFarmBold } from "react-icons/pi";
-import { IoCarSharp, IoFish, IoLogOut } from "react-icons/io5";
+import { IoCarSharp, IoFish, IoList, IoLogOut } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { RiBillFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +60,12 @@ const MenuList = () => {
       label: "Trip",
       icon: <IoCarSharp />,
       path: "/admin/ManagerTrip",
+    },
+    {
+      key: "/admin/ManagerBooking",
+      label: "Booking list",
+      icon: <IoList />,
+      path: "/admin/ManagerBooking",
     },
     {
       key: "/admin/Setting",

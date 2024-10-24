@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Upload, Button } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Upload, Button, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
 import { useLocation } from "react-router-dom";
 import "../Trip/BookingStatusPage.css";
+import upFile from "../../utils/file";
+import storage from "../../config/firebase";
+import { deleteObject, ref } from "firebase/storage";
 
 const { Content } = Layout;
 
@@ -21,6 +24,7 @@ const statusColors = {
 function BookingStatusPage() {
   const [booking, setBooking] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
@@ -87,13 +91,49 @@ function BookingStatusPage() {
     return statusIndex[status] || 0;
   };
 
-  const handleUploadChange = ({ file }) => {
-    if (file.status === "done" || file.status === "uploading") {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUploadedImage(e.target.result);
-      };
-      reader.readAsDataURL(file.originFileObj);
+  const handleUploadChange = async (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setUploadedImage(reader.result);
+    };
+    setFile(file);
+    console.log("image : ", file);
+  };
+
+  const handleCheckIn = async () => {
+
+    const downloadURL = await upFile(file, `Bookings/${booking.id}`); // Tải file lên Firebase
+
+    if (downloadURL) {
+      // Cập nhật booking với URL của ảnh checkin
+      booking.image = downloadURL;
+      console.log("checkIn.image: ", downloadURL);
+      try {
+        const res = await api.put(`booking/check-in/${booking.id}`,
+          {
+            image: downloadURL
+          }
+        );
+        const res2 = await api.put(`booking/status/${booking.id}`, {
+          status: "CHECK_IN",
+        })
+        console.log("res: ", res.data);
+        console.log("res2: ", res2.data);
+        message.success("Check in successfully.");
+      } catch (error) {
+        deleteFile(downloadURL);
+        message.error("Failed to check in.");
+        console.log(error);
+      }
+    }
+    setFile(null);
+  };
+  const deleteFile = async (url) => {
+    if (url) {
+      const ImageRef = ref(storage, url);
+      await deleteObject(ImageRef);
     }
   };
 
@@ -153,7 +193,7 @@ function BookingStatusPage() {
                   className="information-card"
                   bordered
                 >
-                  <div style={{ marginBottom: "24px" }}> 
+                  <div style={{ marginBottom: "24px" }}>
                     <h3>Trip Information</h3>
                     <p><strong>Start Date:</strong> {booking.trip.startDate}</p>
                     <p><strong>End Date:</strong> {booking.trip.endDate}</p>
@@ -200,16 +240,44 @@ function BookingStatusPage() {
             </Row>
             <Row style={{ marginTop: "20px" }}>
               <Col xs={24}>
-                <Card title="Upload Ticket Image" bordered>
-                  <Upload onChange={handleUploadChange} showUploadList={false}>
+                {!booking.image ? (
+                  <Card title="Upload Ticket Image" bordered>
+                    <input type="file" onChange={(e) => handleUploadChange(e)} />
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
-                  {uploadedImage && (
-                    <div className="upload-btn">
-                      <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
-                    </div>
-                  )}
-                </Card>
+                    {uploadedImage && (
+                      <div className="uploaded-image-container">
+                        <div className="upload-btn">
+                          <Button
+                            icon={<UploadOutlined />}
+                            style={{
+                              width: "200%",
+                              fontSize: "20px",
+                            }}
+                            type="primary"
+                            onClick={() => {
+                              Modal.confirm({
+                                title: "Check in",
+                                content: "Are you sure you want to check in?",
+                                onOk: () => handleCheckIn(),
+                              })
+                            }}
+                          >
+                            Submit Check In
+                          </Button>
+                        </div>
+                        <div className="upload-btn">
+                          <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                )
+                  : (
+                    <Card title="Uploaded Ticket Image" bordered>
+                      <img className="ticket-img" src={booking.image} alt="Uploaded" />
+                    </Card>
+                  )
+                }
               </Col>
             </Row>
           </>

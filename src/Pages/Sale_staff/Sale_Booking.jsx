@@ -20,15 +20,59 @@ function Sale_Booking() {
   const [loading, setLoading] = useState(true);
 
   const [bookingList, setBookingList] = useState([]);
+  const [bookingListAccept, setBookingListAccept] = useState([]);
+  // const [recommendPrice, setRecommendPrice] = useState([]);
+
+  const fetchBookingManger = async () => {
+    const res = await api.get("booking/manager");
+    setLoading(false);
+    var list = res.data;
+
+    setBookingListAccept(
+      list
+        .filter((item) => item.status != "PENDING_CONFIRMATION")
+        .map((item) => ({
+          ...item,
+          key: item.id,
+        }))
+    )
+    setBookingList(
+      list
+        .filter((item) => item.status === "PENDING_CONFIRMATION")
+        .map((item) => ({
+          ...item,
+          key: item.id,
+        }))
+    );
+    console.log(res.data);
+  };
+
+  // const fetchRecommendPrice = async () => {
+  //   const res = await api.get("booking/manager");
+  //   setLoading(false);
+  //   var list = res.data;
+  //   setRecommendPrice(
+  //     list
+  //       .filter((trip) => trip.status === "PENDING_CONFIRMATION")
+  //       .map((trip) => (
+  //         {
+  //           id: trip.id,
+  //           recommend_price: 0.00,
+  //         }
+  //       ))
+  //   );
+  //   console.log("recoPriceList", list
+  //     .filter((trip) => trip.status === "PENDING_CONFIRMATION")
+  //     .map((trip) => (
+  //       {
+  //         id: trip.id,
+  //         recommend_price: 0.00,
+  //       }
+  //     )))
+  // };
 
   useEffect(() => {
-    const fetchBookingManger = async () => {
-      const res = await api.get("booking/manager");
-
-      setLoading(false);
-      setBookingList(res.data);
-      console.log(res.data);
-    };
+    // fetchRecommendPrice();
     fetchBookingManger();
   }, []);
 
@@ -45,55 +89,49 @@ function Sale_Booking() {
     );
   };
 
-  const handleUpdate = (values) => {
+  const handleUpdatePrice = (values) => {
     console.log("update", values);
+    try {
 
-    Modal.info({
-      title: "Update Price",
-      maskClosable: true,
-      content: (
-        <div className={styles.modal_content}>
-          <label htmlFor="price">Price</label>
-          <input placeholder="Enter price" type="number" id="price" ></input>
-        </div>
-      ),
-      okText: "Submit Price",
-      onOk: async () => {
-        try {
-          const res = await api.put(`booking/${values.id}`, {
-            TotalPrice: values.price,
-          });
-        } catch (error) {
-          message.error("Error updating price!");
-        }
-      },
+      Modal.info({
+        title: "Update Price",
+        maskClosable: true,
+        content: (
+          <div className={styles.modal_content}>
+            <label htmlFor="price">Price</label>
+            <input
+              placeholder="Enter price" type="number" id="price"
+              defaultValue={values.totalPrice.toFixed(2)}
+              inputMode="decimal"
+            />
+          </div>
+        ),
+        okText: "Submit Price",
+        onOk: async () => {
+          const price = document.getElementById("price").value;
+          console.log("price", price);
+          try {
+            const res = await api.put(`booking/price/${values.id}`, {
+              totalPrice: price,
+            });
+            console.log(res.data);
+            message.success({
+              content: "Update price successfully!",
+              style: { position: "relative", top: "10px", right: "10px" },
+            });
+            fetchBookingManger();
+          } catch (error) {
+            message.error("Error updating price!");
+            console.log(error.message?.data || error);
+          }
+        },
 
-    });
+      });
 
-  };
-
-  const handleDelete = (values) => {
-    console.log("delete", values);
-    Modal.confirm({
-      title: "Are you sure delete this booking?",
-      content: `Booking id: ${values}`,
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: async () => {
-        try {
-
-
-          message.success({
-            content: "Delete booking successfully!",
-            style: { position: "relative", top: "10px", right: "10px" },
-          });
-        } catch (error) {
-          console.log(error.message?.data || error);
-          message.error("Error deleting booking!");
-        }
-      },
-    });
+    } catch (error) {
+      console.log(error.message?.data || error);
+      message.error("Error updating price!");
+    }
   };
 
   const handleViewDetails = (values) => {
@@ -118,7 +156,7 @@ function Sale_Booking() {
               key: "id",
             },
             {
-              title: "Image",
+              title: "Checkin Pic",
               dataIndex: "image",
               key: "image",
               render: (image) => (
@@ -146,7 +184,13 @@ function Sale_Booking() {
               title: "Total",
               dataIndex: "totalPrice",
               key: "totalPrice",
-              render: (price) => <span style={{ color: "gray" }}>{price.toFixed(2)}</span>,
+              render: (price) => {
+                return price != null && price != 0
+                  ? <span style={{ color: "black" }}>
+                    {price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                  </span>
+                  : <span style={{ color: "gray" }}>{price}</span>
+              }
             },
             {
               title: "View Detail",
@@ -154,7 +198,7 @@ function Sale_Booking() {
               key: "viewDetail",
               render: (_, record) => (
                 <button
-                  className={styles.view_btn}
+                  className={styles.view_btn + " " + styles.button}
                   onClick={() => handleViewDetails(record)}
                 >
                   View Detail
@@ -169,18 +213,12 @@ function Sale_Booking() {
                 <>
                   <button
                     className={styles.update_btn + " " + styles.button}
-                    onClick={() => handleUpdate(record)}
+                    onClick={() => handleUpdatePrice(record)}
                   >
                     Update Price
                   </button>
-                  <button
-                    className={styles.delete_btn + " " + styles.button}
-                    onClick={() => handleDelete(record)}
-                  >
-                    Delete
-                  </button>
                 </>
-              ),
+              )
             },
           ]}
         />
@@ -191,6 +229,7 @@ function Sale_Booking() {
   return (
     <Layout style={{ padding: "0 24px 24px" }} className={styles.container}>
       {displayBooking(bookingList)}
+      {displayBooking(bookingListAccept)}
     </Layout>
   );
 }

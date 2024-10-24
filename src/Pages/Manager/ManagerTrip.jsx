@@ -20,7 +20,7 @@ import { MdOutlineCreateNewFolder } from "react-icons/md";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { IoSearchOutline } from "react-icons/io5";
+
 // Kích hoạt plugin
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -276,7 +276,7 @@ function ManagerTrip() {
         searchDateRange === null
           ? true
           : dayjs(trip.startDate).isSameOrAfter(searchDateRange[0], "day") &&
-            dayjs(trip.endDate).isSameOrBefore(searchDateRange[1], "day");
+          dayjs(trip.endDate).isSameOrBefore(searchDateRange[1], "day");
 
       // Check for farms match
       const matchesFarms =

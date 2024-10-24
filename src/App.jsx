@@ -2,17 +2,22 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Error from "./Pages/Error/Error.jsx";
 
 import LoginForm from "./Pages/Login/LoginForm.jsx";
+
 import Home from "./Pages/Home/Home.jsx";
+import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
 
 import PrivateRoute from "./Components/private-rout/PrivateRoute.jsx";
 
+import ForgotPass from "./Pages/Account/ForgotPass.jsx";
+import ResetPass from "./Pages/Account/Reset_password.jsx";
 import Account from "./Pages/Account/Account.jsx";
 import Account_profile from "./Pages/Account/Account_profile.jsx";
 import Account_trips from "./Pages/Account/Account_trips.jsx";
 import Account_generall from "./Pages/Account/Account_generall.jsx";
+
+import TripPage from "./Pages/Trip/TripPage.jsx";
 import BookingStatusPage from "./Pages/Trip/BookingStatusPage.jsx";
 
-import KoiPageFind from "./Pages/Kois/KoiPageFind.jsx";
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
 import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
 import ManagerHome from "./Pages/Manager/ManagerHome";
@@ -21,9 +26,7 @@ import ManagerKoi from "./Pages/Manager/ManagerKoi";
 import ManagerTrip from "./Pages/Manager/ManagerTrip";
 import ManagerLayOut from "./Pages/Manager/ManagerLayOut.jsx";
 import FarmFindPage from "./Pages/Farms/FarmFindPage.jsx";
-import ForgotPass from "./Pages/Account/ForgotPass.jsx";
-import ResetPass from "./Pages/Account/Reset_password.jsx";
-import TripPage from "./Pages/Trip/TripPage.jsx";
+import ManagerBooking from "./Pages/Manager/ManagerBooking.jsx";
 
 import SaleLayOut from "./Pages/Sale_staff/SaleLayOut.jsx";
 import Sale_Booking from "./Pages/Sale_staff/Sale_Booking.jsx";
@@ -70,6 +73,7 @@ const routes = [
           { path: "ManagerTrip", element: <ManagerTrip /> },
           { path: "ManagerPendingOrder", element: <PendingOrder /> },
           { path: "ManagerOrderHistory", element: <OrderHistory /> },
+          { path: "ManagerBooking", element: <ManagerBooking /> },
         ],
       },
     ],
