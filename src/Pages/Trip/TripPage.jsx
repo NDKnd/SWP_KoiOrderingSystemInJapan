@@ -12,7 +12,6 @@ const { RangePicker } = DatePicker;
 function TripPage() {
   const [tripList, setTripList] = useState([]);
   const [filteredTripList, setFilteredTripList] = useState([]);
-  const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const tripsPerPage = 12;
@@ -32,15 +31,6 @@ function TripPage() {
       message.error("Failed to fetch trips.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchFarms = async () => {
-    try {
-      const response = await api.get("/farm");
-      setFarms(response.data);
-    } catch (error) {
-      message.error("Failed to fetch farms.");
     }
   };
 
@@ -84,14 +74,9 @@ function TripPage() {
     }
   };
 
-  const getFarmByTripId = (tripId) => {
-    const farm = farms.find((farm) => farm.trips.some((trip) => trip.id === tripId));
-    return farm || { farmName: "", image: "" };
-  };
-
   const handleSearch = () => {
     const filtered = tripList.filter((trip) => {
-      const matchesFarmName = farmName ? getFarmByTripId(trip.id).farmName.toLowerCase().includes(farmName.toLowerCase()) : true;
+      const matchesFarmName = farmName ? trip.farms.some((farm) => farm.farmName.toLowerCase().includes(farmName.toLowerCase())) : true;
       const matchesStartLocation = startLocation ? trip.startLocation.toLowerCase().includes(startLocation.toLowerCase()) : true;
       const matchesEndLocation = endLocation ? trip.endLocation.toLowerCase().includes(endLocation.toLowerCase()) : true;
       const matchesDateRange =
@@ -106,7 +91,6 @@ function TripPage() {
 
   useEffect(() => {
     fetchTrips();
-    fetchFarms();
   }, []);
 
   const indexOfLastTrip = currentPage * tripsPerPage;
@@ -169,37 +153,33 @@ function TripPage() {
         ) : (
           <>
             <Row gutter={[16, 16]}>
-              {currentTripList.map((trip) => (
-                <Col xs={24} sm={12} md={8} lg={6} key={trip.tripId}>
-                  <Card hoverable className="trip-card">
-                    <div className="trip-image">
-                      <img
-                        src={getFarmByTripId(trip.id).image}
-                        alt={getFarmByTripId(trip.id).farmName}
+              {currentTripList.map((trip) =>
+                trip.farms.map((farm) => (
+                  <Col xs={24} sm={12} md={8} lg={6} key={`${trip.tripId}-${farm.id}`}>
+                    <Card hoverable className="trip-card">
+                      <div className="trip-image">
+                        <img src={farm.image} alt={farm.farmName} />
+                      </div>
+                      <Card.Meta
+                        title={`Trip to: ${farm.farmName}`}
+                        description={
+                          <>
+                            <div>From: {trip.startDate}</div>
+                            <div>To: {trip.endDate}</div>
+                            <div>Depart location: {trip.startLocation}</div>
+                            <div>Apart location: {trip.endLocation}</div>
+                          </>
+                        }
                       />
-                    </div>
-                    <Card.Meta
-                      title={getFarmByTripId(trip.id).farmName}
-                      description={
-                        <>
-                          <div>From: {trip.startDate}</div>
-                          <div>To: {trip.endDate}</div>
-                          <div>Depart location: {trip.startLocation}</div>
-                          <div>Apart location: {trip.endLocation}</div>
-                        </>
-                      }
-                    />
-                    <div className="book-button">
-                      <Button
-                        type="primary"
-                        onClick={() => handleBookTrip(trip)}
-                      >
-                        Book Now
-                      </Button>
-                    </div>
-                  </Card>
-                </Col>
-              ))}
+                      <div className="book-button">
+                        <Button type="primary" onClick={() => handleBookTrip(trip)}>
+                          Book Now
+                        </Button>
+                      </div>
+                    </Card>
+                  </Col>
+                ))
+              )}
             </Row>
             <Pagination
               current={currentPage}
