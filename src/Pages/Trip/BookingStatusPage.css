@@ -22,8 +22,9 @@
   display: flex;
   flex-direction: row-reverse;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
+  flex-direction: column;
 }
 
 .upload-btn{
@@ -41,6 +42,8 @@
   background-color: #1890ff;
   border: none;
   color: white;
+  width: 90px;
+  margin-top: 10px;
 }
 
 .checkout-button:hover {
@@ -57,4 +60,16 @@
 
 .steps-description-active {
   color: #52c41a;
+}
+
+.cancel-button {
+  background-color: #fb2d31;
+  border: none;
+  color: white;
+  width: 90px;
+  margin-top: 10px;
+}
+
+.cancel-button:hover {
+  background-color: #eea5a5 !important;
 }

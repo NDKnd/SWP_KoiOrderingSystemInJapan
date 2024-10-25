@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Upload, Button, Modal } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
@@ -152,6 +152,19 @@ function BookingStatusPage() {
       });
   };
 
+  const handleCancel = async () => {
+    try {
+      await api.put(`/booking/status/${booking.id}`, {
+        status: "CANCEL",
+      });
+      setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
+      message.success("Booking canceled successfully.");
+    } catch (error) {
+      console.error("Error canceling booking:", error);
+      message.error("Failed to cancel booking.");
+    }
+  };
+
   return (
     <Layout>
       <Header />
@@ -161,30 +174,38 @@ function BookingStatusPage() {
           <Spin tip="Loading booking status..." />
         ) : booking ? (
           <>
-            <Steps
-              current={getCurrentStep(booking.status)}
-              status={booking.status === "CANCELED" ? "error" : "process"}
-            >
+            <Steps current={getCurrentStep(booking.status)}>
               <Steps.Step
                 title="Pending Confirmation"
-                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
+                description={booking.status === "CANCEL"}
+                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="Awaiting Payment"
-                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
+                description={booking.status === "CANCEL"}
+                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="In Progress"
-                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
+                description={booking.status === "CANCEL"}
+                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="Check In"
-                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
+                description={booking.status === "CANCEL"}
+                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="Completed"
-                description={booking.status === "CANCELED" ? "This trip has been canceled" : ""}
+                description={booking.status === "CANCEL"}
+                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
+              {booking.status === "CANCEL" && (
+                <Steps.Step
+                  title="Canceled"
+                  status="error"
+                />
+              )}
             </Steps>
             <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
               <Col xs={24} md={12}>
@@ -235,51 +256,59 @@ function BookingStatusPage() {
                       Check Out
                     </Button>
                   )}
+                  {booking.status != "CANCEL" && (
+                    <p>
+                      <Button className="cancel-button" type="primary" onClick={handleCancel}>
+                        Cancel
+                      </Button>
+                    </p>
+                  )}
                 </Card>
               </Col>
             </Row>
-            <Row style={{ marginTop: "20px" }}>
-              <Col xs={24}>
-                {!booking.image ? (
-                  <Card title="Upload Ticket Image" bordered>
-                    <input type="file" onChange={(e) => handleUploadChange(e)} />
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    {uploadedImage && (
-                      <div className="uploaded-image-container">
-                        <div className="upload-btn">
-                          <Button
-                            icon={<UploadOutlined />}
-                            style={{
-                              width: "200%",
-                              fontSize: "20px",
-                            }}
-                            type="primary"
-                            onClick={() => {
-                              Modal.confirm({
-                                title: "Check in",
-                                content: "Are you sure you want to check in?",
-                                onOk: () => handleCheckIn(),
-                              })
-                            }}
-                          >
-                            Submit Check In
-                          </Button>
+            {booking.status === "CHECK_IN" && (
+              <Row style={{ marginTop: "20px" }}>
+                <Col xs={24}>
+                  {!booking.image ? (
+                    <Card title="Upload Ticket Image" bordered>
+                      <input type="file" onChange={(e) => handleUploadChange(e)} />
+                      {uploadedImage && (
+                        <div className="uploaded-image-container">
+                          <div className="upload-btn">
+                            <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
+                          </div>
+                          <div className="upload-btn">
+                            <Button
+                              icon={<UploadOutlined />}
+                              style={{
+                                width: "200%",
+                                fontSize: "20px",
+                              }}
+                              type="primary"
+                              onClick={() => {
+                                Modal.confirm({
+                                  title: "Check in",
+                                  content: "Are you sure you want to check in?",
+                                  onOk: () => handleCheckIn(),
+                                })
+                              }}
+                            >
+                              Submit Check In
+                            </Button>
+                          </div>
                         </div>
-                        <div className="upload-btn">
-                          <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                )
-                  : (
-                    <Card title="Uploaded Ticket Image" bordered>
-                      <img className="ticket-img" src={booking.image} alt="Uploaded" />
+                      )}
                     </Card>
                   )
-                }
-              </Col>
-            </Row>
+                    : (
+                      <Card title="Uploaded Ticket Image" bordered>
+                        <img className="ticket-img" src={booking.image} alt="Uploaded" />
+                      </Card>
+                    )
+                  }
+                </Col>
+              </Row>
+            )}
           </>
         ) : (
           <p>No trip status available.</p>
