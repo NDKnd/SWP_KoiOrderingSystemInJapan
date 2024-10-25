@@ -123,7 +123,7 @@ function Header() {
       ) : (
         <>
           <div className={path_css.nav_item}>
-            <NavLink to="/orders">
+            <NavLink to="/OrderPage">
               <Badge count={quantity} className={path_css.badge}>
                 <FaShoppingBag />
               </Badge>
