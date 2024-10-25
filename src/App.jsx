@@ -18,6 +18,8 @@ import Account_generall from "./Pages/Account/Account_generall.jsx";
 import TripPage from "./Pages/Trip/TripPage.jsx";
 import BookingStatusPage from "./Pages/Trip/BookingStatusPage.jsx";
 
+import OrderPage from "./Pages/order/OrderPage.jsx";
+
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
 import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
 import ManagerHome from "./Pages/Manager/ManagerHome";
@@ -59,6 +61,7 @@ const routes = [
       { path: "FarmFindPage", element: <FarmFindPage /> },
       { path: "book-status", element: <BookingStatusPage /> },
       { path: "TripPage", element: <TripPage /> },
+      { path: "OrderPage", element: <OrderPage /> },
     ]
   },
 
