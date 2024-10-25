@@ -43,7 +43,7 @@ const PrivateRoute = ({ allow_Role = [] }) => {
       // handle role
       if (!allow_Role.includes(userInfo.role)) {
         message.error("You are not allowed to access that page");
-        navigate("/");
+        navigate("/login");
         return;
       }
 

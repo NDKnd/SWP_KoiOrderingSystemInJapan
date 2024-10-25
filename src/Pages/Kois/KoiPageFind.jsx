@@ -66,6 +66,15 @@ function KoiPageFind() {
     fetchAllKoiAndTypes();
   }, []);
 
+  const handleOrderClick = async () => {
+    try {
+      message.success("Order Koi fish completed successfully!");
+    } catch (error) {
+      console.error("Error order Koi fish:", error);
+      message.error("Failed to fetch Koi fish data.");
+    }
+  };
+
   return (
     <Layout>
       <Header />
@@ -165,7 +174,8 @@ function KoiPageFind() {
                         }
                       />
                       <div className="order-button">
-                        <Button type="primary">Order</Button>
+                        <Button type="primary"
+                          onClick={() => handleOrderClick(koi)}>Order</Button>
                       </div>
                     </Card>
                   </Col>

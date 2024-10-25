@@ -20,12 +20,6 @@ function SaleLayOut() {
       icon: <FaCogs />,
       path: "/sale",
     },
-    // {
-    //   key: 1,
-    //   label: "Booking",
-    //   icon: <FaUserAlt />,
-    //   path: "/profile/detail",
-    // },
     {
       key: 2,
       label: "Logout",
