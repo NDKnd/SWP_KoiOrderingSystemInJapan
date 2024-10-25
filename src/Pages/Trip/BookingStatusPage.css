@@ -73,3 +73,7 @@
 .cancel-button:hover {
   background-color: #eea5a5 !important;
 }
+
+.feedback-card {
+  margin-top: 20px;
+}

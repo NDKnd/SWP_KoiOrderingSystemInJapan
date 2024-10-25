@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Upload, Button, Modal } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input } from "antd";
 import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -26,6 +26,7 @@ function BookingStatusPage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [feedback, setFeedback] = useState("");
   const location = useLocation();
 
   useEffect(() => {
@@ -165,6 +166,16 @@ function BookingStatusPage() {
     }
   };
 
+  const handleFeedbackSubmit = async () => {
+    try {
+      await api.put();
+      message.success("Thank you for your feedback!");
+      setFeedback("");
+    } catch (error) {
+      message.error("Failed to submit feedback.");
+    }
+  };
+
   return (
     <Layout>
       <Header />
@@ -256,13 +267,30 @@ function BookingStatusPage() {
                       Check Out
                     </Button>
                   )}
-                  {booking.status != "CANCEL" && (
+                  {booking.status != "CANCEL" && booking.status != "COMPLETED" && (
                     <p>
                       <Button className="cancel-button" type="primary" onClick={handleCancel}>
                         Cancel
                       </Button>
                     </p>
                   )}
+                  {(booking.status === "COMPLETED" || booking.status === "CANCELED") && (
+                  <Card title="Feedback" className="feedback-card" bordered>
+                    <Input.TextArea
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
+                      placeholder="Please leave your feedback here"
+                      rows={4}
+                    />
+                    <Button
+                      type="primary"
+                      onClick={handleFeedbackSubmit}
+                      style={{ marginTop: "10px" }}
+                    >
+                      Submit
+                    </Button>
+                  </Card>
+                )}
                 </Card>
               </Col>
             </Row>
