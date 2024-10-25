@@ -83,7 +83,7 @@ const LoginForm = () => {
       } else if (role == "MANAGER") {
         navigate("/admin");
       } else if (role == "CONSULTING_STAFF") {
-        navigate("consulting");
+        navigate("/consulting");
       }
     } catch (err) {
       console.log(err);

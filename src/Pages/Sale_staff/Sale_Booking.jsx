@@ -1,27 +1,32 @@
-import { Divider, Drawer, Layout, message, Modal, Table } from "antd";
+import { Col, Drawer, Layout, List, message, Modal, Row, Table } from "antd";
 import styles from "./SaleLayOut.module.css";
 import { useEffect, useState } from "react";
 import api from "../../services/axios";
 import dayjs from "dayjs";
 
 const dateFormat = "MM-DD-YYYY";
-const statusIndex = {
-  PENDING_CONFIRMATION: 0,
-  AWAITING_PAYMENT: 1,
-  IN_PROGRESS: 2,
-  CHECK_IN: 3,
-  COMPLETED: 4,
-  CANCELED: 5,
-};
+const Able = [
+  "PENDING_CONFIRMATION",
+];
+const Unable = [
+  "AWAITING_PAYMENT",
+  "IN_PROGRESS",
+  "CHECK_IN",
+  "COMPLETED",
+  "CANCELED",
+];
+
 
 function Sale_Booking() {
   console.log("token", localStorage.getItem("token"));
 
   const [loading, setLoading] = useState(true);
 
+  const [visible, setVisible] = useState(false);
+  const [drawerInformation, setDrawerInformation] = useState([]);
+
   const [bookingList, setBookingList] = useState([]);
   const [bookingListAccept, setBookingListAccept] = useState([]);
-  // const [recommendPrice, setRecommendPrice] = useState([]);
 
   const fetchBookingManger = async () => {
     const res = await api.get("booking/manager");
@@ -47,32 +52,7 @@ function Sale_Booking() {
     console.log(res.data);
   };
 
-  // const fetchRecommendPrice = async () => {
-  //   const res = await api.get("booking/manager");
-  //   setLoading(false);
-  //   var list = res.data;
-  //   setRecommendPrice(
-  //     list
-  //       .filter((trip) => trip.status === "PENDING_CONFIRMATION")
-  //       .map((trip) => (
-  //         {
-  //           id: trip.id,
-  //           recommend_price: 0.00,
-  //         }
-  //       ))
-  //   );
-  //   console.log("recoPriceList", list
-  //     .filter((trip) => trip.status === "PENDING_CONFIRMATION")
-  //     .map((trip) => (
-  //       {
-  //         id: trip.id,
-  //         recommend_price: 0.00,
-  //       }
-  //     )))
-  // };
-
   useEffect(() => {
-    // fetchRecommendPrice();
     fetchBookingManger();
   }, []);
 
@@ -110,6 +90,10 @@ function Sale_Booking() {
         onOk: async () => {
           const price = document.getElementById("price").value;
           console.log("price", price);
+          if (price < 10000) {
+            message.error("Price must be at least 10,000 VND!");
+            return;
+          }
           try {
             const res = await api.put(`booking/price/${values.id}`, {
               totalPrice: price,
@@ -135,9 +119,10 @@ function Sale_Booking() {
   };
 
   const handleViewDetails = (values) => {
-    console.log("view details", values);
+    console.log("values", values);
+    setDrawerInformation(values);
+    setVisible(true);
   };
-
   const displayBooking = (booking) => {
     return (
       <div className={styles.box_table}>
@@ -210,14 +195,13 @@ function Sale_Booking() {
               dataIndex: "action",
               key: "action",
               render: (_, record) => (
-                <>
-                  <button
-                    className={styles.update_btn + " " + styles.button}
-                    onClick={() => handleUpdatePrice(record)}
-                  >
-                    Update Price
-                  </button>
-                </>
+                <button
+                  className={styles.update_btn + " " + styles.button}
+                  onClick={() => handleUpdatePrice(record)}
+                  disabled={Able.includes(record.status) === false}
+                >
+                  Update Price
+                </button>
               )
             },
           ]}
@@ -230,6 +214,96 @@ function Sale_Booking() {
     <Layout style={{ padding: "0 24px 24px" }} className={styles.container}>
       {displayBooking(bookingList)}
       {displayBooking(bookingListAccept)}
+
+      <Drawer
+        title="Information Details"
+        placement="right"
+        loading={loading}
+        closable={true}
+        onClose={() => setVisible(false)}
+        open={visible}
+        width={800}
+      >
+        <Row className={styles.booking_info}>
+          <Col span={14} >
+            <p>
+              <b>Booking ID: </b>
+              {drawerInformation.id}
+            </p>
+            <p>
+              <b>Booking Date: </b>
+              {dayjs(drawerInformation.bookingDate).format(dateFormat)}
+            </p>
+            <p>
+              <b>Note: </b>
+              {drawerInformation.note}
+            </p>
+          </Col>
+          <Col span={8} >
+            <p className={styles.total_price}>
+              <b>Total: </b>
+              <span>{drawerInformation.totalPrice} VND</span>
+            </p>
+          </Col>
+        </Row>
+
+        <Row className={styles.trip_info}>
+          {drawerInformation?.trip && (
+            <>
+              <Row>
+                <p>
+                  <b>Trip ID: </b>
+                  {drawerInformation.trip.id}
+                </p>
+                <p>
+                  <b>Start date: </b>
+                  {drawerInformation.trip.startDate}
+                </p>
+                <p>
+                  <b>Start location: </b>
+                  {drawerInformation.trip.startLocation}
+                </p>
+                <p>
+                  <b>End location: </b>
+                  {drawerInformation.trip.endLocation}
+                </p>
+              </Row>
+
+              <Row className={styles.farm_list} >
+                <List
+                  bordered
+                  dataSource={drawerInformation.trip.farms}
+                  renderItem={(item) => (
+                    <List.Item className={styles.farm}>
+                      {/* Hình ảnh của farm */}
+                      <img
+                        src={item.image || "https://via.placeholder.com/60"} // Hiển thị hình ảnh hoặc placeholder
+                        alt={item.farmName}
+                        className={styles.farm_image}
+                      />
+                      {/* Nội dung farm */}
+                      <div className={styles.farm_content}>
+                        <h3>{item.farmName || "No farm name available"}</h3>
+                        {item.location || "No farm location available"}
+                        <br />
+                        {item.phone || "No farm phone available"}
+                        <br />
+                        {item.email || "No farm email available"}
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </Row>
+            </>
+          )}
+        </Row>
+
+        <Row className={styles.drawer_image}>
+          <img src={drawerInformation.image} alt="checkInImage" />
+        </Row>
+
+      </Drawer>
+
     </Layout>
   );
 }

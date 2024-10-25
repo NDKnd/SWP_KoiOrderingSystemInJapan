@@ -19,7 +19,7 @@ function Header() {
     if (payload.exp * 1000 - Date.now() < 0) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      navigate("/");
+      navigate("/login");
     }
   }
   const tokenExpired = (token) => {

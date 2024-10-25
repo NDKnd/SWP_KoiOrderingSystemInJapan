@@ -38,6 +38,9 @@ import DeliverHome from "./Pages/Deliver/DeliverHome.jsx";
 import DeliverPendingOrder from "./Pages/Deliver/DeliverPendingOrder.jsx";
 import DeliverOrderHistory from "./Pages/Deliver/DeliverOrderHistory.jsx";
 
+import ConsultingLayOut from "./Pages/Consulting/ConsultingLayOut.jsx";
+import ConsultingPage from "./Pages/Consulting/ConsultingPage.jsx";
+
 const List_Imp_Role = [
   "MANAGER",
   "SALE_STAFF",
@@ -89,7 +92,7 @@ const routes = [
     children: [
       {
         path: "",
-        element: <SaleLayOut />, // Layout của trang quản lý
+        element: <SaleLayOut />, // Layout của trang quản lý sale
         children: [{ path: "", element: <Sale_Booking /> }],
       },
     ],
@@ -100,8 +103,8 @@ const routes = [
     children: [
       {
         path: "",
-        element: <ManagerLayOut />, // Layout của trang quản lý
-        children: [{ path: "", element: <ManagerHome /> }],
+        element: <ConsultingLayOut />, // Layout của trang tư vấn
+        children: [{ path: "", element: <ConsultingPage /> }],
       },
     ],
   },
