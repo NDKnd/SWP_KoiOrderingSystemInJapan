@@ -14,11 +14,11 @@ import Account from "./Pages/Account/Account.jsx";
 import Account_profile from "./Pages/Account/Account_profile.jsx";
 import Account_trips from "./Pages/Account/Account_trips.jsx";
 import Account_generall from "./Pages/Account/Account_generall.jsx";
+import Order from "./Pages/Account/Account_order.jsx";
 
 import TripPage from "./Pages/Trip/TripPage.jsx";
 import BookingStatusPage from "./Pages/Trip/BookingStatusPage.jsx";
 
-import OrderPage from "./Pages/order/OrderPage.jsx";
 
 import PendingOrder from "./Pages/Manager/PendingOrder.jsx";
 import OrderHistory from "./Pages/Manager/OrderHistory.jsx";
@@ -61,7 +61,6 @@ const routes = [
       { path: "FarmFindPage", element: <FarmFindPage /> },
       { path: "book-status", element: <BookingStatusPage /> },
       { path: "TripPage", element: <TripPage /> },
-      { path: "OrderPage", element: <OrderPage /> },
     ]
   },
 
@@ -132,6 +131,7 @@ const routes = [
           { path: "general", element: <Account_generall /> },
           { path: "detail", element: <Account_profile /> },
           { path: "trips", element: <Account_trips /> },
+          { path: "Order", element: <Order /> },
         ],
       },
     ],
