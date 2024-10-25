@@ -144,9 +144,15 @@ function Sale_Booking() {
               title: "Checkin Pic",
               dataIndex: "image",
               key: "image",
-              render: (image) => (
-                <img className={styles.img_first_farm} src={image} alt="img" />
-              ),
+              render: (image) => {
+                return image != null ?
+                  (
+                    <img className={styles.img_first_farm} src={image} alt="img" />
+                  )
+                  : (
+                    <div className={styles.img_first_farm}>No Image</div>
+                  )
+              },
             },
             {
               title: "Booking Date",
@@ -164,6 +170,12 @@ function Sale_Booking() {
               dataIndex: "status",
               key: "status",
               render: (status) => handleStatus(status),
+            },
+            {
+              title: "User Name",
+              dataIndex: "account",
+              key: "account",
+              render: (account) => account?.username,
             },
             {
               title: "Total",
