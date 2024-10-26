@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from './ConsultingStyle.module.css'
-import { Col, Drawer, Layout, List, message, Row, Table } from 'antd'
+import { Col, Drawer, Layout, List, message, Modal, Row, Table } from 'antd'
 import api from "../../services/axios";
 import dayjs from "dayjs";
 
@@ -166,7 +166,15 @@ function ConsultingPage() {
                                 <>
                                     <button
                                         className={styles.update_btn + " " + styles.button}
-                                        onClick={() => handleUpdateStatus(record)}
+                                        onClick={() => {
+                                            Modal.confirm({
+                                                title: "Update Status",
+                                                content: "Are you sure you want to update status?",
+                                                onOk: () => {
+                                                    handleUpdateStatus(record)
+                                                },
+                                            })
+                                        }}
                                         disabled={CheckInList.includes(record.status) === false}
                                     >
                                         Update Status

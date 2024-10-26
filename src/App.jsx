@@ -14,7 +14,7 @@ import Account from "./Pages/Account/Account.jsx";
 import Account_profile from "./Pages/Account/Account_profile.jsx";
 import Account_trips from "./Pages/Account/Account_trips.jsx";
 import Account_generall from "./Pages/Account/Account_generall.jsx";
-import Order from "./Pages/Account/Account_order.jsx";
+import Account_order from "./Pages/Account/Account_order.jsx";
 
 import TripPage from "./Pages/Trip/TripPage.jsx";
 import BookingStatusPage from "./Pages/Trip/BookingStatusPage.jsx";
@@ -40,6 +40,7 @@ import DeliverOrderHistory from "./Pages/Deliver/DeliverOrderHistory.jsx";
 
 import ConsultingLayOut from "./Pages/Consulting/ConsultingLayOut.jsx";
 import ConsultingPage from "./Pages/Consulting/ConsultingPage.jsx";
+import Consulting_orders from "./Pages/Consulting/Consulting_orders.jsx";
 
 const List_Imp_Role = [
   "MANAGER",
@@ -104,7 +105,9 @@ const routes = [
       {
         path: "",
         element: <ConsultingLayOut />, // Layout của trang tư vấn
-        children: [{ path: "", element: <ConsultingPage /> }],
+        children: [{ path: "", element: <ConsultingPage /> },
+        { path: "orders", element: <Consulting_orders /> },
+        ],
       },
     ],
   },
@@ -134,7 +137,7 @@ const routes = [
           { path: "general", element: <Account_generall /> },
           { path: "detail", element: <Account_profile /> },
           { path: "trips", element: <Account_trips /> },
-          { path: "Order", element: <Order /> },
+          { path: "orders", element: <Account_order /> },
         ],
       },
     ],

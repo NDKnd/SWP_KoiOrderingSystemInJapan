@@ -6,10 +6,12 @@ import {
   FaUserAlt,
   FaTruckPickup,
   FaCogs,
+  FaShoppingCart,
 } from "react-icons/fa";
 import Headers from "../../Components/Header/Header";
 import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../Components/SideMenu/SideMenu.css";
+import { FaShop } from "react-icons/fa6";
 
 function Account() {
   const navigate = useNavigate(); // Khai báo useNavigate
@@ -43,6 +45,12 @@ function Account() {
           label: "Trips",
           icon: <FaTruckPickup />,
           path: "/profile/trips", // Đường dẫn tới trang Orders
+        },
+        {
+          key: 1.4,
+          label: "Orders",
+          icon: <FaShoppingCart />,
+          path: "/profile/orders", // Đường dẫn tới trang Settings
         },
       ],
     },

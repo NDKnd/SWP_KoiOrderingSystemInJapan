@@ -30,6 +30,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(-360deg);
   }
@@ -37,6 +38,7 @@
 
 .account_profile_content_details {
   margin-top: 1rem;
+
   span {
     color: var(--purple1);
   }
@@ -46,4 +48,58 @@
   margin-top: 1rem;
   width: 30%;
   transition: 0.3s;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.status.status_pending {
+  background-color: #f2c94c;
+}
+
+.status.status_awaiting_payment {
+  background-color: #9baff0;
+}
+
+.status.status_in_progress {
+  background-color: #8bc34a;
+}
+
+.status.status_check_in {
+  background-color: #3bdc4074;
+}
+
+.status.status_completed {
+  background-color: #b3baef;
+}
+
+.status.status_canceled {
+  background-color: #e53935;
+}
+
+/* status orders */
+.status.status_on_delivery {
+  background-color: #3a4bca81;
+}
+
+.button {
+  border: none;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.038);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.538);
+  transition: background-color 0.3s;
+}
+
+.update_btn {
+  background-color: hsla(226, 74%, 77%, 0.525);
 }

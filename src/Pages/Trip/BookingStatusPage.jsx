@@ -31,6 +31,29 @@ function BookingStatusPage() {
   const location = useLocation();
 
   useEffect(() => {
+
+    const fetchTransactions = async (id) => {
+      console.log("id: ", id)
+      try {
+        const response = await api.post("transaction/booking?bookingId=" + id);
+        console.log("res transaction: ", response.data)
+        message.success(response.data);
+      } catch (error) {
+        console.error("Error transaction orders:", error)
+        message.error("Failed to transaction.")
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const vnp_ResponseCode = urlParams.get('vnp_ResponseCode');
+    const bookID = urlParams.get('bookingId');
+    console.log(vnp_ResponseCode + "-" + bookID)
+    if (vnp_ResponseCode != null && bookID != null) {
+      if (vnp_ResponseCode === '00') {
+        fetchTransactions(bookID);
+      }
+    }
+
     const fetchBookingData = async (bookingId) => {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
@@ -260,6 +283,7 @@ function BookingStatusPage() {
                   {booking.trip.farms && booking.trip.farms.length > 0 ? (
                     booking.trip.farms.map((farm) => (
                       <div key={farm.id}>
+                        <p><strong>Name:</strong> {farm.farmName}</p>
                         <p><strong>Location:</strong> {farm.location}</p>
                         <p><strong>Phone:</strong> {farm.phone}</p>
                         <p><strong>Email:</strong> {farm.email}</p>
@@ -299,28 +323,26 @@ function BookingStatusPage() {
                     </p>
                   )}
                   {(booking.status === "COMPLETED" || booking.status === "CANCELED") && (
-                    <Card title="Feedback" className="feedback-card" bordered>
-                      <p>Rate your experience:</p>
-                      <Rate value={rating} onChange={setRating} /> {/* Rating component */}
-                      <Input.TextArea
-                        value={feedback}
-                        onChange={(e) => setFeedback(e.target.value)}
-                        placeholder="Please leave your feedback here"
-                        rows={4}
-                      />
-                      <Button
-                        type="primary"
-                        onClick={handleFeedbackSubmit}
-                        style={{ marginTop: "10px" }}
-                      >
-                        Submit
-                      </Button>
-                    </Card>
-                  )}
+                  <Card title="Feedback" className="feedback-card" bordered>
+                    <Input.TextArea
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
+                      placeholder="Please leave your feedback here"
+                      rows={4}
+                    />
+                    <Button
+                      type="primary"
+                      onClick={handleFeedbackSubmit}
+                      style={{ marginTop: "10px" }}
+                    >
+                      Submit
+                    </Button>
+                  </Card>
+                )}
                 </Card>
               </Col>
             </Row>
-            {booking.status === "CHECK_IN" && (
+            {["IN_PROGRESS", "CHECK_IN"].includes(booking.status) && (
               <Row style={{ marginTop: "20px" }}>
                 <Col xs={24}>
                   {!booking.image ? (
