@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate } from "antd";
 import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -27,6 +27,7 @@ function BookingStatusPage() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
@@ -167,15 +168,38 @@ function BookingStatusPage() {
   };
 
   const handleFeedbackSubmit = async () => {
+    if (!feedback.trim()) {
+      message.error("Please enter feedback before submitting.");
+      return;
+    }
+    if (rating < 1) {
+      message.error("Please select a rating before submitting.");
+      return;
+    }
+    
     try {
-      await api.put();
-      message.success("Thank you for your feedback!");
-      setFeedback("");
+      const response = await api.post(
+        "/feedback",
+        {
+          rating: rating,
+          comment: feedback,
+          bookingId: booking.id,
+        }
+      );
+
+      if (response.status === 200) {
+        message.success("Thank you for your feedback!");
+        setFeedback("");
+        setRating(0);
+      } else {
+        message.error("Failed to submit feedback. Please try again.");
+      }
     } catch (error) {
+      console.error("Error submitting feedback:", error);
       message.error("Failed to submit feedback.");
     }
   };
-
+  
   return (
     <Layout>
       <Header />
@@ -275,22 +299,24 @@ function BookingStatusPage() {
                     </p>
                   )}
                   {(booking.status === "COMPLETED" || booking.status === "CANCELED") && (
-                  <Card title="Feedback" className="feedback-card" bordered>
-                    <Input.TextArea
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
-                      placeholder="Please leave your feedback here"
-                      rows={4}
-                    />
-                    <Button
-                      type="primary"
-                      onClick={handleFeedbackSubmit}
-                      style={{ marginTop: "10px" }}
-                    >
-                      Submit
-                    </Button>
-                  </Card>
-                )}
+                    <Card title="Feedback" className="feedback-card" bordered>
+                      <p>Rate your experience:</p>
+                      <Rate value={rating} onChange={setRating} /> {/* Rating component */}
+                      <Input.TextArea
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                        placeholder="Please leave your feedback here"
+                        rows={4}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={handleFeedbackSubmit}
+                        style={{ marginTop: "10px" }}
+                      >
+                        Submit
+                      </Button>
+                    </Card>
+                  )}
                 </Card>
               </Col>
             </Row>

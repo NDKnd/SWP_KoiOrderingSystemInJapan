@@ -20,7 +20,6 @@ function KoiPageFind() {
   const [currentPage, setCurrentPage] = useState(1);
   const koiPerPage = 12;
 
-  // Function to fetch all Koi fishes and types
   const fetchAllKoiAndTypes = async () => {
     try {
       const response = await api.get("/koi");
@@ -43,7 +42,7 @@ function KoiPageFind() {
   const handleSearch = () => {
     const filtered = koiList.filter((koi) => {
       const matchesKoiName = koi.koiName.toLowerCase().includes(koiName.toLowerCase());
-      const matchesFarmName = koi.farmName.toLowerCase().includes(farmName.toLowerCase());
+      const matchesFarmName = koi.farm.farmName.toLowerCase().includes(farmName.toLowerCase());
       const matchesType = type ? koi.type === type : true;
       const matchesPrice = koi.price >= priceRange[0] && koi.price <= priceRange[1];
       return matchesKoiName && matchesFarmName && matchesType && matchesPrice;
@@ -61,11 +60,6 @@ function KoiPageFind() {
     setCurrentPage(page);
   };
 
-  // Fetch all Koi fishes and types
-  useEffect(() => {
-    fetchAllKoiAndTypes();
-  }, []);
-
   const handleOrderClick = async () => {
     try {
       message.success("Order Koi fish completed successfully!");
@@ -74,6 +68,12 @@ function KoiPageFind() {
       message.error("Failed to fetch Koi fish data.");
     }
   };
+
+  // Fetch all Koi fishes and types
+  useEffect(() => {
+    fetchAllKoiAndTypes();
+  }, []);
+
 
   return (
     <Layout>
@@ -167,7 +167,7 @@ function KoiPageFind() {
                         title={koi.koiName}
                         description={
                           <>
-                            <div>Farm: {koi.farmName}</div>
+                            <div>Farm: {koi.farm.farmName}</div>
                             <div>Type: {koi.type}</div>
                             <div>Price: ${koi.price}</div>
                           </>

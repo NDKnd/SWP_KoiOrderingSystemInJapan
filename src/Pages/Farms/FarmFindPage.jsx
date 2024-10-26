@@ -23,10 +23,8 @@ const { Content } = Layout;
 const { Option } = Select;
 
 function FarmFindPage() {
-  const [koiName, setKoiName] = useState("");
   const [farmName, setFarmName] = useState("");
-  const [type, setType] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 500]);
+  const [farmLocation, setFarmLocation] = useState("");
 
   const [farmList, setFarmList] = useState([]);
   const [filterFarmList, setFilterFarmList] = useState([]);
@@ -56,19 +54,16 @@ function FarmFindPage() {
 
   // Function to search
   const handleSearch = () => {
-    // const filtered = farmList.filter((farm) => {
-    //   const matchesKoiName = farm.farmName
-    //     .toLowerCase()
-    //     .includes(koiName.toLowerCase());
-    //   const matchesFarmName = farm.farmName
-    //     .toLowerCase()
-    //     .includes(farmName.toLowerCase());
-    //   const matchesType = type ? farm.type === type : true;
-    //   const matchesPrice =
-    //     farm.price >= priceRange[0] && farm.price <= priceRange[1];
-    //   return matchesKoiName && matchesFarmName && matchesType && matchesPrice;
-    // });
-    // setFilterFarmList(filtered);
+    const filtered = farmList.filter((farm) => {
+      const matchesFarmName = farm.farmName
+        .toLowerCase()
+        .includes(farmName.toLowerCase());
+      const matchesLocation = farm.location
+        .toLowerCase()
+        .includes(farmLocation.toLowerCase());
+      return matchesFarmName && matchesLocation;
+    });
+    setFilterFarmList(filtered);
     message.success("Search completed successfully!");
   };
 
@@ -85,7 +80,7 @@ function FarmFindPage() {
   };
 
   const handleBooking = (farm) => {
-    console.log("Booking clicked farm name: ", farm);
+    console.log("Booking trip to farm name: ", farm);
     setListBookFarm([...listBookFarm, farm]);
     console.log("listBookFarm: ", listBookFarm);
     message.success("Booking completed successfully!");
@@ -102,55 +97,22 @@ function FarmFindPage() {
       <Content className={styles.layout}>
         <div className={styles.card}>
           <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={6}>
-              <label>Koi Name</label>
-              <Input
-                placeholder="Enter Koi Name"
-                value={koiName}
-                onChange={(e) => setKoiName(e.target.value)}
-              />
-            </Col>
-
-            <Col xs={24} sm={12} md={6}>
+            <Col xs={24} sm={12} md={12}>
               <label>Farm Name</label>
               <Input
                 placeholder="Enter Farm Name"
                 value={farmName}
+                onChange={(e) => setFarmLocation(e.target.value)}
+              />
+            </Col>
+
+            <Col xs={24} sm={12} md={12}>
+              <label>Farm Location</label>
+              <Input
+                placeholder="Enter Farm Location"
+                value={farmLocation}
                 onChange={(e) => setFarmName(e.target.value)}
               />
-            </Col>
-
-            <Col xs={24} sm={12} md={6}>
-              <label>Type</label>
-              <Select
-                placeholder="Select Type"
-                value={type}
-                onChange={(value) => setType(value)}
-                style={{ width: "100%" }}
-              >
-                <Option value="">All</Option>
-                {koiTypes.map((type) => (
-                  <Option key={type} value={type}>
-                    {type}
-                  </Option>
-                ))}
-              </Select>
-            </Col>
-
-            <Col xs={24} sm={12} md={6}>
-              <label>Price Range</label>
-              <Slider
-                range
-                min={0}
-                max={500}
-                step={10}
-                value={priceRange}
-                onChange={(value) => setPriceRange(value)}
-              />
-              <div className="price-range">
-                <span>{`$${priceRange[0]}`}</span>
-                <span>{`$${priceRange[1]}`}</span>
-              </div>
             </Col>
 
             <Col xs={24} className="search-button">
@@ -193,6 +155,7 @@ function FarmFindPage() {
                         description={
                           <>
                             <div>Farm: {farm.farmName}</div>
+                            <div>Location: {farm.location}</div>
                             <div>Phone: {farm.phone}</div>
                             <div>Email: ${farm.email}</div>
                           </>
