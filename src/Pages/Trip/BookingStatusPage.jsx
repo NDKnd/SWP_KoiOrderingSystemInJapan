@@ -200,23 +200,18 @@ function BookingStatusPage() {
       return;
     }
     
-    try {
-      const response = await api.post(
-        "/feedback",
-        {
-          rating: rating,
-          comment: feedback,
-          bookingId: booking.id,
-        }
-      );
+    const params = new URLSearchParams({
+      rating: rating.toString(),
+      comment: feedback,
+      bookingId: booking.id.toString(),
+  }).toString();
 
-      if (response.status === 200) {
+
+    try {
+      await api.post(`/feedback?${params}`);
         message.success("Thank you for your feedback!");
         setFeedback("");
         setRating(0);
-      } else {
-        message.error("Failed to submit feedback. Please try again.");
-      }
     } catch (error) {
       console.error("Error submitting feedback:", error);
       message.error("Failed to submit feedback.");
@@ -324,6 +319,8 @@ function BookingStatusPage() {
                   )}
                   {(booking.status === "COMPLETED" || booking.status === "CANCELED") && (
                   <Card title="Feedback" className="feedback-card" bordered>
+                    <p>Rate your experience:</p>
+                    <Rate value={rating} onChange={setRating} />
                     <Input.TextArea
                       value={feedback}
                       onChange={(e) => setFeedback(e.target.value)}
