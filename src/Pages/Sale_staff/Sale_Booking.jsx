@@ -95,6 +95,7 @@ function Sale_Booking() {
             return;
           }
           try {
+            message.warning("Please wait...");
             const res = await api.put(`booking/price/${values.id}`, {
               totalPrice: price,
             });

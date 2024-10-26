@@ -40,6 +40,7 @@ import DeliverOrderHistory from "./Pages/Deliver/DeliverOrderHistory.jsx";
 
 import ConsultingLayOut from "./Pages/Consulting/ConsultingLayOut.jsx";
 import ConsultingPage from "./Pages/Consulting/ConsultingPage.jsx";
+import Consulting_orders from "./Pages/Consulting/Consulting_orders.jsx";
 
 const List_Imp_Role = [
   "MANAGER",
@@ -104,7 +105,9 @@ const routes = [
       {
         path: "",
         element: <ConsultingLayOut />, // Layout của trang tư vấn
-        children: [{ path: "", element: <ConsultingPage /> }],
+        children: [{ path: "", element: <ConsultingPage /> },
+        { path: "orders", element: <Consulting_orders /> },
+        ],
       },
     ],
   },

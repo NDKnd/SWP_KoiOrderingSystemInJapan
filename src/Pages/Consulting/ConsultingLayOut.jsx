@@ -16,9 +16,15 @@ function ConsultingLayOut() {
     const contentSidebar = [
         {
             key: 0,
-            label: "General",
-            icon: <FaCogs />,
+            label: "Booking list",
+            icon: <FaTruckPickup />,
             path: "/consulting",
+        },
+        {
+            key: 1,
+            label: "Orders",
+            icon: <FaHistory />,
+            path: "/consulting/orders",
         },
         {
             key: 2,

@@ -8,6 +8,12 @@
     flex-direction: column;
 }
 
+.navigate_btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
 .title {
     font-size: 24px;
     margin-bottom: 0.5rem;
@@ -29,6 +35,10 @@
 }
 
 .status.status_pending_confirmation {
+    background-color: #f2c94c;
+}
+
+.status.status_pending {
     background-color: #f2c94c;
 }
 
@@ -119,6 +129,28 @@ input {
     }
 }
 
+.booking_info_row {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    background-color: #d8eac4a8;
+    max-height: 170px;
+    overflow-y: scroll;
+}
+
 .total_price {
     display: flex;
     justify-content: space-between;
@@ -144,4 +176,36 @@ input {
         border: 1px solid #ccc;
         border-radius: 7%;
     }
+}
+
+/* order detail */
+.order_checked {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+
+    .img_order_checked_null {
+        width: 25rem;
+        object-fit: cover;
+        aspect-ratio: 3/4;
+        border: 1px solid #ccc;
+        border-radius: 7%;
+
+        p {
+            position: relative;
+            top: 50%;
+            left: 90%;
+            transform: translate(-50%, -50%)
+        }
+    }
+}
+
+.img_order_checked {
+    width: 20rem;
+    object-fit: cover;
+    aspect-ratio: 3/4;
+    border: 1px solid #ccc;
+    border-radius: 7%;
 }

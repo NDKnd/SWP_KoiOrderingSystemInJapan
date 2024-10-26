@@ -30,6 +30,29 @@ function BookingStatusPage() {
   const location = useLocation();
 
   useEffect(() => {
+
+    const fetchTransactions = async (id) => {
+      console.log("id: ", id)
+      try {
+        const response = await api.post("transaction/booking?bookingId=" + id);
+        console.log("res transaction: ", response.data)
+        message.success(response.data);
+      } catch (error) {
+        console.error("Error transaction orders:", error)
+        message.error("Failed to transaction.")
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const vnp_ResponseCode = urlParams.get('vnp_ResponseCode');
+    const bookID = urlParams.get('bookingId');
+    console.log(vnp_ResponseCode + "-" + bookID)
+    if (vnp_ResponseCode != null && bookID != null) {
+      if (vnp_ResponseCode === '00') {
+        fetchTransactions(bookID);
+      }
+    }
+
     const fetchBookingData = async (bookingId) => {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
