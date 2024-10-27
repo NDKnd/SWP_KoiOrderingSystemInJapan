@@ -28,6 +28,7 @@ function BookingStatusPage() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
+  const [existingFeedback, setExistingFeedback] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -67,6 +68,7 @@ function BookingStatusPage() {
             bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
             setBooking(bookingData[0]);
           }
+          handleCheckFeedback(bookingData[0].id);
         } else {
           message.error("No booking found.");
         }
@@ -199,25 +201,39 @@ function BookingStatusPage() {
       message.error("Please select a rating before submitting.");
       return;
     }
-    
+
     const params = new URLSearchParams({
       rating: rating.toString(),
       comment: feedback,
       bookingId: booking.id.toString(),
-  }).toString();
+    }).toString();
 
 
     try {
       await api.post(`/feedback?${params}`);
-        message.success("Thank you for your feedback!");
-        setFeedback("");
-        setRating(0);
+      message.success("Thank you for your feedback!");
+      setFeedback("");
+      setRating(0);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       message.error("Failed to submit feedback.");
     }
   };
-  
+
+  const handleCheckFeedback = async (bookingId) => {
+    try {
+      const response = await api.get(`/feedback`);
+      const feedbackData = response.data.find((f) => f.booking.id === bookingId);
+
+      if (feedbackData) {
+        setExistingFeedback(feedbackData);
+      }
+    } catch (error) {
+      console.error("Error checking feedback:", error);
+      message.error("Failed to check feedback.");
+    }
+  };
+
   return (
     <Layout>
       <Header />
@@ -318,24 +334,34 @@ function BookingStatusPage() {
                     </p>
                   )}
                   {(booking.status === "COMPLETED" || booking.status === "CANCELED") && (
-                  <Card title="Feedback" className="feedback-card" bordered>
-                    <p>Rate your experience:</p>
-                    <Rate value={rating} onChange={setRating} />
-                    <Input.TextArea
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
-                      placeholder="Please leave your feedback here"
-                      rows={4}
-                    />
-                    <Button
-                      type="primary"
-                      onClick={handleFeedbackSubmit}
-                      style={{ marginTop: "10px" }}
-                    >
-                      Submit
-                    </Button>
-                  </Card>
-                )}
+                    <Card title="Feedback" className="feedback-card" bordered>
+                      {existingFeedback ? (
+                        <>
+                          <p><strong>Rating:</strong> <Rate disabled value={existingFeedback.rating} /></p>
+                          <p><strong>Comment:</strong> {existingFeedback.comment}</p>
+                          <p><strong>Date:</strong> {new Date(existingFeedback.createAt).toLocaleString()}</p>
+                        </>
+                      ) : (
+                        <>
+                          <p>Rate your experience:</p>
+                          <Rate value={rating} onChange={setRating} />
+                          <Input.TextArea
+                            value={feedback}
+                            onChange={(e) => setFeedback(e.target.value)}
+                            placeholder="Please leave your feedback here"
+                            rows={4}
+                          />
+                          <Button
+                            type="primary"
+                            onClick={handleFeedbackSubmit}
+                            style={{ marginTop: "10px" }}
+                          >
+                            Submit
+                          </Button>
+                        </>
+                      )}
+                    </Card>
+                  )}
                 </Card>
               </Col>
             </Row>

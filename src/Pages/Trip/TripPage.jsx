@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Row, Col, Card, Button, Spin, message, Pagination, Input, DatePicker, Modal } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
@@ -16,8 +16,9 @@ function TripPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const tripsPerPage = 12;
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [farmName, setFarmName] = useState("");
+  const [farmName, setFarmName] = useState(location.state?.farmName || "");
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
   const [dateRange, setDateRange] = useState([]);
@@ -47,6 +48,17 @@ function TripPage() {
     }
 
     try {
+      const bookingsResponse = await api.get("/booking/customer");
+
+      const incompleteBooking = bookingsResponse.data.some(
+        (booking) => booking.status !== "COMPLETED"
+      );
+
+      if (incompleteBooking) {
+        message.error("You already have an active trip is in booking. Complete it before booking another trip.");
+        return;
+      }
+
       const response = await api.post(
         "/booking",
         {
@@ -92,6 +104,12 @@ function TripPage() {
   useEffect(() => {
     fetchTrips();
   }, []);
+
+  useEffect(() => {
+    if (farmName) {
+      handleSearch();
+    }
+  }, [farmName, tripList]);
 
   const indexOfLastTrip = currentPage * tripsPerPage;
   const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
