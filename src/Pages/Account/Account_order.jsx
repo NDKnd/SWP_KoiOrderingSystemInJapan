@@ -128,8 +128,20 @@ function Account_order() {
                             title: "Order Details",
                             dataIndex: "orderDetails",
                             key: "orderDetails",
+                            width: 300,
                             render: (orderDetails) => orderDetails
-                                ? orderDetails.map((orderDetail) => ("Koi id:" + orderDetail.id + ", quantity: " + orderDetail.quantity))
+                                ? (
+                                    <ul style={{ listStyle: "none" }}>
+                                        {orderDetails.map((orderDetail) => (
+                                            <li key={orderDetail.id} style={{ marginBottom: "10px" }}>
+                                                <span style={{ marginRight: "10px" }}><b>Koi id: </b>
+                                                    {orderDetail.id}</span>
+                                                <span><b>Quantity: </b>
+                                                    {orderDetail.quantity}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )
                                 : 'not know',
                         },
                         {
