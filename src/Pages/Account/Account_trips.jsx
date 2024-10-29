@@ -12,7 +12,27 @@ const statusColors = {
   CANCELED: "red",
 };
 
-const tabPanels = [{ id: 1, label: "All", content: <Trips /> }];
+const statusOrder = [
+  "PENDING_CONFIRMATION",
+  "AWAITING_PAYMENT",
+  "IN_PROGRESS",
+  "CHECK_IN",
+  "COMPLETED",
+  "CANCEL",
+];
+
+const tabPanels = [
+  { key: "All", label: "All", status: "All" },
+  ...statusOrder.map((status) => ({
+    key: status,
+    label: status
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase()),  
+    status,
+  })),
+];
+
 
 function Trips() {
   const [bookings, setBookings] = useState([]);
@@ -23,10 +43,12 @@ function Trips() {
     const fetchBookings = async () => {
       try {
         const bookingResponse = await api.get("/booking/customer");
-        setBookings(bookingResponse.data);
+        const sortedBookings = bookingResponse.data.sort(
+          (a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status)
+        );
+        setBookings(sortedBookings);
       } catch (error) {
         console.error("Error fetching bookings:", error);
-        message.error("Failed to fetch bookings.");
       } finally {
         setLoading(false);
       }
@@ -37,6 +59,12 @@ function Trips() {
 
   const handleDetails = (bookingId) => {
     navigate(`/book-status?bookingId=${bookingId}`);
+  };
+
+  const filterBookingsByStatus = (status) => {
+    return status === "All"
+      ? bookings
+      : bookings.filter((booking) => booking.status === status);
   };
 
   return (
@@ -56,62 +84,67 @@ function Trips() {
         }}
       >
         <Tabs>
-          <Tabs.TabPane tab="All" key="1">
-            {loading ? (
-              <Spin tip="Loading bookings..." />
-            ) : bookings && bookings.length > 0 ? (
-              <Row gutter={[16, 16]}>
-                {bookings.map((booking) => (
-                  <Col xs={24} sm={12} md={8} lg={6} key={booking.id}>
-                    <Card
-                      hoverable
-                      cover={
-                        booking.trip.farms && booking.trip.farms[0] && booking.trip.farms[0].image ? (
-                          <img
-                            alt="trip"
-                            src={booking.trip.farms[0].image}
-                            style={{ height: "200px", objectFit: "cover" }}
-                          />
-                        ) : (
-                          <div>
-                            No Image Available
-                          </div>
-                        )
-                      }
-                      actions={[
-                        <Button
-                          key={booking.id}
-                          type="primary"
-                          onClick={() => handleDetails(booking.id)}
-                        >
-                          Details
-                        </Button>,
-                      ]}
-                    >
-                      <Card.Meta
-                        title={`Booking ID: ${booking.id}`}
-                        description={
-                          <>
-                            <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
-                            <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
-                            <p>
-                              <strong>Status:</strong>{" "}
-                              <Tag color={statusColors[booking.status]}>
-                                {booking.status.replace("_", " ")}
-                              </Tag>
-                            </p>
-                            <p><strong>Note:</strong> {booking.note || "No additional notes"}</p>
-                          </>
+          {tabPanels.map((panel) => (
+            <Tabs.TabPane tab={panel.label} key={panel.key}>
+              {loading ? (
+                <Spin tip="Loading bookings..." />
+              ) : filterBookingsByStatus(panel.status).length > 0 ? (
+                <Row gutter={[16, 16]}>
+                  {filterBookingsByStatus(panel.status).map((booking) => (
+                    <Col xs={24} sm={12} md={8} lg={6} key={booking.id}>
+                      <Card
+                        hoverable
+                        cover={
+                          booking.trip.farms && booking.trip.farms[0] && booking.trip.farms[0].image ? (
+                            <img
+                              alt="trip"
+                              src={booking.trip.farms[0].image}
+                              style={{ height: "200px", objectFit: "cover" }}
+                            />
+                          ) : (
+                            <div>No Image Available</div>
+                          )
                         }
-                      />
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            ) : (
-              <p>No bookings found.</p>
-            )}
-          </Tabs.TabPane>
+                        actions={[
+                          <Button
+                            key={booking.id}
+                            type="primary"
+                            onClick={() => handleDetails(booking.id)}
+                          >
+                            Details
+                          </Button>,
+                        ]}
+                      >
+                        <Card.Meta
+                          title={`Booking ID: ${booking.id}`}
+                          description={
+                            <>
+                              <p>
+                                <strong>Total Price:</strong> {
+                                  new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
+                                  .format(booking.totalPrice)
+                                  }đ
+                              </p>
+                              <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                              <p>
+                                <strong>Status:</strong>{" "}
+                                <Tag color={statusColors[booking.status]}>
+                                  {booking.status.replace("_", " ")}
+                                </Tag>
+                              </p>
+                              <p><strong>Note:</strong> {booking.note || "No additional notes"}</p>
+                            </>
+                          }
+                        />
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <p>No bookings found.</p>
+              )}
+            </Tabs.TabPane>
+          ))}
         </Tabs>
       </ConfigProvider>
     </>

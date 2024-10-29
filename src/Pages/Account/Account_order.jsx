@@ -11,13 +11,15 @@ const statusList = [
 ]
 
 function Account_order() {
-    const [orders, setOrders] = useState([])
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fetchOrders = async () => {
         try {
             const response = await api.get("/order/customer")
             console.log("orders: ", response.data)
             setOrders(response.data)
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching orders:", error)
             message.error("Failed to fetch orders.")
@@ -83,7 +85,7 @@ function Account_order() {
         <div>
             <h1>Order List</h1>
             <Table
-                loading={orders.length === 0}
+                loading={loading}
                 style={{ width: "100%", overflow: "auto" }}
                 dataSource={orders} columns={
                     [

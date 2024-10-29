@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footers";
-import { Divider, Layout, Input, Select, Slider, Button, Row, Col, message, Card, Spin, Pagination, Popover, Modal } from "antd";
+import { Divider, Layout, Input, Select, Button, Row, Col, message, Card, Spin, Pagination, Popover, Modal, InputNumber } from "antd";
 import "./KoiPageFind.css";
 import api from "../../services/axios";
 import dayjs from "dayjs";
@@ -282,6 +282,13 @@ function KoiPageFind() {
     });
   };
 
+  const handleMinPriceChange = (value) => {
+    setPriceRange([value, priceRange[1]]);
+  };
+
+  const handleMaxPriceChange = (value) => {
+    setPriceRange([priceRange[0], value]);
+  };
 
   return (
     <Layout>
@@ -324,17 +331,29 @@ function KoiPageFind() {
 
             <Col xs={24} sm={12} md={6}>
               <label>Price Range</label>
-              <Slider
-                range
-                min={0}
-                max={500}
-                step={10}
-                value={priceRange}
-                onChange={(value) => setPriceRange(value)}
-              />
-              <div className="price-range">
-                <span>{`$${priceRange[0]}`}</span>
-                <span>{`$${priceRange[1]}`}</span>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <InputNumber
+                  min={0}
+                  max={100000000}
+                  value={
+                    new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
+                    .format(priceRange[0])
+                    }đ
+                  onChange={handleMinPriceChange}
+                  placeholder="Min Price"
+                  style={{ width: "100%" }}
+                />
+                <InputNumber
+                  min={0}
+                  max={100000000}
+                  value={
+                    new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
+                    .format(priceRange[1])
+                    }đ
+                  onChange={handleMaxPriceChange}
+                  placeholder="Max Price"
+                  style={{ width: "100%" }}
+                />
               </div>
             </Col>
 
@@ -367,17 +386,19 @@ function KoiPageFind() {
                           title={koi.koiName}
                           trigger="hover"
                         >
-                          <img alt={koi.koiName} src={koi.image} />
+                          <img alt={koi.koiName} src={koi.image} className="card-image" />
                         </Popover>
                       }
                     >
                       <Card.Meta
-                        title={koi.koiName}
+                        title={`${koi.koiName} - ${
+                          new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
+                          .format(koi.price)
+                          }đ`}
                         description={
                           <>
                             <div>Farm: {koi.farm.farmName}</div>
-                            <div>Type: {koi.type}</div>
-                            <div>Price: ${koi.price}</div>
+                            <div>Type: {koi.type}</div> 
                           </>
                         }
                       />
