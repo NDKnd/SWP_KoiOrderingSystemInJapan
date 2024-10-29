@@ -540,8 +540,8 @@ const DeliverPendingOrder = () => {
             try {
                 setLoading(true);
                 const orderResponse = await api.get("order/manager");
-                // setOrderList(orderResponse.data);
-                setOrderList(mockOrderList);
+                setOrderList(orderResponse.data);
+                // setOrderList(mockOrderList);
             } catch (err) {
                 console.error(err);
                 message.error("Cannot fetch some of the data");

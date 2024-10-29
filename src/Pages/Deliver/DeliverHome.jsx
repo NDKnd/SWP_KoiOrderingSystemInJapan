@@ -5,18 +5,12 @@ import { MdOutlineCalendarMonth, MdOutlinePendingActions } from "react-icons/md"
 import { FaTasks } from "react-icons/fa";
 import { message } from "antd";
 import dayjs from "dayjs";
-import upFile from "../../utils/file";
-import storage from "../../config/firebase";
-import { deleteObject, ref } from "firebase/storage";
 
 const DeliverHome = () => {
     const [loading, setLoading] = useState(true);
     const [orderList, setOrderList] = useState([]);
     const [currentOrder, setCurrentOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
-    const [orderFile, setOrderFile] = useState(null);
 
     const mockOrderList = [
         {
@@ -589,13 +583,8 @@ const DeliverHome = () => {
 
     const handleDetailComplete = async (event) => {
         event.preventDefault();
-
-        const dataToSend = {
-            image: uploadedOrderImage || "",
-        };
-
         try {
-            const res = await api.put(`order/${currentOrder.id}`, dataToSend);
+            const res = await api.put(`order/${currentOrder.id}`);
             if (res.status >= 200 && res.status < 300) {
                 setOrderList((prevList) => prevList.filter((order) => order.id !== currentOrder.id));
                 message.success("Order completed successfully");
@@ -605,44 +594,6 @@ const DeliverHome = () => {
         } catch (err) {
             message.error(err.response?.data?.message || "Error completing the order");
         }
-    };
-
-
-    const handleOrderUploadChange = async (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            setUploadedOrderImage(reader.result);
-        };
-        setOrderFile(file);
-        console.log("Order image : ", file);
-    };
-
-    const handleOrderCheckIn = async () => {
-        const downloadURL = await upFile(orderFile, `Orders/${currentOrder.id}`);
-
-        if (downloadURL) {
-            try {
-                const res = await api.put(`order/${currentOrder.id}`, {
-                    image: downloadURL,
-                });
-                message.success("Image uploaded and order updated successfully!");
-                refreshPage();
-            } catch (error) {
-                console.error("Error updating order:", error);
-            }
-        }
-        setOrderFile(null);
-    };
-
-    const handleCompleteClick = async (e) => {
-        e.preventDefault();
-        if (orderFile) {
-            await handleOrderCheckIn();
-        }
-
-        await handleDetailComplete(e);
     };
 
     return (
@@ -776,27 +727,15 @@ const DeliverHome = () => {
                                         <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
                                     </div>
                                     <div>
-                                        <input type="file" accept="image/*" onChange={handleOrderUploadChange} />
-                                        {uploadedOrderImage && (
-                                            <div className="uploaded-image-container">
-                                                <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" />
-                                            </div>
-                                        )}
+                                        
                                     </div>
                                     <div className="manager-order-content-detail-button">
-                                        <button
-                                            type="submit"
-                                            className="manager-order-content-detail-button-pop"
-                                            onClick={handleCompleteClick}
-                                        >
-                                            Complete
-                                        </button>
+                                        <button type="submit" className="manager-order-content-detail-button-pop">Complete</button>
                                         <button
                                             className="manager-order-content-detail-button-pop"
                                             onClick={() => {
                                                 setIsModalOpen((prevState) => !prevState);
                                                 setCurrentOrder(null);
-                                                setUploadedOrderImage(null);
                                             }}>Cancel</button>
                                     </div>
                                 </form>

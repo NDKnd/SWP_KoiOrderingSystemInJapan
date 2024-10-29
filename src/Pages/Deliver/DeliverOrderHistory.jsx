@@ -17,7 +17,7 @@ const DeliverOrderHistory = () => {
             deliveredDate: null,
             price: 0,
             address: "123 Test Street, Test City",
-            status: "ON_DELIVERY", // Đang giao hàng
+            status: "ON_DELIVERY",
             orderDetailResponseList: [
                 {
                     koiFishResponse: {
@@ -540,8 +540,8 @@ const DeliverOrderHistory = () => {
             try {
                 setLoading(true);
                 const orderResponse = await api.get("order/manager");
-                // setOrderList(orderResponse.data);
-                setOrderList(mockOrderList);
+                setOrderList(orderResponse.data);
+                // setOrderList(mockOrderList);
             } catch (err) {
                 console.error(err);
                 message.error("Cannot fetch some of the data");
