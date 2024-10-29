@@ -92,10 +92,10 @@ function ConsultingPage() {
         setVisible(true);
     }
 
-    const displayBooking = (booking) => {
+    const displayBooking = (booking, title) => {
         return (
             <div className={styles.box_table}>
-                <h2 className={styles.title}>Booking List</h2>
+                <h2 className={styles.title}>{title}</h2>
                 <Table
                     loading={loading}
                     pagination={{
@@ -116,6 +116,12 @@ function ConsultingPage() {
                             render: (image) => (
                                 <img className={styles.img_first_farm} src={image} alt="img" />
                             ),
+                        },
+                        {
+                            title: "User Name",
+                            dataIndex: "account",
+                            key: "account",
+                            render: (account) => account?.username,
                         },
                         {
                             title: "Booking Date",
@@ -169,7 +175,7 @@ function ConsultingPage() {
                                         className={styles.update_btn + " " + styles.button}
                                         onClick={() => {
                                             Modal.confirm({
-                                                title: "Update Status",
+                                                title: "Completed Trip",
                                                 content: "Are you sure you want to update status?",
                                                 onOk: () => {
                                                     handleUpdateStatus(record)
@@ -178,7 +184,7 @@ function ConsultingPage() {
                                         }}
                                         disabled={CheckInList.includes(record.status) === false}
                                     >
-                                        Update Status
+                                        Complete
                                     </button>
                                 </>
                             )
@@ -191,8 +197,8 @@ function ConsultingPage() {
 
     return (
         <Layout style={{ padding: "0 24px 24px" }} className={styles.container}>
-            {displayBooking(bookingListCompleted)}
-            {displayBooking(bookingList)}
+            {displayBooking(bookingListCompleted, "Booking Checked In")}
+            {displayBooking(bookingList, "Others Booking")}
             <Drawer
                 title="Information Details"
                 placement="right"
@@ -202,12 +208,9 @@ function ConsultingPage() {
                 open={visible}
                 width={800}
             >
+                <h1>Booking Information</h1>
                 <Row className={styles.booking_info}>
-                    <Col span={14} >
-                        <p>
-                            <b>Booking ID: </b>
-                            {drawerInformation.id}
-                        </p>
+                    <Col span={10} >
                         <p>
                             <b>Booking Date: </b>
                             {dayjs(drawerInformation.bookingDate).format(dateFormat)}
@@ -217,45 +220,51 @@ function ConsultingPage() {
                             {drawerInformation.note}
                         </p>
                     </Col>
-                    <Col span={8} >
+                    <Col span={12} >
                         <p className={styles.total_price}>
                             <b>Total: </b>
                             <span>{drawerInformation.totalPrice} VND</span>
                         </p>
                     </Col>
                 </Row>
-
+                <h1>Trip Information</h1>
                 <Row className={styles.trip_info}>
                     {drawerInformation?.trip && (
                         <>
-                            <Row>
-                                <p>
-                                    <b>Trip ID: </b>
-                                    {drawerInformation.trip.id}
-                                </p>
-                                <p>
-                                    <b>Start date: </b>
-                                    {drawerInformation.trip.startDate}
-                                </p>
-                                <p>
-                                    <b>Start location: </b>
-                                    {drawerInformation.trip.startLocation}
-                                </p>
-                                <p>
-                                    <b>End location: </b>
-                                    {drawerInformation.trip.endLocation}
-                                </p>
+                            <Row style={{ width: "100%" }}>
+                                <Col span={12} >
+                                    <p>
+                                        <b>Start date: </b>
+                                        {drawerInformation.trip.startDate}
+                                    </p>
+                                    <p>
+                                        <b>End date: </b>
+                                        {drawerInformation.trip.endDate}
+                                    </p>
+                                </Col>
+                                <Col span={12} >
+                                    <p>
+                                        <b>Start location: </b>
+                                        {drawerInformation.trip.startLocation}
+                                    </p>
+                                    <p>
+                                        <b>End location: </b>
+                                        {drawerInformation.trip.endLocation}
+                                    </p>
+                                </Col>
+
                             </Row>
 
-                            <Row className={styles.farm_list} >
+                            <Row className={styles.farm_row}>
                                 <List
+                                    className={styles.farm_list}
                                     bordered
                                     dataSource={drawerInformation.trip.farms}
                                     renderItem={(item) => (
                                         <List.Item className={styles.farm}>
-                                            {/* Hình ảnh của farm */}
+                                            {/* Hình ảnh farm */}
                                             <img
-                                                src={item.image || "https://via.placeholder.com/60"} // Hiển thị hình ảnh hoặc placeholder
+                                                src={item.image || "https://via.placeholder.com/60"}
                                                 alt={item.farmName}
                                                 className={styles.farm_image}
                                             />
@@ -274,10 +283,6 @@ function ConsultingPage() {
                             </Row>
                         </>
                     )}
-                </Row>
-
-                <Row className={styles.drawer_image}>
-                    <img src={drawerInformation.image} alt="checkInImage" />
                 </Row>
 
             </Drawer>

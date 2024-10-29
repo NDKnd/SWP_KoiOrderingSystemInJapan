@@ -92,19 +92,6 @@ function Header() {
             <li className="opt">
               <NavLink to="/TripPage">Trips</NavLink>
             </li>
-            <li className="opt">Opt4</li>
-            <li className="opt">Opt5</li>
-          </div>
-        </ul>
-      </div>
-      <div className="nav-item">
-        <p className="title">Title</p>
-        <FaAngleDown />
-        <ul className="dropdown">
-          <div className="drop-conts">
-            <li className="opt">Opt1</li>
-            <li className="opt">Opt2</li>
-            <li className="opt">Opt3</li>
           </div>
         </ul>
       </div>

@@ -31,7 +31,7 @@ const PrivateRoute = ({ allow_Role = [] }) => {
     // handle not login
     if (!token || tokenExpired(token)) {
       navigate("/login");
-      message.warning("Please login first");
+      // message.warning("Please login first");
       return;
     }
 

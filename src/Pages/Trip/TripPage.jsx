@@ -47,43 +47,50 @@ function TripPage() {
       return;
     }
 
-    try {
-      const bookingsResponse = await api.get("/booking/customer");
+    Modal.confirm({
+      title: "Confirm Booking",
+      content: "Are you sure you want to book this trip?",
+      onCancel: () => { },
+      onOk: async () => {
+        try {
+          const bookingsResponse = await api.get("/booking/customer");
 
-      const incompleteBooking = bookingsResponse.data.some(
-        (booking) => booking.status !== "COMPLETED" && booking.status !== "CANCEL"
-      );
+          const incompleteBooking = bookingsResponse.data.some(
+            (booking) => booking.status !== "COMPLETED" && booking.status !== "CANCEL"
+          );
 
-      if (incompleteBooking) {
-        message.error("You already have an active trip is in booking. Complete it before booking another trip.");
-        return;
-      }
+          if (incompleteBooking) {
+            message.error("You already have an active trip is in booking. Complete it before booking another trip.");
+            return;
+          }
 
-      const response = await api.post(
-        "/booking",
-        {
-          image: "",
-          status: "PENDING_CONFIRMATION",
-          note: "",
-          tripId: trip.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          const response = await api.post(
+            "/booking",
+            {
+              image: "",
+              status: "PENDING_CONFIRMATION",
+              note: "",
+              tripId: trip.id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (response.status === 200) {
+            message.success("Trip booked successfully!");
+            navigate("/book-status");
+          } else {
+            message.error("Failed to book the trip. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error booking trip:", error);
+          message.error("Failed to book the trip. Please try again.");
         }
-      );
-
-      if (response.status === 200) {
-        message.success("Trip booked successfully!");
-        navigate("/book-status");
-      } else {
-        message.error("Failed to book the trip. Please try again.");
       }
-    } catch (error) {
-      console.error("Error booking trip:", error);
-      message.error("Failed to book the trip. Please try again.");
-    }
+    })
   };
 
   const handleSearch = () => {

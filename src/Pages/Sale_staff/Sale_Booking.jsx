@@ -124,10 +124,10 @@ function Sale_Booking() {
     setDrawerInformation(values);
     setVisible(true);
   };
-  const displayBooking = (booking) => {
+  const displayBooking = (booking, title) => {
     return (
       <div className={styles.box_table}>
-        <h2 className={styles.title}>Booking List</h2>
+        <h2 className={styles.title}>{title}</h2>
         <Table
           loading={loading}
           pagination={{
@@ -137,28 +137,9 @@ function Sale_Booking() {
           dataSource={booking}
           columns={[
             {
-              title: "ID",
-              dataIndex: "id",
-              key: "id",
-            },
-            {
-              title: "Checkin Pic",
-              dataIndex: "image",
-              key: "image",
-              render: (image) => {
-                return image != null ?
-                  (
-                    <img className={styles.img_first_farm} src={image} alt="img" />
-                  )
-                  : (
-                    <div className={styles.img_first_farm}>No Image</div>
-                  )
-              },
-            },
-            {
               title: "Booking Date",
               dataIndex: "bookingDate",
-              key: "bookingDate",
+              key: "bookingDate", width: 150,
               render: (date) => dayjs(date).format(dateFormat),
             },
             {
@@ -179,7 +160,7 @@ function Sale_Booking() {
               render: (account) => account?.username,
             },
             {
-              title: "Total",
+              title: "Total Price",
               dataIndex: "totalPrice",
               key: "totalPrice",
               render: (price) => {
@@ -225,8 +206,8 @@ function Sale_Booking() {
 
   return (
     <Layout style={{ padding: "0 24px 24px" }} className={styles.container}>
-      {displayBooking(bookingList)}
-      {displayBooking(bookingListAccept)}
+      {displayBooking(bookingList, "Booking List")}
+      {displayBooking(bookingListAccept, "Booking List Accept")}
 
       <Drawer
         title="Information Details"
@@ -237,12 +218,9 @@ function Sale_Booking() {
         open={visible}
         width={800}
       >
+        <h1>Booking Information</h1>
         <Row className={styles.booking_info}>
-          <Col span={14} >
-            <p>
-              <b>Booking ID: </b>
-              {drawerInformation.id}
-            </p>
+          <Col span={10} >
             <p>
               <b>Booking Date: </b>
               {dayjs(drawerInformation.bookingDate).format(dateFormat)}
@@ -252,45 +230,51 @@ function Sale_Booking() {
               {drawerInformation.note}
             </p>
           </Col>
-          <Col span={8} >
+          <Col span={11} >
             <p className={styles.total_price}>
               <b>Total: </b>
-              <span>{drawerInformation.totalPrice} VND</span>
+              <span>{drawerInformation.totalPrice?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND</span>
             </p>
           </Col>
         </Row>
-
+        <h1>Trip Information</h1>
         <Row className={styles.trip_info}>
           {drawerInformation?.trip && (
             <>
-              <Row>
-                <p>
-                  <b>Trip ID: </b>
-                  {drawerInformation.trip.id}
-                </p>
-                <p>
-                  <b>Start date: </b>
-                  {drawerInformation.trip.startDate}
-                </p>
-                <p>
-                  <b>Start location: </b>
-                  {drawerInformation.trip.startLocation}
-                </p>
-                <p>
-                  <b>End location: </b>
-                  {drawerInformation.trip.endLocation}
-                </p>
+              <Row style={{ width: "100%" }}>
+                <Col span={12} >
+                  <p>
+                    <b>Start date: </b>
+                    {drawerInformation.trip.startDate}
+                  </p>
+                  <p>
+                    <b>End date: </b>
+                    {drawerInformation.trip.endDate}
+                  </p>
+                </Col>
+                <Col span={12} >
+                  <p>
+                    <b>Start location: </b>
+                    {drawerInformation.trip.startLocation}
+                  </p>
+                  <p>
+                    <b>End location: </b>
+                    {drawerInformation.trip.endLocation}
+                  </p>
+                </Col>
+
               </Row>
 
-              <Row className={styles.farm_list} >
+              <Row className={styles.farm_row}>
                 <List
+                  className={styles.farm_list}
                   bordered
                   dataSource={drawerInformation.trip.farms}
                   renderItem={(item) => (
                     <List.Item className={styles.farm}>
-                      {/* Hình ảnh của farm */}
+                      {/* Hình ảnh farm */}
                       <img
-                        src={item.image || "https://via.placeholder.com/60"} // Hiển thị hình ảnh hoặc placeholder
+                        src={item.image || "https://via.placeholder.com/60"}
                         alt={item.farmName}
                         className={styles.farm_image}
                       />
@@ -309,10 +293,6 @@ function Sale_Booking() {
               </Row>
             </>
           )}
-        </Row>
-
-        <Row className={styles.drawer_image}>
-          <img src={drawerInformation.image} alt="checkInImage" />
         </Row>
 
       </Drawer>

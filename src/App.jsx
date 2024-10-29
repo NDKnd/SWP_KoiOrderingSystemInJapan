@@ -53,14 +53,14 @@ const Less_Role = ["CUSTOMER"];
 const AllRole = [...List_Imp_Role, ...Less_Role];
 
 const routes = [
+  { path: "/", element: <Home /> },
   { path: "login", element: <LoginForm /> }, // not need token
   { path: "forgot", element: <ForgotPass /> },
   { path: "reset-password", element: <ResetPass /> },
   {
-    path: "/",
+    path: "/*",
     element: <PrivateRoute allow_Role={AllRole} />,
     children: [
-      { path: "/", element: <Home /> },
       { path: "KoiPageFind", element: <KoiPageFind /> },
       { path: "FarmFindPage", element: <FarmFindPage /> },
       { path: "book-status", element: <BookingStatusPage /> },
