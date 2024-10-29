@@ -79,6 +79,7 @@ function ConsultingPage() {
             console.log(res);
             fetchBookingManger();
             message.success("Complete trip successfully");
+
         } catch (error) {
             console.log(error);
             message.error("Failed to complete trip");

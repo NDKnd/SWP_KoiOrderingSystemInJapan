@@ -51,7 +51,7 @@ function TripPage() {
       const bookingsResponse = await api.get("/booking/customer");
 
       const incompleteBooking = bookingsResponse.data.some(
-        (booking) => booking.status !== "COMPLETED"
+        (booking) => booking.status !== "COMPLETED" && booking.status !== "CANCEL"
       );
 
       if (incompleteBooking) {
