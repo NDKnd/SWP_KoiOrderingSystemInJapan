@@ -202,15 +202,14 @@ function BookingStatusPage() {
       return;
     }
 
-    const params = new URLSearchParams({
-      rating: rating.toString(),
-      comment: feedback,
-      bookingId: booking.id.toString(),
-    }).toString();
-
-
     try {
-      await api.post(`/feedback?${params}`);
+      await api.post(`/feedback`,
+        {
+          rating: rating.toString(),
+          comment: feedback,
+          bookingId: booking.id.toString(),
+        }
+      );
       message.success("Thank you for your feedback!");
       setFeedback("");
       setRating(0);
@@ -220,13 +219,15 @@ function BookingStatusPage() {
     }
   };
 
-  const handleCheckFeedback = async (bookingId) => {
+  const handleCheckFeedback = async (bookingid) => {
     try {
       const response = await api.get(`/feedback`);
-      const feedbackData = response.data.find((f) => f.booking.id === bookingId);
-
-      if (feedbackData) {
-        setExistingFeedback(feedbackData);
+      const feedbackData = response.data;
+      const existingFeedback = feedbackData.find(
+        (feedback) => feedback.booking.id === bookingid
+      ); 
+      if (existingFeedback) {
+        setExistingFeedback(existingFeedback);
       }
     } catch (error) {
       console.error("Error checking feedback:", error);
