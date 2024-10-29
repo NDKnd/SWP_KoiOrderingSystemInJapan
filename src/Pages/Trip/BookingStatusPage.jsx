@@ -147,6 +147,7 @@ function BookingStatusPage() {
         })
         console.log("res: ", res.data);
         console.log("res2: ", res2.data);
+        refreshPage();
       } catch (error) {
         deleteFile(downloadURL);
         console.log(error);
@@ -402,7 +403,6 @@ function BookingStatusPage() {
                                   content: "Are you sure you want to check in?",
                                   onOk: () => {
                                     handleCheckIn();
-                                    refreshPage();
                                   },
                                 })
                               }}
