@@ -216,8 +216,9 @@ function BookingStatusPage() {
     try {
       const response = await api.get(`/feedback`);
       const feedbackData = response.data;
+      console.log("feedback lsit:", response.data);
       const existingFeedback = feedbackData.find(
-        (feedback) => feedback.booking.id === bookingid
+        (feedback) => feedback.booking ? bookingid === feedback.booking.id : null
       );
       if (existingFeedback) {
         setExistingFeedback(existingFeedback);
