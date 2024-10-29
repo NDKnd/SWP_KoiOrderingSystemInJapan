@@ -10,121 +10,538 @@ const DeliverOrderHistory = () => {
     const [currentOrder, setCurrentOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const mockData = [
+    const mockOrderList = [
         {
             id: 1,
-            customerName: "John Doe",
-            address: "123 Main St",
-            deliveryDate: "10/10/2024",
-            totalPayment: 500.75,
-            status: "pending",
-            koiList: [
-                { name: "Koi A", quantity: 3 },
-                { name: "Koi A", quantity: 3 },
-                { name: "Koi A", quantity: 3 },
-                { name: "Koi B", quantity: 2 }
-            ]
+            expectedDate: "2024-10-29",
+            deliveredDate: null,
+            price: 0,
+            address: "123 Test Street, Test City",
+            status: "ON_DELIVERY", // Đang giao hàng
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 9,
+                        koiName: "Sakai Koi",
+                        price: 500,
+                        type: "Type A",
+                        description: "Beautiful koi fish from Sakai farm",
+                        image: "https://example.com/sakai.jpg",
+                        farmName: "koiFarm2",
+                    },
+                    quantity: 2,
+                    price: 1000,
+                },
+            ],
+            booking: {
+                id: 1,
+                totalPrice: 1000,
+                account: {
+                    firstName: "John",
+                    lastName: "Doe",
+                    address: "456 Example Ave, Example City",
+                    phone: "0943251643",
+                    email: "customerTest@gmail.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
             id: 2,
-            customerName: "Jane Smith",
-            address: "456 Elm St",
-            deliveryDate: "15/10/2024",
-            totalPayment: 300.50,
-            status: "completed",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-            ]
+            expectedDate: "2024-11-05", // Ngày giao trong tương lai (tháng tới)
+            deliveredDate: null,
+            price: 0,
+            address: "789 Future St, Future City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 2,
+                        koiName: "Marudo Koi",
+                        price: 300,
+                        type: "Type B",
+                        description: "Koi fish with beautiful patterns",
+                        image: "https://example.com/marudo.jpg",
+                        farmName: "Marudo",
+                    },
+                    quantity: 1,
+                    price: 300,
+                },
+            ],
+            booking: {
+                id: 2,
+                totalPrice: 300,
+                account: {
+                    firstName: "Jane",
+                    lastName: "Smith",
+                    address: "789 Future St, Future City",
+                    phone: "0943251644",
+                    email: "janesmith@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
             id: 3,
-            customerName: "tt3",
-            address: "456 Elm St",
-            deliveryDate: "24/10/2024",
-            totalPayment: 300.50,
-            status: "completed",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi D", quantity: 5 }
-            ]
+            expectedDate: "2024-12-15", // Ngày giao trong tương lai, tháng tới
+            deliveredDate: "2024-12-16",
+            price: 0,
+            address: "123 Delivered Ave, Delivered City",
+            status: "COMPLETED",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 3,
+                        koiName: "Momotaro Koi",
+                        price: 400,
+                        type: "Type C",
+                        description: "Top-grade koi from Momotaro",
+                        image: "https://example.com/momotaro.jpg",
+                        farmName: "Momotaro",
+                    },
+                    quantity: 3,
+                    price: 1200,
+                },
+            ],
+            booking: {
+                id: 3,
+                totalPrice: 1200,
+                account: {
+                    firstName: "Alice",
+                    lastName: "Johnson",
+                    address: "123 Delivered Ave, Delivered City",
+                    phone: "0943251645",
+                    email: "alicejohnson@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
             id: 4,
-            customerName: "tt5",
-            address: "456 Elm St",
-            deliveryDate: "15/11/2024",
-            totalPayment: 300.50,
-            status: "completed",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi D", quantity: 5 }
-            ]
+            expectedDate: "2025-01-05", // Ngày giao trong tương lai (năm sau)
+            deliveredDate: null,
+            price: 0,
+            address: "456 New Year Blvd, Future City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 4,
+                        koiName: "Sakai Super Koi",
+                        price: 600,
+                        type: "Type D",
+                        description: "A premium koi from Sakai",
+                        image: "https://example.com/sakai_super.jpg",
+                        farmName: "Sakai",
+                    },
+                    quantity: 1,
+                    price: 600,
+                },
+            ],
+            booking: {
+                id: 4,
+                totalPrice: 600,
+                account: {
+                    firstName: "Tom",
+                    lastName: "Clark",
+                    address: "456 New Year Blvd, Future City",
+                    phone: "0943251646",
+                    email: "tomclark@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
             id: 5,
-            customerName: "cccccccc",
-            address: "456 Elm St",
-            deliveryDate: "24/10/2024",
-            totalPayment: 300.50,
-            status: "pending",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-            ]
+            expectedDate: "2024-11-15", // Ngày giao trong tương lai gần
+            deliveredDate: "2024-11-15",
+            price: 0,
+            address: "123 Random St, Random City",
+            status: "COMPLETED",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 5,
+                        koiName: "Hoshikin Koi",
+                        price: 200,
+                        type: "Type E",
+                        description: "Elegant Hoshikin koi fish",
+                        image: "https://example.com/hoshikin.jpg",
+                        farmName: "Hoshikin",
+                    },
+                    quantity: 2,
+                    price: 400,
+                },
+            ],
+            booking: {
+                id: 5,
+                totalPrice: 400,
+                account: {
+                    firstName: "Sara",
+                    lastName: "Connor",
+                    address: "123 Random St, Random City",
+                    phone: "0943251647",
+                    email: "saraconnor@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
             id: 6,
-            customerName: "ccccccsacacas",
-            address: "456 Elm St",
-            deliveryDate: "24/10/2024",
-            totalPayment: 300.50,
-            status: "completed",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi D", quantity: 5 }
-            ]
+            expectedDate: "2024-10-30", // Ngày giao trong tháng hiện tại
+            deliveredDate: null,
+            price: 0,
+            address: "789 Current St, Current City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 6,
+                        koiName: "Koda Koi",
+                        price: 350,
+                        type: "Type F",
+                        description: "Koi fish from Koda farm",
+                        image: "https://example.com/koda.jpg",
+                        farmName: "Koda",
+                    },
+                    quantity: 1,
+                    price: 350,
+                },
+            ],
+            booking: {
+                id: 6,
+                totalPrice: 350,
+                account: {
+                    firstName: "Leo",
+                    lastName: "Brown",
+                    address: "789 Current St, Current City",
+                    phone: "0943251648",
+                    email: "leobrown@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
             id: 7,
-            customerName: "wwwwwere",
-            address: "456 Elm St",
-            deliveryDate: "24/10/2024",
-            totalPayment: 300.50,
-            status: "pending",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi D", quantity: 5 }
-            ]
+            expectedDate: "2025-04-10", // Ngày giao xa hơn trong năm sau
+            deliveredDate: null,
+            price: 0,
+            address: "456 Future Ave, Future Town",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 7,
+                        koiName: "Shinoda Koi",
+                        price: 1000,
+                        type: "Type G",
+                        description: "Rare Shinoda koi fish",
+                        image: "https://example.com/shinoda.jpg",
+                        farmName: "Shinoda",
+                    },
+                    quantity: 1,
+                    price: 1000,
+                },
+            ],
+            booking: {
+                id: 7,
+                totalPrice: 1000,
+                account: {
+                    firstName: "Nina",
+                    lastName: "White",
+                    address: "456 Future Ave, Future Town",
+                    phone: "0943251649",
+                    email: "ninawhite@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
         },
         {
+            id: 13,
+            expectedDate: "2024-10-30", // Ngày giao trong tháng hiện tại
+            deliveredDate: null,
+            price: 0,
+            address: "789 Current St, Current City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 6,
+                        koiName: "Koda Koi",
+                        price: 350,
+                        type: "Type F",
+                        description: "Koi fish from Koda farm",
+                        image: "https://example.com/koda.jpg",
+                        farmName: "Koda",
+                    },
+                    quantity: 1,
+                    price: 350,
+                },
+            ],
+            booking: {
+                id: 6,
+                totalPrice: 350,
+                account: {
+                    firstName: "Leo",
+                    lastName: "Brown",
+                    address: "789 Current St, Current City",
+                    phone: "0943251648",
+                    email: "leobrown@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
+        },
+        // Trường hợp giao hàng hôm nay
+        {
             id: 8,
-            customerName: "Jane Smith",
-            address: "456 Elm St",
-            deliveryDate: "24/10/2024",
-            totalPayment: 300.50,
-            status: "pending",
-            koiList: [
-                { name: "Koi C", quantity: 1 },
-                { name: "Koi D", quantity: 5 },
-                { name: "Koi e", quantity: 5 },
-                { name: "Koi f", quantity: 5 },
-                { name: "Koi D", quantity: 5 },
-                { name: "Koi D", quantity: 5 },
-                { name: "Koi D", quantity: 5 }
-            ]
-        }
+            expectedDate: "2024-10-29", // Ngày giao hôm nay
+            deliveredDate: null,
+            price: 0,
+            address: "123 Today St, Today City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 7,
+                        koiName: "Asagi Koi",
+                        price: 500,
+                        type: "Type C",
+                        description: "Beautiful Asagi koi fish",
+                        image: "https://example.com/asagi.jpg",
+                        farmName: "Asagi Farm",
+                    },
+                    quantity: 2,
+                    price: 1000,
+                },
+            ],
+            booking: {
+                id: 7,
+                totalPrice: 1000,
+                account: {
+                    firstName: "Anna",
+                    lastName: "Smith",
+                    address: "123 Today St, Today City",
+                    phone: "0943251647",
+                    email: "annasmith@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
+        },
+        {
+            id: 9,
+            expectedDate: "2024-10-29", // Ngày giao hôm nay
+            deliveredDate: null,
+            price: 0,
+            address: "321 Nowhere Rd, Nowhere City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 8,
+                        koiName: "Showa Koi",
+                        price: 700,
+                        type: "Type D",
+                        description: "Rare Showa koi fish",
+                        image: "https://example.com/showa.jpg",
+                        farmName: "Showa Farm",
+                    },
+                    quantity: 1,
+                    price: 700,
+                },
+            ],
+            booking: {
+                id: 8,
+                totalPrice: 700,
+                account: {
+                    firstName: "Michael",
+                    lastName: "Johnson",
+                    address: "321 Nowhere Rd, Nowhere City",
+                    phone: "0943251646",
+                    email: "michaeljohnson@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
+        },
+        {
+            id: 10,
+            expectedDate: "2024-10-29", // Ngày giao hôm nay
+            deliveredDate: null,
+            price: 0,
+            address: "654 Tomorrow St, Tomorrow City",
+            status: "COMPLETED",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 9,
+                        koiName: "Sanke Koi",
+                        price: 450,
+                        type: "Type E",
+                        description: "Gorgeous Sanke koi fish",
+                        image: "https://example.com/sanke.jpg",
+                        farmName: "Sanke Farm",
+                    },
+                    quantity: 1,
+                    price: 450,
+                },
+                {
+                    koiFishResponse: {
+                        id: 10,
+                        koiName: "Shiro Utsuri",
+                        price: 500,
+                        type: "Type A",
+                        description: "Beautiful Shiro Utsuri koi fish",
+                        image: "https://example.com/shiro.jpg",
+                        farmName: "Utsuri Farm",
+                    },
+                    quantity: 1,
+                    price: 500,
+                },
+                {
+                    koiFishResponse: {
+                        id: 11,
+                        koiName: "Kohaku Koi",
+                        price: 600,
+                        type: "Type B",
+                        description: "Stunning Kohaku koi fish",
+                        image: "https://example.com/kohaku.jpg",
+                        farmName: "Kohaku Farm",
+                    },
+                    quantity: 1,
+                    price: 600,
+                },
+            ],
+            booking: {
+                id: 9,
+                totalPrice: 450 + 500 + 600, // Cập nhật tổng giá
+                account: {
+                    firstName: "Sophia",
+                    lastName: "Williams",
+                    address: "654 Tomorrow St, Tomorrow City",
+                    phone: "0943251645",
+                    email: "sophiawilliams@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
+        },
+        // Trường hợp giao hàng vào tương lai
+        {
+            id: 11,
+            expectedDate: "2024-11-05", // Ngày giao trong tương lai
+            deliveredDate: null,
+            price: 0,
+            address: "987 Future Blvd, Future City",
+            status: "ON_DELIVERY",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 10,
+                        koiName: "Kohaku Koi",
+                        price: 600,
+                        type: "Type A",
+                        description: "Classic Kohaku koi fish",
+                        image: "https://example.com/kohaku.jpg",
+                        farmName: "Kohaku Farm",
+                    },
+                    quantity: 1,
+                    price: 600,
+                },
+            ],
+            booking: {
+                id: 10,
+                totalPrice: 600,
+                account: {
+                    firstName: "Oliver",
+                    lastName: "Jones",
+                    address: "987 Future Blvd, Future City",
+                    phone: "0943251644",
+                    email: "oliverjones@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
+        },
+        {
+            id: 12,
+            expectedDate: "2025-01-15", // Ngày giao trong năm sau
+            deliveredDate: null,
+            price: 0,
+            address: "741 Next St, Next City",
+            status: "COMPLETED",
+            orderDetailResponseList: [
+                {
+                    koiFishResponse: {
+                        id: 11,
+                        koiName: "Kiki Koi",
+                        price: 800,
+                        type: "Type B",
+                        description: "Exquisite Kiki koi fish",
+                        image: "https://example.com/kiki.jpg",
+                        farmName: "Kiki Farm",
+                    },
+                    quantity: 1,
+                    price: 800,
+                },
+            ],
+            booking: {
+                id: 11,
+                totalPrice: 800,
+                account: {
+                    firstName: "Emma",
+                    lastName: "Davis",
+                    address: "741 Next St, Next City",
+                    phone: "0943251643",
+                    email: "emmadavis@example.com",
+                },
+                trip: {
+                    startLocation: "Vietnam",
+                    endLocation: "Japan",
+                },
+            },
+        },
     ];
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [orderResponse] = await Promise.all([api.get("farm")]);
+                const orderResponse = await api.get("order/manager");
                 // setOrderList(orderResponse.data);
-                setOrderList(mockData);
+                setOrderList(mockOrderList);
             } catch (err) {
                 console.error(err);
                 message.error("Cannot fetch some of the data");
@@ -141,22 +558,24 @@ const DeliverOrderHistory = () => {
     const currentDay = today.date();
 
     const ordersThisMonth = orderList.filter(order => {
-        const deliveryDate = dayjs(order.deliveryDate, "DD/MM/YYYY");
+        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
         return deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
     });
 
-    const pendingOrdersThisMonth = ordersThisMonth.filter(order => order.status === "pending");
+    const pendingOrdersThisMonth = ordersThisMonth.filter(order => order.status === "ON_DELIVERY");
     const pendingOrdersToday = pendingOrdersThisMonth.filter(order => {
-        const deliveryDate = dayjs(order.deliveryDate, "DD/MM/YYYY");
-        return deliveryDate.date() === currentDay;
+        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
+        return deliveryDate.date() === currentDay && deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
     });
 
-    const todayDate = dayjs().format("DD/MM/YYYY");
-    const filteredOrderList = orderList.filter(order => order.status === "pending"
-    );
+    const todayDate = dayjs().format("YYYY-MM-DD");
+    const filteredOrderList = orderList
+    .filter(order => order.expectedDate === todayDate && order.status === "ON_DELIVERY")
+    .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
 
-    const filteredOrderListComplete = orderList.filter(order => order.status === "completed"
-    );
+    const filteredOrderListComplete = orderList
+    .filter(order => order.status === "COMPLETED")
+    .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
 
     const handleDetail = (order) => {
         setCurrentOrder(order);
@@ -191,20 +610,24 @@ const DeliverOrderHistory = () => {
                                 {filteredOrderListComplete.length > 0 ? (
                                     filteredOrderListComplete.map((order) => (
                                         <tr key={order.id}>
-                                            <td>{order.customerName}</td>
+                                            <td>{order.booking.account.firstName} {order.booking.account.lastName}</td>
                                             <td>
-                                                {order.koiList.map((koi, index) => (
-                                                    <div key={index}>{koi.name}</div>
-                                                ))}
+                                                {order.orderDetailResponseList && order.orderDetailResponseList.length > 0 ? (
+                                                    order.orderDetailResponseList.map((detail, index) => (
+                                                        <div key={index}>{detail.koiFishResponse.koiName}</div>
+                                                    ))
+                                                ) : (
+                                                    <div>No koi ordered</div>
+                                                )}
                                             </td>
                                             <td>
-                                                {order.koiList.map((koi, index) => (
-                                                    <div key={index}>{koi.quantity}</div>
+                                                {order.orderDetailResponseList.map((detail, index) => (
+                                                    <div key={index}>{detail.quantity}</div>
                                                 ))}
                                             </td>
-                                            <td>{order.address}</td>
-                                            <td>{order.deliveryDate}</td>
-                                            <td>{order.totalPayment}</td>
+                                            <td>{order.booking.account.address}</td>
+                                            <td>{order.expectedDate}</td>
+                                            <td>{order.booking.totalPrice}</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
                                                 <a onClick={() => handleDetail(order)} className="deliver-dashboard-home-content-user-body-button">Detail</a>
                                             </td>
@@ -225,10 +648,10 @@ const DeliverOrderHistory = () => {
                                 <h2 className="manager-order-title-detail">Order Detail</h2>
                                 <form className="manager-order-edit-detail">
                                     <div className="manager-order-content-detail">
-                                        <label>Customer Name: {currentOrder?.customerName || "My customername"}</label>
+                                        <label>Customer Name: {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Address: {currentOrder?.address || "Address"}</label>
+                                        <label>Address: {currentOrder.booking.account.address}</label>
                                     </div>
                                     <table className="manager-order-table-detail">
                                         <thead>
@@ -238,11 +661,11 @@ const DeliverOrderHistory = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {currentOrder?.koiList?.length > 0 ? (
-                                                currentOrder.koiList.map((koi, index) => (
+                                            {currentOrder.orderDetailResponseList && currentOrder.orderDetailResponseList.length > 0 ? (
+                                                currentOrder.orderDetailResponseList.map((detail, index) => (
                                                     <tr key={index}>
-                                                        <td>{koi.name || `Koi ${index + 1}`}</td>
-                                                        <td>{koi.quantity || "0"}</td>
+                                                        <td>{detail.koiFishResponse.koiName}</td>
+                                                        <td>{detail.quantity}</td>
                                                     </tr>
                                                 ))
                                             ) : (
@@ -254,10 +677,10 @@ const DeliverOrderHistory = () => {
                                         </tbody>
                                     </table>
                                     <div className="manager-order-content-detail">
-                                        <label>Delivery Date: {currentOrder?.deliveryDate || "-"}</label>
+                                        <label>Delivery Date: {currentOrder.expectedDate}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Total payment money: {currentOrder?.totalPayment || "$0"}</label>
+                                        <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
                                     </div>
                                     <div className="manager-order-content-detail-button">
                                         <button
