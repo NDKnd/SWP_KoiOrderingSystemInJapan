@@ -103,7 +103,6 @@ const DeliverHome = () => {
                     image: downloadURL,
                 });
                 message.success("Image uploaded and order updated successfully!");
-                refreshPage();
             } catch (error) {
                 console.error("Error updating order:", error);
             }
@@ -117,7 +116,8 @@ const DeliverHome = () => {
             await handleOrderCheckIn();
         }
 
-        await handleDetailComplete(e);
+        // await handleDetailComplete(e);
+        setIsModalOpen(false);
     };
 
     return (
@@ -251,7 +251,7 @@ const DeliverHome = () => {
                                         <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
                                     </div>
                                     <div>
-                                        <input type="file" accept="image/*" onChange={handleOrderUploadChange} />
+                                        <input type="file" accept="image/*" onChange={(e) => handleOrderUploadChange(e)} />
                                         {uploadedOrderImage && (
                                             <div className="uploaded-image-container">
                                                 <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" />

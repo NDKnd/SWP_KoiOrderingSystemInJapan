@@ -134,9 +134,9 @@ function Header() {
                 <li className="opt">
                   <NavLink to="/profile">Profile</NavLink>
                 </li>
-                <li className="opt">
+                {/* <li className="opt">
                   <NavLink to="/account-setting">Settings</NavLink>
-                </li>
+                </li> */}
                 <li className="opt">
                   <NavLink onClick={() => handleLogout()}>Logout</NavLink>
                 </li>

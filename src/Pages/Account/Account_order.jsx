@@ -128,23 +128,20 @@ function Account_order() {
                         },
                         {
                             title: "Order Details",
-                            dataIndex: "orderDetails",
-                            key: "orderDetails",
-                            width: 300,
-                            render: (orderDetails) => orderDetails
+                            dataIndex: "orderDetailResponseList",
+                            key: "orderDetailResponseList",
+                            render: (orderDetails) => orderDetails && orderDetails.length > 0
                                 ? (
-                                    <ul style={{ listStyle: "none" }}>
-                                        {orderDetails.map((orderDetail) => (
-                                            <li key={orderDetail.id} style={{ marginBottom: "10px" }}>
-                                                <span style={{ marginRight: "10px" }}><b>Koi id: </b>
-                                                    {orderDetail.id}</span>
-                                                <span><b>Quantity: </b>
-                                                    {orderDetail.quantity}</span>
+                                    <ul style={{ listStyle: "none", padding: 0, width: "15rem" }}>
+                                        {orderDetails.map((KoiOrder) => (
+                                            <li key={KoiOrder.id} style={{ marginBottom: "10px" }}>
+                                                <span style={{ marginRight: "10px" }}><strong>Koi Name:</strong> {KoiOrder.koiFishResponse.koiName}</span>
+                                                <span><strong>Quantity:</strong> {KoiOrder.quantity}</span>
                                             </li>
                                         ))}
                                     </ul>
                                 )
-                                : 'not know',
+                                : 'None',
                         },
                         {
                             title: "Order Status",
