@@ -59,11 +59,11 @@ function BookingStatusPage() {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
         const bookingData = bookingResponse.data;
-    
+
         if (bookingData && bookingData.length > 0) {
           const storedBookingId = bookingId || localStorage.getItem("bookingId");
           let specificBooking;
-    
+
           if (storedBookingId) {
             specificBooking = bookingData.find((b) => b.id === parseInt(storedBookingId));
             setBooking(specificBooking || bookingData[0]);
@@ -227,9 +227,10 @@ function BookingStatusPage() {
     try {
       const response = await api.get(`/feedback`);
       const feedbackData = response.data;
+      console.log("feedback lsit:", response.data);
       const existingFeedback = feedbackData.find(
-        (feedback) => feedback.booking.id === bookingid
-      ); 
+        (feedback) => feedback.booking ? bookingid === feedback.booking.id : null
+      );
       if (existingFeedback) {
         setExistingFeedback(existingFeedback);
       }
