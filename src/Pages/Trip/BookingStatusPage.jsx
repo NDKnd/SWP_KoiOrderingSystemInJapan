@@ -59,16 +59,20 @@ function BookingStatusPage() {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
         const bookingData = bookingResponse.data;
-
+    
         if (bookingData && bookingData.length > 0) {
-          if (bookingId) {
-            const specificBooking = bookingData.find((b) => b.id === parseInt(bookingId));
+          const storedBookingId = bookingId || localStorage.getItem("bookingId");
+          let specificBooking;
+    
+          if (storedBookingId) {
+            specificBooking = bookingData.find((b) => b.id === parseInt(storedBookingId));
             setBooking(specificBooking || bookingData[0]);
           } else {
             bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
             setBooking(bookingData[0]);
           }
-          handleCheckFeedback(bookingData[0].id);
+          if (specificBooking) localStorage.setItem("bookingId", specificBooking.id);
+          handleCheckFeedback(specificBooking ? specificBooking.id : bookingData[0].id);
         } else {
           message.error("No booking found.");
         }
