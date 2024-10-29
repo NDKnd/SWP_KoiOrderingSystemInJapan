@@ -177,7 +177,7 @@ function FarmFindPage() {
                           title={farm.farmName}
                           trigger="hover"
                         >
-                          <img alt={farm.farmName} src={farm.image} />
+                          <img alt={farm.farmName} src={farm.image} className="card-image"/>
                         </Popover>
                       }
                     >

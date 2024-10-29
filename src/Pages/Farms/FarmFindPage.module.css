@@ -49,3 +49,9 @@
   line-height: 2;
   padding: 5px;
 }
+
+.card-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}

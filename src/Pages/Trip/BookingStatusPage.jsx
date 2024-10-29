@@ -38,10 +38,8 @@ function BookingStatusPage() {
       try {
         const response = await api.post("transaction/booking?bookingId=" + id);
         console.log("res transaction: ", response.data)
-        message.success(response.data);
       } catch (error) {
         console.error("Error transaction orders:", error)
-        message.error("Failed to transaction.")
       }
     }
 
@@ -59,11 +57,11 @@ function BookingStatusPage() {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
         const bookingData = bookingResponse.data;
-    
+
         if (bookingData && bookingData.length > 0) {
           const storedBookingId = bookingId || localStorage.getItem("bookingId");
           let specificBooking;
-    
+
           if (storedBookingId) {
             specificBooking = bookingData.find((b) => b.id === parseInt(storedBookingId));
             setBooking(specificBooking || bookingData[0]);
@@ -74,11 +72,10 @@ function BookingStatusPage() {
           if (specificBooking) localStorage.setItem("bookingId", specificBooking.id);
           handleCheckFeedback(specificBooking ? specificBooking.id : bookingData[0].id);
         } else {
-          message.error("No booking found.");
+          console.error("No booking found.");
         }
       } catch (error) {
         console.error("Error fetching booking data:", error);
-        message.error("Failed to fetch booking data.");
       } finally {
         setLoading(false);
       }
@@ -94,10 +91,8 @@ function BookingStatusPage() {
           await api.put(`/booking/status/${bookingId}`, {
             status: "IN_PROGRESS",
           });
-          message.success("Check out successfully.");
         } catch (error) {
           console.error("Error updating booking status:", error);
-          message.error("Failed to update booking status.");
         }
       }
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -152,10 +147,8 @@ function BookingStatusPage() {
         })
         console.log("res: ", res.data);
         console.log("res2: ", res2.data);
-        message.success("Check in successfully.");
       } catch (error) {
         deleteFile(downloadURL);
-        message.error("Failed to check in.");
         console.log(error);
       }
     }
@@ -174,12 +167,11 @@ function BookingStatusPage() {
         if (response.data) {
           window.location.href = response.data;
         } else {
-          message.error("Failed to retrieve payment link.");
+          console.error("Failed to retrieve payment link.");
         }
       })
       .catch((error) => {
         console.error("Error during checkout:", error);
-        message.error("Failed to proceed to checkout.");
       });
   };
 
@@ -189,10 +181,8 @@ function BookingStatusPage() {
         status: "CANCEL",
       });
       setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
-      message.success("Booking canceled successfully.");
     } catch (error) {
       console.error("Error canceling booking:", error);
-      message.error("Failed to cancel booking.");
     }
   };
 
@@ -219,7 +209,6 @@ function BookingStatusPage() {
       setRating(0);
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      message.error("Failed to submit feedback.");
     }
   };
 
@@ -229,15 +218,18 @@ function BookingStatusPage() {
       const feedbackData = response.data;
       const existingFeedback = feedbackData.find(
         (feedback) => feedback.booking.id === bookingid
-      ); 
+      );
       if (existingFeedback) {
         setExistingFeedback(existingFeedback);
       }
     } catch (error) {
       console.error("Error checking feedback:", error);
-      message.error("Failed to check feedback.");
     }
   };
+
+  function refreshPage() {
+    window.location.reload(false);
+  }
 
   return (
     <Layout>
@@ -297,8 +289,9 @@ function BookingStatusPage() {
                   </div>
                   <h3>Farm Information</h3>
                   {booking.trip.farms && booking.trip.farms.length > 0 ? (
-                    booking.trip.farms.map((farm) => (
+                    booking.trip.farms.map((farm, index) => (
                       <div key={farm.id}>
+                        <p><strong>Farm No {index + 1}</strong></p>
                         <p><strong>Name:</strong> {farm.farmName}</p>
                         <p><strong>Location:</strong> {farm.location}</p>
                         <p><strong>Phone:</strong> {farm.phone}</p>
@@ -311,34 +304,44 @@ function BookingStatusPage() {
                 </Card>
               </Col>
               <Col xs={24} md={12}>
-                <Card
-                  title="Booking Information"
-                  className="information-card"
-                  bordered
-                >
-                  <p><strong>Booking ID:</strong> {booking.id}</p>
-                  <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
-                  <p>
-                    <strong>Status:</strong>{" "}
+                <Card title="Booking Information" className="information-card" bordered>
+                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                    <span><strong>Booking ID:</strong></span>
+                    <span>{booking.id}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                    <span><strong>Booking Date:</strong></span>
+                    <span>{new Date(booking.bookingDate).toLocaleDateString()}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                    <span><strong>Status:</strong></span>
                     <Tag color={statusColors[booking.status]}>
                       {booking.status.replace("_", " ")}
                     </Tag>
-                  </p>
-                  <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                    <span><strong>Total Price:</strong></span>
+                    <span>{new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 }).format(booking.totalPrice)}đ</span>
+                  </div>
                   <p><strong>Note:</strong> {booking.note}</p>
+
                   {booking.status === "AWAITING_PAYMENT" && (
                     <Button className="checkout-button" type="primary" onClick={handleCheckout}>
                       Check Out
                     </Button>
                   )}
-                  {booking.status != "CANCEL" && booking.status != "COMPLETED" && (
-                    <p>
-                      <Button className="cancel-button" type="primary" onClick={handleCancel}>
+
+                  {booking.status !== "CANCEL" && booking.status !== "COMPLETED" && (
+                    <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
+                      <Button className="cancel-button" type="primary" onClick={() => {
+                        handleCancel();
+                        refreshPage();
+                      }}>
                         Cancel
                       </Button>
-                    </p>
+                    </div>
                   )}
-                  {(booking.status === "COMPLETED" || booking.status === "CANCELED") && (
+                  {(booking.status === "COMPLETED" || booking.status === "CANCEL") && (
                     <Card title="Feedback" className="feedback-card" bordered>
                       {existingFeedback ? (
                         <>
@@ -358,7 +361,10 @@ function BookingStatusPage() {
                           />
                           <Button
                             type="primary"
-                            onClick={handleFeedbackSubmit}
+                            onClick={() => {
+                              handleFeedbackSubmit();
+                              refreshPage();
+                            }}
                             style={{ marginTop: "10px" }}
                           >
                             Submit
@@ -393,7 +399,10 @@ function BookingStatusPage() {
                                 Modal.confirm({
                                   title: "Check in",
                                   content: "Are you sure you want to check in?",
-                                  onOk: () => handleCheckIn(),
+                                  onOk: () => {
+                                    handleCheckIn();
+                                    refreshPage();
+                                  },
                                 })
                               }}
                             >
