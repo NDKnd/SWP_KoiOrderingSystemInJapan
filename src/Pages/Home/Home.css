@@ -1,1 +1,23 @@
-
+.fixed-height-image {
+    height: 500px;
+    object-fit: cover;
+    width: 100%;
+  }
+  
+  .info-card {
+    font-size: 25px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .info-card .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .ant-card {
+    height: 100%;
+  }
