@@ -132,11 +132,12 @@ function Account_order() {
                             key: "orderDetailResponseList",
                             render: (orderDetails) => orderDetails && orderDetails.length > 0
                                 ? (
-                                    <ul style={{ listStyle: "none", padding: 0, width: "15rem" }}>
+                                    <ul style={{ listStyle: "none", padding: 0, width: "20rem" }}>
                                         {orderDetails.map((KoiOrder) => (
                                             <li key={KoiOrder.id} style={{ marginBottom: "10px" }}>
                                                 <span style={{ marginRight: "10px" }}><strong>Koi Name:</strong> {KoiOrder.koiFishResponse.koiName}</span>
-                                                <span><strong>Quantity:</strong> {KoiOrder.quantity}</span>
+                                                <span style={{ marginRight: "10px" }}><strong>Quantity:</strong> {KoiOrder.quantity}</span>
+                                                <span><strong>Price:</strong> {KoiOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
                                             </li>
                                         ))}
                                     </ul>
