@@ -10,6 +10,9 @@ const DeliverPendingOrder = () => {
     const [currentOrder, setCurrentOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
+    const [orderFile, setOrderFile] = useState(null);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -54,8 +57,13 @@ const DeliverPendingOrder = () => {
 
     const handleDetailComplete = async (event) => {
         event.preventDefault();
+
+        const dataToSend = {
+            image: uploadedOrderImage || "",
+        };
+
         try {
-            const res = await api.put(`order/${currentOrder.id}`);
+            const res = await api.put(`order/${currentOrder.id}`, dataToSend);
             if (res.status >= 200 && res.status < 300) {
                 setOrderList((prevList) => prevList.filter((order) => order.id !== currentOrder.id));
                 message.success("Order completed successfully");
@@ -65,6 +73,43 @@ const DeliverPendingOrder = () => {
         } catch (err) {
             message.error(err.response?.data?.message || "Error completing the order");
         }
+    };
+
+    const handleOrderUploadChange = async (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            setUploadedOrderImage(reader.result);
+        };
+        setOrderFile(file);
+        console.log("Order image : ", file);
+    };
+
+    const handleOrderCheckIn = async () => {
+        const downloadURL = await upFile(orderFile, `Orders/${currentOrder.id}`);
+
+        if (downloadURL) {
+            try {
+                const res = await api.put(`order/${currentOrder.id}`, {
+                    image: downloadURL,
+                });
+                message.success("Image uploaded and order updated successfully!");
+            } catch (error) {
+                console.error("Error updating order:", error);
+            }
+        }
+        setOrderFile(null);
+    };
+
+    const handleCompleteClick = async (e) => {
+        e.preventDefault();
+        if (orderFile) {
+            await handleOrderCheckIn();
+        }
+
+        // await handleDetailComplete(e);
+        setIsModalOpen(false);
     };
 
     return (
@@ -167,13 +212,28 @@ const DeliverPendingOrder = () => {
                                     <div className="manager-order-content-detail">
                                         <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
                                     </div>
+                                    <div>
+                                        <input type="file" accept="image/*" onChange={(e) => handleOrderUploadChange(e)} />
+                                        {uploadedOrderImage && (
+                                            <div className="uploaded-image-container">
+                                                <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" />
+                                            </div>
+                                        )}
+                                    </div>
                                     <div className="manager-order-content-detail-button">
-                                        <button type="submit" className="manager-order-content-detail-button-pop">Complete</button>
+                                        <button
+                                            type="submit"
+                                            className="manager-order-content-detail-button-pop"
+                                            onClick={handleCompleteClick}
+                                        >
+                                            Complete
+                                        </button>
                                         <button
                                             className="manager-order-content-detail-button-pop"
                                             onClick={() => {
                                                 setIsModalOpen((prevState) => !prevState);
                                                 setCurrentOrder(null);
+                                                setUploadedOrderImage(null);
                                             }}>Cancel</button>
                                     </div>
                                 </form>

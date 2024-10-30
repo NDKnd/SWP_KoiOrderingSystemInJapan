@@ -193,7 +193,7 @@ const DeliverHome = () => {
                                                     <div key={index}>{detail.quantity}</div>
                                                 ))}
                                             </td>
-                                            <td>{order.booking.account.address}</td>
+                                            <td>{order?.booking?.account?.address || 'N/A'}</td>
                                             <td>{order.expectedDate}</td>
                                             <td>{order.booking.totalPrice}</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
