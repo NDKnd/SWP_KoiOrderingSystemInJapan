@@ -150,7 +150,7 @@ function Account_order() {
                             render: (status) => handleStatus(status),
                         },
                         {
-                            title: "Order Price",
+                            title: "Delivery Price",
                             dataIndex: "price",
                             key: "price",
                             render: (price) => price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
