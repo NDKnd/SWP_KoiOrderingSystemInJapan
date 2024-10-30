@@ -81,6 +81,8 @@ function TripPage() {
 
           if (response.status === 200) {
             message.success("Trip booked successfully!");
+            localStorage.setItem("bookingId", response.data.id)
+            console.log(response.data.id);
             navigate("/book-status");
           } else {
             message.error("Failed to book the trip. Please try again.");
