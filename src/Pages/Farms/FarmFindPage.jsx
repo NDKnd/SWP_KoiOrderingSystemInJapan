@@ -30,7 +30,7 @@ function FarmFindPage() {
   const [farmList, setFarmList] = useState([]);
   const [filterFarmList, setFilterFarmList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [farmRatings, setFarmRatings] = useState({});
+  // const [farmRatings, setFarmRatings] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const farmPerPage = 12;
 
@@ -50,36 +50,36 @@ function FarmFindPage() {
   };
 
   // Function to fetch feedback and calculate average ratings for each farm
-  const fetchFeedbackRatings = async () => {
-    try {
-      const response = await api.get("/feedback");
-      const feedbackData = response.data;
+  // const fetchFeedbackRatings = async () => {
+  //   try {
+  //     const response = await api.get("/feedback");
+  //     const feedbackData = response.data;
 
-      const ratings = feedbackData.reduce((acc, feedback) => {
-        const farms = feedback.booking.trip.farms;
+  //     const ratings = feedbackData.reduce((acc, feedback) => {
+  //       const farms = feedback.booking.trip.farms;
 
-        farms.forEach((farm) => {
-          if (!acc[farm.id]) {
-            acc[farm.id] = { total: 0, count: 0 };
-          }
-          acc[farm.id].total += feedback.rating;
-          acc[farm.id].count += 1;
-        });
+  //       farms.forEach((farm) => {
+  //         if (!acc[farm.id]) {
+  //           acc[farm.id] = { total: 0, count: 0 };
+  //         }
+  //         acc[farm.id].total += feedback.rating;
+  //         acc[farm.id].count += 1;
+  //       });
 
-        return acc;
-      }, {});
+  //       return acc;
+  //     }, {});
 
-      const avgRatings = Object.keys(ratings).reduce((acc, farmId) => {
-        acc[farmId] = (ratings[farmId].total / ratings[farmId].count).toFixed(1);
-        return acc;
-      }, {});
+  //     const avgRatings = Object.keys(ratings).reduce((acc, farmId) => {
+  //       acc[farmId] = (ratings[farmId].total / ratings[farmId].count).toFixed(1);
+  //       return acc;
+  //     }, {});
 
-      setFarmRatings(avgRatings);
-    } catch (error) {
-      console.error("Error fetching feedback:", error);
-      message.error("Failed to fetch feedback data.");
-    }
-  };
+  //     setFarmRatings(avgRatings);
+  //   } catch (error) {
+  //     console.error("Error fetching feedback:", error);
+  //     message.error("Failed to fetch feedback data.");
+  //   }
+  // };
 
 
   // Function to search farms
@@ -119,7 +119,7 @@ function FarmFindPage() {
   // Fetch all farms and feedbacks
   useEffect(() => {
     fetchFarms();
-    fetchFeedbackRatings();
+    // fetchFeedbackRatings();
   }, []);
 
   return (
@@ -189,10 +189,10 @@ function FarmFindPage() {
                             <div>Location: {farm.location}</div>
                             <div>Phone: {farm.phone}</div>
                             <div>Email: {farm.email}</div>
-                            <div>
+                            {/* <div>
                               Rating:{" "}
                               {farmRatings[farm.id] ? `${farmRatings[farm.id]} / 5` : "No ratings"}
-                            </div>
+                            </div> */}
                           </>
                         }
                       />

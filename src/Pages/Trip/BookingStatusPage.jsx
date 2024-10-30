@@ -328,9 +328,11 @@ function BookingStatusPage() {
                   <p><strong>Note:</strong> {booking.note}</p>
 
                   {booking.status === "AWAITING_PAYMENT" && (
-                    <Button className="checkout-button" type="primary" onClick={handleCheckout}>
-                      Check Out
-                    </Button>
+                    <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
+                      <Button className="checkout-button" type="primary" onClick={handleCheckout}>
+                        Check Out
+                      </Button>
+                    </div>
                   )}
 
                   {booking.status !== "CANCEL" && booking.status !== "COMPLETED" && (

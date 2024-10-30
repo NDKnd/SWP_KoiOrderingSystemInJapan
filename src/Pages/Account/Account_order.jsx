@@ -36,7 +36,6 @@ function Account_order() {
                 fetchOrders();
             } catch (error) {
                 console.error("Error transaction orders:", error)
-                message.error("Failed to transaction.")
             }
         }
 

@@ -11,6 +11,7 @@
 
 .search_button {
   text-align: center;
+  margin-top: 20px;
 }
 
 .search_button .ant-btn-primary {
