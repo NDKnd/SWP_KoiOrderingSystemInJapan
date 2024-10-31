@@ -18,12 +18,6 @@ function Account() {
 
   const contentAccount = [
     {
-      key: 0,
-      label: "General",
-      icon: <FaCogs />,
-      path: "/profile/general",
-    },
-    {
       key: 1,
       label: "Account",
       icon: <FaUserAlt />,
@@ -36,18 +30,12 @@ function Account() {
         },
         {
           key: 1.2,
-          label: "History",
-          icon: <FaHistory />,
-          path: "#", // Đường dẫn tới trang History
-        },
-        {
-          key: 1.3,
           label: "Trips",
           icon: <FaTruckPickup />,
           path: "/profile/trips", // Đường dẫn tới trang Orders
         },
         {
-          key: 1.4,
+          key: 1.3,
           label: "Orders",
           icon: <FaShoppingCart />,
           path: "/profile/orders", // Đường dẫn tới trang Settings
@@ -97,7 +85,7 @@ function Account() {
           }}
         >
           <Menu
-            defaultOpenKeys={["1"]}
+            defaultOpenKeys={["1.1"]}
             className="custom-menu"
             mode="inline"
             items={contentAccount}

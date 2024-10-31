@@ -71,25 +71,28 @@
   width: 100%;
   border-radius: 8px;
   margin-bottom: 16px;
-  max-height: 50em;
-  .ant-card-body {
-    padding: 0;
-  }
+  max-height: fit-content;
 }
 
 .manager_trip_title {
   font-size: 1.3em;
   color: var(--purple1);
   margin-bottom: 8px;
+
   b {
     color: rgb(19, 6, 32);
   }
 }
+
 .manager_trip_list {
-  max-height: 238px; /* Chiều cao tối đa cho danh sách */
-  overflow-y: auto; /* Kích hoạt scrollbar */
-  scroll-snap-type: y mandatory; /* Bật chế độ snap scrolling theo chiều dọc */
-  padding-right: 10px; /* Tạo khoảng trống tránh che bởi scrollbar */
+  max-height: 238px;
+  /* Chiều cao tối đa cho danh sách */
+  overflow-y: auto;
+  /* Kích hoạt scrollbar */
+  scroll-snap-type: y mandatory;
+  /* Bật chế độ snap scrolling theo chiều dọc */
+  padding-right: 10px;
+  /* Tạo khoảng trống tránh che bởi scrollbar */
 }
 
 .manager_trip_item {
@@ -99,10 +102,14 @@
 }
 
 .manager_trip_image {
-  width: 60px; /* Chiều rộng ảnh nhỏ */
-  height: 60px; /* Chiều cao ảnh nhỏ */
-  object-fit: cover; /* Giữ tỷ lệ ảnh */
-  margin-right: 16px; /* Khoảng cách giữa ảnh và nội dung */
+  width: 60px;
+  /* Chiều rộng ảnh nhỏ */
+  height: 60px;
+  /* Chiều cao ảnh nhỏ */
+  object-fit: cover;
+  /* Giữ tỷ lệ ảnh */
+  margin-right: 16px;
+  /* Khoảng cách giữa ảnh và nội dung */
 }
 
 .manager_trip_content {

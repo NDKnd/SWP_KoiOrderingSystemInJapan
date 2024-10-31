@@ -59,13 +59,17 @@ function Account_profile() {
     <div className={styles.account_profile}>
       <Divider>Profile</Divider>
       <div className={styles.account_profile_content}>
+        <img
+          className={styles.account_profile_content_avatar}
+          src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/defAvatar%2Fkoi-4371460.svg?alt=media&token=e7c71b00-3b9f-4b54-af1f-4e4d580f6877"
+        />
         {listContent.map((item, index) => (
           <div className={styles.account_profile_content_details} key={index}>
             <Row>
-              <Col span={6}>
+              <Col span={12}>
                 <span>{item.label}: </span>
               </Col>
-              <Col span={18}>
+              <Col span={12}>
                 {item.content !== "N/A" ? (
                   item.content
                 ) : (
@@ -93,11 +97,6 @@ function Account_profile() {
             Update Profile
           </Button>
         </ConfigProvider>
-
-        <img
-          className={styles.account_profile_content_avatar}
-          src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/defAvatar%2Fkoi-4371460.svg?alt=media&token=e7c71b00-3b9f-4b54-af1f-4e4d580f6877"
-        />
       </div>
 
       <Modal

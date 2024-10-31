@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./LoginForm.css";
-import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen } from "react-icons/fa";
+import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaHome, FaArrowAltCircleLeft } from "react-icons/fa";
 import api from "./../../services/axios";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
@@ -124,6 +124,9 @@ const LoginForm = () => {
 
   return (
     <div className="login-body">
+      <button onClick={() => navigate("/")} className="back_home_btn">
+        <FaArrowAltCircleLeft className="icon" />
+      </button>
       <div className={`wrapper ${action}`}>
         <div className="form-box login">
           <form action="" onSubmit={handleLogin}>
@@ -154,9 +157,6 @@ const LoginForm = () => {
               )}
             </div>
             <div className="remember-forgot">
-              <label>
-                <input type="checkbox"></input>Remember me
-              </label>
               <a href="forgot">Forgot password?</a>
             </div>
             <button type="submit">Login</button>

@@ -132,7 +132,7 @@ function Header() {
             <ul className="dropdown last">
               <div className="drop-conts last">
                 <li className="opt">
-                  <NavLink to="/profile">Profile</NavLink>
+                  <NavLink to="/profile/detail">Profile</NavLink>
                 </li>
                 {/* <li className="opt">
                   <NavLink to="/account-setting">Settings</NavLink>
