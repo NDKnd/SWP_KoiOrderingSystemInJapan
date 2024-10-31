@@ -360,7 +360,7 @@ function BookingStatusPage() {
                           <Input.TextArea
                             value={feedback}
                             onChange={(e) => setFeedback(e.target.value)}
-                            placeholder="Please leave your feedback here"
+                            placeholder="Please leave your feedback here (atleast 3 characters)."
                             rows={4}
                           />
                           <Button

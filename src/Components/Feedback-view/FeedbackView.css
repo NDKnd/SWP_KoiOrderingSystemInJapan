@@ -1,0 +1,27 @@
+.scroll-container {
+    height: 200px;
+    padding-top: 8px;
+    position: relative;
+  }
+  
+  .scroll-content {
+    display: flex;
+    flex-direction: column;
+    animation: scroll-up 10s linear infinite;
+  }
+  
+  .feedback-item {
+    margin-bottom: 16px;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+  
+  @keyframes scroll-up {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+  
