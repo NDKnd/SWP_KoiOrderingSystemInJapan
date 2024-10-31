@@ -16,7 +16,7 @@ function KoiPageFind() {
   const [koiName, setKoiName] = useState("");
   const [farmName, setFarmName] = useState("");
   const [type, setType] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 500]);
+  const [priceRange, setPriceRange] = useState([0, 0]);
   const [koiList, setKoiList] = useState([]);
   const [filteredKoiList, setFilteredKoiList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,6 @@ function KoiPageFind() {
       setKoiTypes(types);
     } catch (error) {
       console.error("Error fetching Koi fish:", error);
-      message.error("Failed to fetch Koi fish data.");
     } finally {
       setLoading(false);
     }
@@ -335,24 +334,30 @@ function KoiPageFind() {
                 <InputNumber
                   min={0}
                   max={100000000}
-                  value={
-                    new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
-                      .format(priceRange[0])
-                  } đ
+                  value={priceRange[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  suffix="VND"
                   onChange={handleMinPriceChange}
                   placeholder="Min Price"
                   style={{ width: "100%" }}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                    }
+                }}
                 />
                 <InputNumber
                   min={0}
                   max={100000000}
-                  value={
-                    new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
-                      .format(priceRange[1])
-                  } đ
+                  value={priceRange[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  suffix="VND"
                   onChange={handleMaxPriceChange}
                   placeholder="Max Price"
                   style={{ width: "100%" }}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                    }
+                }}
                 />
               </div>
             </Col>
@@ -391,9 +396,7 @@ function KoiPageFind() {
                       }
                     >
                       <Card.Meta
-                        title={`${koi.koiName} - ${new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
-                          .format(koi.price)
-                          }đ`}
+                        title={`${koi.koiName} - ${koi.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND`}
                         description={
                           <>
                             <div>Farm: {koi.farm.farmName}</div>

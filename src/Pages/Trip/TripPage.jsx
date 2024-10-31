@@ -29,7 +29,7 @@ function TripPage() {
       setTripList(response.data);
       setFilteredTripList(response.data);
     } catch (error) {
-      message.error("Failed to fetch trips.");
+      console.log("Error fetching trips:", error);
     } finally {
       setLoading(false);
     }

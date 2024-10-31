@@ -43,7 +43,6 @@ function FarmFindPage() {
       setFilterFarmList(farmData);
     } catch (error) {
       console.error("Error fetching farms:", error);
-      message.error("Failed to fetch farm data.");
     } finally {
       setLoading(false);
     }
@@ -177,7 +176,7 @@ function FarmFindPage() {
                           title={farm.farmName}
                           trigger="hover"
                         >
-                          <img alt={farm.farmName} src={farm.image} className="card-image"/>
+                          <img alt={farm.farmName} src={farm.image} className="card-image" />
                         </Popover>
                       }
                     >

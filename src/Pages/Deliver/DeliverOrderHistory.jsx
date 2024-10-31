@@ -44,12 +44,12 @@ const DeliverOrderHistory = () => {
 
     const todayDate = dayjs().format("YYYY-MM-DD");
     const filteredOrderList = orderList
-    .filter(order => order.expectedDate === todayDate && order.status === "ON_DELIVERY")
-    .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
+        .filter(order => order.expectedDate === todayDate && order.status === "ON_DELIVERY")
+        .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
 
     const filteredOrderListComplete = orderList
-    .filter(order => order.status === "COMPLETED")
-    .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
+        .filter(order => order.status === "COMPLETED")
+        .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
 
     const handleDetail = (order) => {
         setCurrentOrder(order);
@@ -76,7 +76,7 @@ const DeliverOrderHistory = () => {
                                     <th className="deliver-dashboard-home-content-user-header-3">Quantity</th>
                                     <th className="deliver-dashboard-home-content-user-header-4">Address</th>
                                     <th className="deliver-dashboard-home-content-user-header-5">Delivery date</th>
-                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment ($)</th>
+                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment </th>
                                     <th className="deliver-dashboard-home-content-user-header-3">Action</th>
                                 </tr>
                             </thead>
@@ -101,7 +101,7 @@ const DeliverOrderHistory = () => {
                                             </td>
                                             <td>{order.booking.account.address}</td>
                                             <td>{order.expectedDate}</td>
-                                            <td>{order.booking.totalPrice}</td>
+                                            <td>{order.price}</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
                                                 <a onClick={() => handleDetail(order)} className="deliver-dashboard-home-content-user-body-button">Detail</a>
                                             </td>
@@ -154,7 +154,7 @@ const DeliverOrderHistory = () => {
                                         <label>Delivery Date: {currentOrder.expectedDate}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
+                                        <label>Total Payment: {currentOrder.price}</label>
                                     </div>
                                     <div className="manager-order-content-detail-button">
                                         <button

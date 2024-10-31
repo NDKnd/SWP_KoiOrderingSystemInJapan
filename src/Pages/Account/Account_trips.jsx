@@ -120,10 +120,7 @@ function Trips() {
                           description={
                             <>
                               <p>
-                                <strong>Total Price:</strong> {
-                                  new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 })
-                                  .format(booking.totalPrice)
-                                  }đ
+                                <strong>Total Price:</strong> {booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND
                               </p>
                               <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
                               <p>

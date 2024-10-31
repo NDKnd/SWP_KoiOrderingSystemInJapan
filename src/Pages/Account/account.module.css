@@ -1,28 +1,24 @@
 .account_profile {
   /* background-color: rgba(142, 127, 109, 0.39); */
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: first baseline;
+  display: block;
+  overflow-x: hidden;
   height: 100vh;
 }
 
 .account_profile_content {
   background-color: hsla(60, 56%, 91%, 0.594);
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 1em;
-  width: 100%;
+  width: 60%;
+
   display: flex;
-  flex-direction: column;
+  justify-content: center;
 }
 
 .account_profile_content_avatar {
-  width: 40%;
-  position: absolute;
-  right: 3em;
-  top: 0;
+  border-radius: 50%;
+  width: 200px;
   animation: spin 40s linear infinite;
-  overflow: hidden;
   filter: drop-shadow(0 0 10px var(--purple4));
 }
 
@@ -83,7 +79,7 @@
 
 /* status orders */
 .status.status_on_delivery {
-  background-color: #3a4bca81;
+  background-color: #18c9ff81;
 }
 
 .button {

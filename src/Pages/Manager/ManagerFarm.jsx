@@ -58,8 +58,8 @@ const ManagerFarm = () => {
 
   const filteredKoiFarmList = Array.isArray(koiFarmList)
     ? koiFarmList.filter((koiFarm) =>
-        koiFarm.farmName.toLowerCase().includes(search.toLowerCase())
-      )
+      koiFarm.farmName.toLowerCase().includes(search.toLowerCase())
+    )
     : [];
   // const filteredKoiFarmList = koiFarmList.filter((koiFarm) =>
   //   koiFarm.name.toLowerCase().includes(search.toLowerCase())
@@ -199,7 +199,7 @@ const ManagerFarm = () => {
       // Nếu tạo farm thành công, tiến hành upload ảnh
       // Kiểm tra có file để upload hay không?
       if (file) {
-        const downloadURL = await upFile(file, "farms"); // Tải file lên Firebase
+        const downloadURL = await upFile(file, `farms/${newFarm.id}`); // Tải file lên Firebase
 
         if (downloadURL) {
           // Cập nhật farm với URL của ảnh
@@ -213,7 +213,7 @@ const ManagerFarm = () => {
       message.success("Koi Farm created successfully");
     } catch (err) {
       console.error(err.response.data);
-      message.error(err.response.data);
+      message.error(err.response.data + " ! ");
     } finally {
       setFile(null);
       setNewFarm(null);

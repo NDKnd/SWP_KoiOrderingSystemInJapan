@@ -249,34 +249,31 @@ function ManagerTrip() {
   };
 
   const handleSearch = () => {
-    if (
-      searchFarms.length === 0 &&
-      searchStartLocation.trim() === "" &&
-      searchEndLocation.trim() === "" &&
-      searchDateRange === null
-    ) {
-      fetchTrips();
-      setSearchTrips(tripList);
-      return;
-    }
 
     const filteredTrips = tripList.filter((trip) => {
       // Check for start location match
       const matchesStartLocation = trip.startLocation
         .toLowerCase()
         .includes(searchStartLocation.toLowerCase());
+      console.log(searchStartLocation);
+      console.log("matches StartLocation: ", matchesStartLocation);
 
       // Check for end location match
       const matchesEndLocation = trip.endLocation
         .toLowerCase()
         .includes(searchEndLocation.toLowerCase());
+      console.log(searchEndLocation);
+      console.log("matches EndLocation: ", matchesEndLocation);
 
       // Check for date range match
       const matchesDateRange =
-        searchDateRange === null
+        searchDateRange === null ||
+          searchDateRange.length === 0
           ? true
           : dayjs(trip.startDate).isSameOrAfter(searchDateRange[0], "day") &&
           dayjs(trip.endDate).isSameOrBefore(searchDateRange[1], "day");
+      console.log(searchDateRange);
+      console.log("matches DateRange: ", matchesDateRange);
 
       // Check for farms match
       const matchesFarms =
@@ -284,6 +281,8 @@ function ManagerTrip() {
         searchFarms.every((farmId) =>
           trip.farms.map((farm) => farm.id).includes(farmId)
         );
+      console.log(searchFarms);
+      console.log("matches Farms: ", matchesFarms);
 
       return (
         matchesStartLocation &&
@@ -296,7 +295,7 @@ function ManagerTrip() {
     console.log("filteredTrips: ", filteredTrips);
     filteredTrips.length > 0
       ? setSearchTrips(filteredTrips)
-      : message.warning("Cannot find trips");
+      : setSearchTrips([]);
   };
 
   useEffect(() => {
@@ -306,7 +305,7 @@ function ManagerTrip() {
   }, []);
 
   return (
-    <div>
+    <div className={styles.manager_trip}>
       <Row className={styles.manager_trip_create_search}>
         {/* create button  */}
         <Col xs={24} md={4} className={styles.manager_trip_create}>
