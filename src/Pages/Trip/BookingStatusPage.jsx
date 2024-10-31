@@ -323,7 +323,7 @@ function BookingStatusPage() {
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
                     <span><strong>Total Price:</strong></span>
-                    <span>{new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0 }).format(booking.totalPrice)}đ</span>
+                    <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
                   </div>
                   <p><strong>Note:</strong> {booking.note}</p>
 
@@ -350,8 +350,8 @@ function BookingStatusPage() {
                       {existingFeedback ? (
                         <>
                           <p><strong>Rating:</strong> <Rate disabled value={existingFeedback.rating} /></p>
-                          <p><strong>Comment:</strong> {existingFeedback.comment}</p>
                           <p><strong>Date:</strong> {new Date(existingFeedback.createAt).toLocaleString()}</p>
+                          <p><strong>Comment:</strong> {existingFeedback.comment}</p>
                         </>
                       ) : (
                         <>
