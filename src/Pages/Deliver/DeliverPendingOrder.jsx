@@ -3,6 +3,7 @@ import api from "../../services/axios";
 import "./DeliverHome.css";
 import { message } from "antd";
 import dayjs from "dayjs";
+import upFile from "../../utils/file";
 
 const DeliverPendingOrder = () => {
     const [loading, setLoading] = useState(true);
@@ -47,8 +48,9 @@ const DeliverPendingOrder = () => {
 
     const todayDate = dayjs().format("YYYY-MM-DD");
     const filteredOrderList = orderList
-    .filter(order => order.status === "ON_DELIVERY")
-    .sort((a, b) => dayjs(a.expectedDate).diff(dayjs(b.expectedDate)));
+        .filter(order => order.status === "ON_DELIVERY")
+        .sort((a, b) => dayjs(a.expectedDate).diff(dayjs(b.expectedDate)));
+    console.log("ondelivery : ", filteredOrderList);
 
     const handleDetail = (order) => {
         setCurrentOrder(order);
@@ -132,7 +134,7 @@ const DeliverPendingOrder = () => {
                                     <th className="deliver-dashboard-home-content-user-header-3">Quantity</th>
                                     <th className="deliver-dashboard-home-content-user-header-4">Address</th>
                                     <th className="deliver-dashboard-home-content-user-header-5">Delivery date</th>
-                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment ($)</th>
+                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment </th>
                                     <th className="deliver-dashboard-home-content-user-header-3">Action</th>
                                 </tr>
                             </thead>
@@ -157,7 +159,7 @@ const DeliverPendingOrder = () => {
                                             </td>
                                             <td>{order.booking.account.address}</td>
                                             <td>{order.expectedDate}</td>
-                                            <td>{order.booking.totalPrice}</td>
+                                            <td>{order.price}</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
                                                 <a onClick={() => handleDetail(order)} className="deliver-dashboard-home-content-user-body-button">Detail</a>
                                             </td>
@@ -210,7 +212,7 @@ const DeliverPendingOrder = () => {
                                         <label>Delivery Date: {currentOrder.expectedDate}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
+                                        <label>Total Payment: {currentOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} VND</label>
                                     </div>
                                     <div>
                                         <input type="file" accept="image/*" onChange={(e) => handleOrderUploadChange(e)} />

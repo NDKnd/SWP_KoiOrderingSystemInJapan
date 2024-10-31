@@ -170,7 +170,7 @@ const DeliverHome = () => {
                                     <th className="deliver-dashboard-home-content-user-header-3">Quantity</th>
                                     <th className="deliver-dashboard-home-content-user-header-4">Address</th>
                                     <th className="deliver-dashboard-home-content-user-header-5">Delivery date</th>
-                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment ($)</th>
+                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment</th>
                                     <th className="deliver-dashboard-home-content-user-header-3">Action</th>
                                 </tr>
                             </thead>
@@ -195,7 +195,7 @@ const DeliverHome = () => {
                                             </td>
                                             <td>{order?.booking?.account?.address || 'N/A'}</td>
                                             <td>{order.expectedDate}</td>
-                                            <td>{order.booking.totalPrice}</td>
+                                            <td>{order.price} VND</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
                                                 <a onClick={() => handleDetail(order)} className="deliver-dashboard-home-content-user-body-button">Detail</a>
                                             </td>
@@ -248,7 +248,7 @@ const DeliverHome = () => {
                                         <label>Delivery Date: {currentOrder.expectedDate}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Total Payment: ${currentOrder.booking.totalPrice}</label>
+                                        <label>Total Payment: {currentOrder.price} VND</label>
                                     </div>
                                     <div>
                                         <input type="file" accept="image/*" onChange={(e) => handleOrderUploadChange(e)} />
