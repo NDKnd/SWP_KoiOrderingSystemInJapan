@@ -67,15 +67,16 @@
     font-size: 50px;
 }
 
-.manager-dashboard-home-content h3{
+.manager-dashboard-home-content h3 {
     font-weight: bold;
     font-size: 30px;
 }
 
-.manager-dashboard-home-content-user{
+.manager-dashboard-home-content-user {
     width: 100%;
 }
-.manager-dashboard-home-content-user-header{
+
+.manager-dashboard-home-content-user-header {
     background-color: rgb(207, 228, 248);
 }
 
@@ -87,26 +88,27 @@
     font-weight: bold;
 }
 
-.manager-dashboard-home-content-user-header-1{
-    width: 20%;
-}
-.manager-dashboard-home-content-user-header-2{
+.manager-dashboard-home-content-user-header-1 {
     width: 20%;
 }
 
-.manager-dashboard-home-content-user-header-3{
+.manager-dashboard-home-content-user-header-2 {
     width: 20%;
 }
 
-.manager-dashboard-home-content-user-header-4{
+.manager-dashboard-home-content-user-header-3 {
+    width: 20%;
+}
+
+.manager-dashboard-home-content-user-header-4 {
     width: 10%;
 }
 
-.manager-dashboard-home-content-user-header-5{
+.manager-dashboard-home-content-user-header-5 {
     width: 10%;
 }
 
-.manager-dashboard-home-content-user-header-6{
+.manager-dashboard-home-content-user-header-6 {
     width: 10%;
 }
 
@@ -120,4 +122,12 @@
 
 .manager-dashboard-home-content-user-body tr:hover {
     background-color: #f1f1f1;
+}
+
+.manager-chart-1 {
+    height: 500px;
+}
+
+.manager-chart-2{
+    height: 500px;
 }

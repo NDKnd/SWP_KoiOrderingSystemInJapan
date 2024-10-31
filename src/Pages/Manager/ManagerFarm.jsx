@@ -8,7 +8,7 @@ import storage from "../../config/firebase";
 import { deleteObject, ref } from "firebase/storage";
 
 const ManagerFarm = () => {
-  const [file, setFile] = useState(null); // State để lưu trữ file trước khi upload
+  const [file, setFile] = useState(null);
   const [search, setSearch] = useState("");
   const [koiFarmList, setKoiFarmList] = useState([]);
 
@@ -35,7 +35,6 @@ const ManagerFarm = () => {
         console.log(response);
         setKoiFarmList(response.data);
         console.log("koiFarmList: ", response.data);
-        // message.success("Fetch farm data successfully");
       } catch (err) {
         console.log(err);
         message.error("Cannot fetch farm data");
@@ -52,11 +51,6 @@ const ManagerFarm = () => {
       await deleteObject(ImageRef);
     }
   };
-  // const handleCancelCreate = () => {
-
-  // };
-
-  // if (error) return <p>{error}</p>;
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
