@@ -117,7 +117,7 @@ const DeliverHome = () => {
             await handleOrderCheckIn();
         }
 
-        // await handleDetailComplete(e);
+        fetchData();
         setIsModalOpen(false);
     };
 
@@ -204,7 +204,7 @@ const DeliverHome = () => {
                                                     <div key={index}>{detail.quantity}</div>
                                                 ))}
                                             </td>
-                                            <td>{order?.booking?.account?.address || 'N/A'}</td>
+                                            <td>{order?.address || 'N/A'}</td>
                                             <td>{order.expectedDate}</td>
                                             <td>{order.price} VND</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
@@ -230,7 +230,7 @@ const DeliverHome = () => {
                                         <label>Customer Name: {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Address: {currentOrder.booking.account.address}</label>
+                                        <label>Address: {currentOrder.address}</label>
                                     </div>
                                     <table className="manager-order-table-detail">
                                         <thead>

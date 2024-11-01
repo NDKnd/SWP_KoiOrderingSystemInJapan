@@ -3,17 +3,12 @@ import api from "../../services/axios";
 import "./DeliverHome.css";
 import { message } from "antd";
 import dayjs from "dayjs";
-import upFile from "../../utils/file";
 
 const DeliverOrderHistory = () => {
     const [loading, setLoading] = useState(true);
     const [orderList, setOrderList] = useState([]);
     const [currentOrder, setCurrentOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-    const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
-    const [orderFile, setOrderFile] = useState(null);
 
     const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
@@ -33,92 +28,14 @@ const DeliverOrderHistory = () => {
         fetchData();
     }, []);
 
-    const today = dayjs();
-    const currentMonth = today.month() + 1;
-    const currentYear = today.year();
-    const currentDay = today.date();
-
-    const ordersThisMonth = orderList.filter(order => {
-        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
-        return deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
-    });
-
-    const pendingOrdersThisMonth = ordersThisMonth.filter(order => order.status === "ON_DELIVERY");
-    const pendingOrdersToday = pendingOrdersThisMonth.filter(order => {
-        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
-        return deliveryDate.date() === currentDay && deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
-    });
-
-    const todayDate = dayjs().format("YYYY-MM-DD");
-    const filteredOrderList = orderList
-        .filter(order => order.expectedDate === todayDate && order.status === "ON_DELIVERY")
-        .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
-
     const filteredOrderListComplete = orderList
         .filter(order => order.status === "COMPLETED")
-        .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
+        .sort((a, b) => dayjs(b.deliveredDate).diff(dayjs(a.deliveredDate)));
 
     const handleDetail = (order) => {
         setCurrentOrder(order);
         setIsModalOpen((prevState) => !prevState);
     }
-
-    const handleDetailComplete = async (event) => {
-        event.preventDefault();
-
-        const dataToSend = {
-            image: uploadedOrderImage || "",
-        };
-
-        try {
-            const res = await api.put(`order/${currentOrder.id}`, dataToSend);
-            if (res.status >= 200 && res.status < 300) {
-                setOrderList((prevList) => prevList.filter((order) => order.id !== currentOrder.id));
-                message.success("Order completed successfully");
-            } else {
-                message.error("Failed to complete the order");
-            }
-        } catch (err) {
-            message.error(err.response?.data?.message || "Error completing the order");
-        }
-    };
-
-    const handleOrderUploadChange = async (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            setUploadedOrderImage(reader.result);
-        };
-        setOrderFile(file);
-        console.log("Order image : ", file);
-    };
-
-    const handleOrderCheckIn = async () => {
-        const downloadURL = await upFile(orderFile, `Orders/${currentOrder.id}`);
-
-        if (downloadURL) {
-            try {
-                const res = await api.put(`order/${currentOrder.id}`, {
-                    image: downloadURL,
-                });
-                message.success("Image uploaded and order updated successfully!");
-            } catch (error) {
-                console.error("Error updating order:", error);
-            }
-        }
-        setOrderFile(null);
-    };
-
-    const handleCompleteClick = async (e) => {
-        e.preventDefault();
-        if (orderFile) {
-            await handleOrderCheckIn();
-        }
-
-        // await handleDetailComplete(e);
-        setIsModalOpen(false);
-    };
 
     const handleImageClick = () => {
         setIsImagePopupOpen(true);

@@ -117,6 +117,7 @@ const DeliverPendingOrder = () => {
         // await handleDetailComplete(e);
         setIsModalOpen(false);
         setOrderFile(null);
+        fetchData();
     };
 
     const handleImageClick = () => {
