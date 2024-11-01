@@ -18,6 +18,7 @@ const DeliverHome = () => {
     const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
     const [orderFile, setOrderFile] = useState(null);
 
+    const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -118,6 +119,16 @@ const DeliverHome = () => {
 
         // await handleDetailComplete(e);
         setIsModalOpen(false);
+    };
+
+    const handleImageClick = () => {
+        setIsImagePopupOpen(true);
+    };
+
+    const handleCloseImagePopup = (e) => {
+        if (e.target === e.currentTarget) {
+            setIsImagePopupOpen(false);
+        }
     };
 
     return (
@@ -254,7 +265,12 @@ const DeliverHome = () => {
                                         <input type="file" accept="image/*" onChange={(e) => handleOrderUploadChange(e)} />
                                         {uploadedOrderImage && (
                                             <div className="uploaded-image-container">
-                                                <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" />
+                                                <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" onClick={handleImageClick} />
+                                            </div>
+                                        )}
+                                        {isImagePopupOpen && uploadedOrderImage && (
+                                            <div className="deliver-image-popup" onClick={handleCloseImagePopup}>
+                                                <img className="deliver-popup-image" src={uploadedOrderImage} alt="Popup" />
                                             </div>
                                         )}
                                     </div>

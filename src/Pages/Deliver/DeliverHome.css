@@ -324,3 +324,37 @@
     transition: all 0.3s ease-in-out;
     background: linear-gradient(145deg,rgb(207, 111, 219), #ffffff);
 }
+
+.deliver-image-popup {
+    position: fixed; /* Đặt vị trí cố định */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Nền tối với độ mờ */
+    display: flex;
+    justify-content: center; /* Canh giữa theo chiều ngang */
+    align-items: center; /* Canh giữa theo chiều dọc */
+    z-index: 1000; /* Đảm bảo popup nằm trên tất cả các phần tử khác */
+}
+
+.deliver-popup-image {
+    max-width: 90%; /* Đảm bảo ảnh không vượt quá 90% chiều rộng */
+    max-height: 90%; /* Đảm bảo ảnh không vượt quá 90% chiều cao */
+}
+
+.deliver-uploaded-image-container{
+    height: 60px;
+}
+
+.deliver-uploaded-image-container img{
+    height: 30px;
+}
+
+.uploaded-image-container{
+    height: 60px;
+}
+
+.uploaded-image-container img{
+    height: 50px;
+}

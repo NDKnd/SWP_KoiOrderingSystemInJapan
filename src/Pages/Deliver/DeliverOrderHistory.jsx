@@ -3,12 +3,19 @@ import api from "../../services/axios";
 import "./DeliverHome.css";
 import { message } from "antd";
 import dayjs from "dayjs";
+import upFile from "../../utils/file";
 
 const DeliverOrderHistory = () => {
     const [loading, setLoading] = useState(true);
     const [orderList, setOrderList] = useState([]);
     const [currentOrder, setCurrentOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+    const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
+    const [orderFile, setOrderFile] = useState(null);
+
+    const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,6 +63,73 @@ const DeliverOrderHistory = () => {
         setIsModalOpen((prevState) => !prevState);
     }
 
+    const handleDetailComplete = async (event) => {
+        event.preventDefault();
+
+        const dataToSend = {
+            image: uploadedOrderImage || "",
+        };
+
+        try {
+            const res = await api.put(`order/${currentOrder.id}`, dataToSend);
+            if (res.status >= 200 && res.status < 300) {
+                setOrderList((prevList) => prevList.filter((order) => order.id !== currentOrder.id));
+                message.success("Order completed successfully");
+            } else {
+                message.error("Failed to complete the order");
+            }
+        } catch (err) {
+            message.error(err.response?.data?.message || "Error completing the order");
+        }
+    };
+
+    const handleOrderUploadChange = async (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            setUploadedOrderImage(reader.result);
+        };
+        setOrderFile(file);
+        console.log("Order image : ", file);
+    };
+
+    const handleOrderCheckIn = async () => {
+        const downloadURL = await upFile(orderFile, `Orders/${currentOrder.id}`);
+
+        if (downloadURL) {
+            try {
+                const res = await api.put(`order/${currentOrder.id}`, {
+                    image: downloadURL,
+                });
+                message.success("Image uploaded and order updated successfully!");
+            } catch (error) {
+                console.error("Error updating order:", error);
+            }
+        }
+        setOrderFile(null);
+    };
+
+    const handleCompleteClick = async (e) => {
+        e.preventDefault();
+        if (orderFile) {
+            await handleOrderCheckIn();
+        }
+
+        // await handleDetailComplete(e);
+        setIsModalOpen(false);
+    };
+
+    const handleImageClick = () => {
+        setIsImagePopupOpen(true);
+    };
+
+    const handleCloseImagePopup = (e) => {
+        if (e.target === e.currentTarget) {
+            setIsImagePopupOpen(false);
+        }
+    };
+
     return (
         <>
             <div className="deliver-dashboard-home-content">
@@ -99,8 +173,8 @@ const DeliverOrderHistory = () => {
                                                     <div key={index}>{detail.quantity}</div>
                                                 ))}
                                             </td>
-                                            <td>{order.booking.account.address}</td>
-                                            <td>{order.expectedDate}</td>
+                                            <td>{order.address}</td>
+                                            <td>{order.deliveredDate ? order.deliveredDate.split('T')[0] : "N/A"}</td>
                                             <td>{order.price}</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
                                                 <a onClick={() => handleDetail(order)} className="deliver-dashboard-home-content-user-body-button">Detail</a>
@@ -125,7 +199,7 @@ const DeliverOrderHistory = () => {
                                         <label>Customer Name: {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Address: {currentOrder.booking.account.address}</label>
+                                        <label>Address: {currentOrder.address}</label>
                                     </div>
                                     <table className="manager-order-table-detail">
                                         <thead>
@@ -151,10 +225,20 @@ const DeliverOrderHistory = () => {
                                         </tbody>
                                     </table>
                                     <div className="manager-order-content-detail">
-                                        <label>Delivery Date: {currentOrder.expectedDate}</label>
+                                        <td>{currentOrder.deliveredDate ? currentOrder.deliveredDate.split('T')[0] : "N/A"}</td>
                                     </div>
                                     <div className="manager-order-content-detail">
                                         <label>Total Payment: {currentOrder.price}</label>
+                                    </div>
+                                    <div>
+                                        <div className="deliver-uploaded-image-container">
+                                            <img className="ticket-img" src={currentOrder.image} alt="Uploaded" onClick={handleImageClick} />
+                                        </div>
+                                        {isImagePopupOpen && (
+                                            <div className="deliver-image-popup" onClick={handleCloseImagePopup}>
+                                                <img className="deliver-popup-image" src={currentOrder.image} alt="Popup" />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="manager-order-content-detail-button">
                                         <button

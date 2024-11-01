@@ -14,6 +14,8 @@ const DeliverPendingOrder = () => {
     const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
     const [orderFile, setOrderFile] = useState(null);
 
+    const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -108,10 +110,23 @@ const DeliverPendingOrder = () => {
         e.preventDefault();
         if (orderFile) {
             await handleOrderCheckIn();
+        } else {
+            message.warning("You must upload an image to complete!");
         }
 
         // await handleDetailComplete(e);
         setIsModalOpen(false);
+        setOrderFile(null);
+    };
+
+    const handleImageClick = () => {
+        setIsImagePopupOpen(true);
+    };
+
+    const handleCloseImagePopup = (e) => {
+        if (e.target === e.currentTarget) {
+            setIsImagePopupOpen(false);
+        }
     };
 
     return (
@@ -133,7 +148,7 @@ const DeliverPendingOrder = () => {
                                     <th className="deliver-dashboard-home-content-user-header-2">Koi ordered</th>
                                     <th className="deliver-dashboard-home-content-user-header-3">Quantity</th>
                                     <th className="deliver-dashboard-home-content-user-header-4">Address</th>
-                                    <th className="deliver-dashboard-home-content-user-header-5">Delivery date</th>
+                                    <th className="deliver-dashboard-home-content-user-header-5">Expected Date</th>
                                     <th className="deliver-dashboard-home-content-user-header-6">Total Payment </th>
                                     <th className="deliver-dashboard-home-content-user-header-3">Action</th>
                                 </tr>
@@ -157,7 +172,7 @@ const DeliverPendingOrder = () => {
                                                     <div key={index}>{detail.quantity}</div>
                                                 ))}
                                             </td>
-                                            <td>{order.booking.account.address}</td>
+                                            <td>{order.address}</td>
                                             <td>{order.expectedDate}</td>
                                             <td>{order.price}</td>
                                             <td className="deliver-dashboard-home-content-user-body-button-box">
@@ -183,7 +198,7 @@ const DeliverPendingOrder = () => {
                                         <label>Customer Name: {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
-                                        <label>Address: {currentOrder.booking.account.address}</label>
+                                        <label>Address: {currentOrder.address}</label>
                                     </div>
                                     <table className="manager-order-table-detail">
                                         <thead>
@@ -209,7 +224,7 @@ const DeliverPendingOrder = () => {
                                         </tbody>
                                     </table>
                                     <div className="manager-order-content-detail">
-                                        <label>Delivery Date: {currentOrder.expectedDate}</label>
+                                        <label>Expected Date: {currentOrder.expectedDate}</label>
                                     </div>
                                     <div className="manager-order-content-detail">
                                         <label>Total Payment: {currentOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} VND</label>
@@ -217,8 +232,13 @@ const DeliverPendingOrder = () => {
                                     <div>
                                         <input type="file" accept="image/*" onChange={(e) => handleOrderUploadChange(e)} />
                                         {uploadedOrderImage && (
-                                            <div className="uploaded-image-container">
-                                                <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" />
+                                            <div className="deliver-uploaded-image-container">
+                                                <img className="ticket-img" src={uploadedOrderImage} alt="Uploaded" onClick={handleImageClick} />
+                                            </div>
+                                        )}
+                                        {isImagePopupOpen && uploadedOrderImage && (
+                                            <div className="deliver-image-popup" onClick={handleCloseImagePopup}>
+                                                <img className="deliver-popup-image" src={uploadedOrderImage} alt="Popup" />
                                             </div>
                                         )}
                                     </div>
