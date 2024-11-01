@@ -20,19 +20,21 @@ const DeliverHome = () => {
 
     const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const orderResponse = await api.get("order/manager");
+            setOrderList(orderResponse.data);
+        } catch (err) {
+            console.error(err);
+            message.error("Cannot fetch some of the data");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const orderResponse = await api.get("order/manager");
-                setOrderList(orderResponse.data);
-            } catch (err) {
-                console.error(err);
-                message.error("Cannot fetch some of the data");
-            } finally {
-                setLoading(false);
-            }
-        };
+
         fetchData();
     }, []);
 
@@ -118,6 +120,7 @@ const DeliverHome = () => {
         }
 
         fetchData();
+        setOrderFile(null);
         setIsModalOpen(false);
     };
 
