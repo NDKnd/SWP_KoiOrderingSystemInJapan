@@ -37,24 +37,24 @@ const OrderHistory = () => {
     const currentDay = today.date();
 
     const ordersThisMonth = orderList.filter(order => {
-        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
+        const deliveryDate = dayjs(order.deliveredDate, "YYYY-MM-DD");
         return deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
     });
 
     const pendingOrdersThisMonth = ordersThisMonth.filter(order => order.status === "ON_DELIVERY");
     const pendingOrdersToday = pendingOrdersThisMonth.filter(order => {
-        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
+        const deliveryDate = dayjs(order.deliveredDate, "YYYY-MM-DD");
         return deliveryDate.date() === currentDay && deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
     });
 
     const todayDate = dayjs().format("YYYY-MM-DD");
     const filteredOrderList = orderList
-        .filter(order => order.expectedDate === todayDate && order.status === "ON_DELIVERY")
-        .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
+        .filter(order => order.deliveredDate === todayDate && order.status === "ON_DELIVERY")
+        .sort((a, b) => dayjs(b.deliveredDate).diff(dayjs(a.deliveredDate)));
 
     const filteredOrderListComplete = orderList
         .filter(order => order.status === "COMPLETED")
-        .sort((a, b) => dayjs(b.expectedDate).diff(dayjs(a.expectedDate)));
+        .sort((a, b) => dayjs(b.deliveredDate).diff(dayjs(a.deliveredDate)));
 
     const handleDetail = (order) => {
         setCurrentOrder(order);
