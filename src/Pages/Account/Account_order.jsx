@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../services/axios'
-import { message, Modal, Table } from 'antd'
+import { message, Modal, Select, Table } from 'antd'
 import styles from './account.module.css'
 import { Await } from 'react-router-dom'
 
@@ -13,16 +13,17 @@ const statusList = [
 function Account_order() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [filteredOrders, setFilteredOrders] = useState([]);
 
     const fetchOrders = async () => {
         try {
             const response = await api.get("/order/customer")
             console.log("orders: ", response.data)
             setOrders(response.data)
+            setFilteredOrders(response.data)
             setLoading(false);
         } catch (error) {
             console.error("Error fetching orders:", error)
-            message.error("Failed to fetch orders.")
         }
     }
 
@@ -80,19 +81,30 @@ function Account_order() {
             });
     };
 
+    const handleFilter = (value) => {
+        if (value === 'All') {
+            setFilteredOrders(orders);
+        } else {
+            setFilteredOrders(orders.filter(order => order.status === value));
+        }
+    }
+
     return (
         <div>
             <h1>Order List</h1>
+            <Select
+                style={{ width: 200 }}
+                onChange={handleFilter}
+                defaultValue="All"
+            >
+                <Select.Option value="All">All</Select.Option>
+                {statusList.map(status => <Select.Option key={status} value={status}>{status}</Select.Option>)}
+            </Select>
             <Table
                 loading={loading}
                 style={{ width: "100%", overflow: "auto" }}
-                dataSource={orders} columns={
+                dataSource={filteredOrders} columns={
                     [
-                        {
-                            title: "Order ID",
-                            dataIndex: "id",
-                            key: "id"
-                        },
                         {
                             title: "Order Address",
                             dataIndex: "address",
@@ -184,4 +196,4 @@ function Account_order() {
     )
 }
 
-export default Account_order
+export default Account_order;

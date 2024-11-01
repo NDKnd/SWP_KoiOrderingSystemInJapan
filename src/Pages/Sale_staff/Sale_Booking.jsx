@@ -83,6 +83,7 @@ function Sale_Booking() {
               placeholder="Enter price" type="number" id="price"
               defaultValue={values.totalPrice.toFixed(2)}
               inputMode="decimal"
+              min="0"
             />
           </div>
         ),

@@ -19,31 +19,24 @@ function Account() {
   const contentAccount = [
     {
       key: 1,
-      label: "Account",
-      icon: <FaUserAlt />,
-      children: [
-        {
-          key: 1.1,
-          label: "Detail",
-          icon: <FaUserCog />,
-          path: "/profile/detail", // Đường dẫn tới trang Profile
-        },
-        {
-          key: 1.2,
-          label: "Trips",
-          icon: <FaTruckPickup />,
-          path: "/profile/trips", // Đường dẫn tới trang Orders
-        },
-        {
-          key: 1.3,
-          label: "Orders",
-          icon: <FaShoppingCart />,
-          path: "/profile/orders", // Đường dẫn tới trang Settings
-        },
-      ],
+      label: "Detail",
+      icon: <FaUserCog />,
+      path: "/profile/detail", // Đường dẫn tới trang Profile
     },
     {
       key: 2,
+      label: "Trips",
+      icon: <FaTruckPickup />,
+      path: "/profile/trips", // Đường dẫn tới trang Orders
+    },
+    {
+      key: 3,
+      label: "Orders",
+      icon: <FaShoppingCart />,
+      path: "/profile/orders", // Đường dẫn tới trang Settings
+    },
+    {
+      key: 4,
       label: "Logout",
       icon: <FaSignOutAlt />,
       render: () => {
@@ -85,7 +78,7 @@ function Account() {
           }}
         >
           <Menu
-            defaultOpenKeys={["1.1"]}
+            defaultOpenKeys={["1"]}
             className="custom-menu"
             mode="inline"
             items={contentAccount}

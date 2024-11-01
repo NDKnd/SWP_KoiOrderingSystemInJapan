@@ -1,25 +1,32 @@
 .account_profile {
-  /* background-color: rgba(142, 127, 109, 0.39); */
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
   overflow-x: hidden;
   height: 100vh;
 }
 
 .account_profile_content {
-  background-color: hsla(60, 56%, 91%, 0.594);
-  border-radius: 20px;
-  padding: 1em;
-  width: 60%;
+  width: 100%;
+  padding: 0 18rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  margin-top: 1rem;
+}
 
+.account_profile_content_avatar {
   display: flex;
   justify-content: center;
 }
 
-.account_profile_content_avatar {
+.account_profile_content_avatar_img {
+  display: block;
   border-radius: 50%;
   width: 200px;
   animation: spin 40s linear infinite;
-  filter: drop-shadow(0 0 10px var(--purple4));
+  filter: drop-shadow(0 0 10px rgba(52, 39, 39, 0.5));
 }
 
 @keyframes spin {
@@ -34,10 +41,26 @@
 
 .account_profile_content_details {
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
 
   span {
     color: var(--purple1);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
   }
+}
+
+.account_profile_content_label {}
+
+.account_profile_content_content {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.account_profile_content_button {
+  display: flex;
+  justify-content: center;
 }
 
 .account_profile_content button {

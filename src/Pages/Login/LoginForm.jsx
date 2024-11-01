@@ -3,7 +3,7 @@ import "./LoginForm.css";
 import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaHome, FaArrowAltCircleLeft } from "react-icons/fa";
 import api from "./../../services/axios";
 import { useNavigate } from "react-router-dom";
-import { message } from "antd";
+import { message, Spin } from "antd";
 
 const LoginForm = () => {
   //for tranfsition from login to regis
@@ -15,6 +15,8 @@ const LoginForm = () => {
     setAction("");
   };
 
+  // for loading
+  const [loading, setLoading] = useState(false);
   // for see password
   const [seeLoginPassword, setSeeLoginPassword] = useState(false);
   const [seeRegisterPassword, setSeeRegisterPassword] = useState(false);
@@ -64,7 +66,7 @@ const LoginForm = () => {
     const password = formData.get("password"); // Lấy giá trị của trường Password
     // console.log("Username:", userName);
     // console.log("Password:", password);
-
+    setLoading(true);
     try {
       const response = await api.post("login", {
         username: userName,
@@ -88,6 +90,8 @@ const LoginForm = () => {
     } catch (err) {
       console.log(err);
       alert(err.response.data); // nhận thông báo lỗi từ backend
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,6 +109,7 @@ const LoginForm = () => {
     // console.log("Lastname:", lastName);
     // console.log("Email:", email);
     // console.log("Password:", password);
+    setLoading(true);
     try {
       const response = await api.post("register", {
         username: userName,
@@ -119,6 +124,8 @@ const LoginForm = () => {
     } catch (err) {
       console.log(err);
       alert(err.response.data); // nhận thông báo lỗi từ backend
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -274,8 +281,10 @@ const LoginForm = () => {
           </form>
         </div>
       </div>
+      <Spin spinning={loading} fullscreen />
     </div>
   );
 };
 
 export default LoginForm;
+

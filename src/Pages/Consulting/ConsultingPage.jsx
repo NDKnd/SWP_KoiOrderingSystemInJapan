@@ -105,11 +105,6 @@ function ConsultingPage() {
                     dataSource={booking}
                     columns={[
                         {
-                            title: "ID",
-                            dataIndex: "id",
-                            key: "id",
-                        },
-                        {
                             title: "Checkin Pic",
                             dataIndex: "image",
                             key: "image",
@@ -141,7 +136,7 @@ function ConsultingPage() {
                             render: (status) => handleStatus(status),
                         },
                         {
-                            title: "Total",
+                            title: "Total Price",
                             dataIndex: "totalPrice",
                             key: "totalPrice",
                             render: (price) => {

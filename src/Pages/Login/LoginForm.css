@@ -155,4 +155,10 @@
   top: 10px;
   left: 10px;
   font-size: 3rem;
+  transition: all 0.3s ease;
+}
+
+.back_home_btn:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 3px var(--purple5));
 }

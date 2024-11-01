@@ -190,7 +190,7 @@ function Consulting_orders() {
                     <p>Koi type: {values.type}</p>
                     <p>Koi Name: {values.koiName}</p>
                     <p>Farm Name: {values.farm.farmName}</p>
-                    <p>Booking Trip:</p>
+                    <p>Booking Trip Date:</p>
                     <Select
                         showSearch
                         style={{ width: 150 }}
@@ -207,7 +207,7 @@ function Consulting_orders() {
                     >
                         {bookingList.length > 0 && bookingList.map((booking) => (
                             <Select.Option key={booking.id} value={booking.id}>
-                                {booking.id + " - " + booking.trip.startDate + " - " + booking.trip.endDate}
+                                {dayjs(booking.bookingDate).format(dateFormat)}
                             </Select.Option>
                         ))
                         }
@@ -356,7 +356,7 @@ function Consulting_orders() {
                                 : (record.price = parseInt(e.target.value))}
 
                     />
-                    <p>New Address:</p>
+                    <p>Delivery Address:</p>
                     <Input
                         onChange={(e) => (record.address = e.target.value)
                         }

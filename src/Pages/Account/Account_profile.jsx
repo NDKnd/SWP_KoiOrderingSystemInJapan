@@ -59,17 +59,19 @@ function Account_profile() {
     <div className={styles.account_profile}>
       <Divider>Profile</Divider>
       <div className={styles.account_profile_content}>
-        <img
-          className={styles.account_profile_content_avatar}
-          src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/defAvatar%2Fkoi-4371460.svg?alt=media&token=e7c71b00-3b9f-4b54-af1f-4e4d580f6877"
-        />
+        <div className={styles.account_profile_content_avatar}>
+          <img
+            className={styles.account_profile_content_avatar_img}
+            src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/defAvatar%2Fkoi-4371460.svg?alt=media&token=e7c71b00-3b9f-4b54-af1f-4e4d580f6877"
+          />
+        </div>
         {listContent.map((item, index) => (
           <div className={styles.account_profile_content_details} key={index}>
             <Row>
-              <Col span={12}>
+              <Col span={12} className={styles.account_profile_content_label}>
                 <span>{item.label}: </span>
               </Col>
-              <Col span={12}>
+              <Col span={12} className={styles.account_profile_content_content}>
                 {item.content !== "N/A" ? (
                   item.content
                 ) : (
@@ -82,21 +84,22 @@ function Account_profile() {
           </div>
         ))}
 
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: "var(--purple1)",
-            },
-          }}
-        >
-          <Button
-            type="default"
-            onClick={() => setVisible(true)}
-            className={styles.account_profile_content_button}
+        <div className={styles.account_profile_content_button}>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: "var(--purple1)",
+              },
+            }}
           >
-            Update Profile
-          </Button>
-        </ConfigProvider>
+            <Button
+              type="default"
+              onClick={() => setVisible(true)}
+            >
+              Update Profile
+            </Button>
+          </ConfigProvider>
+        </div>
       </div>
 
       <Modal
