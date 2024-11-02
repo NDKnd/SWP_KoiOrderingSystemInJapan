@@ -71,8 +71,8 @@ const ManagerKoi = () => {
 
   const filteredKoiList = Array.isArray(koiList)
     ? koiList.filter((koi) =>
-        koi.koiName.toLowerCase().includes(search.toLowerCase())
-      )
+      koi.koiName.toLowerCase().includes(search.toLowerCase())
+    )
     : [];
 
   const handleEdit = (koi) => {
@@ -211,6 +211,10 @@ const ManagerKoi = () => {
 
   const handleCreate = async (event) => {
     event.preventDefault();
+    if (newKoi.farmId == null){
+      message.error("You must select a farm!");
+      return;
+    }
     try {
       console.log("newKoi before: ", newKoi);
 
@@ -362,6 +366,7 @@ const ManagerKoi = () => {
                     onChange={(e) =>
                       setCurrentKoi({ ...currentKoi, koiName: e.target.value })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -372,6 +377,7 @@ const ManagerKoi = () => {
                     onChange={(e) =>
                       setCurrentKoi({ ...currentKoi, type: e.target.value })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -385,6 +391,7 @@ const ManagerKoi = () => {
                         price: Number(e.target.value),
                       })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -397,6 +404,7 @@ const ManagerKoi = () => {
                         description: e.target.value,
                       })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -424,6 +432,7 @@ const ManagerKoi = () => {
                   <input
                     type="file"
                     onChange={(e) => handleFileChange(e.target.files[0])}
+                    required
                   />
                 </div>
                 <div className="popup-but-edit-manager-koi">
@@ -458,6 +467,7 @@ const ManagerKoi = () => {
                     onChange={(e) =>
                       setNewKoi({ ...newKoi, koiName: e.target.value })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -468,6 +478,7 @@ const ManagerKoi = () => {
                     onChange={(e) =>
                       setNewKoi({ ...newKoi, type: e.target.value })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -478,6 +489,7 @@ const ManagerKoi = () => {
                     onChange={(e) =>
                       setNewKoi({ ...newKoi, price: Number(e.target.value) })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -487,6 +499,7 @@ const ManagerKoi = () => {
                     onChange={(e) =>
                       setNewKoi({ ...newKoi, description: e.target.value })
                     }
+                    required
                   />
                 </div>
                 <div className="edit-detail-manager-koi">
@@ -498,18 +511,25 @@ const ManagerKoi = () => {
                     }
                     style={{ width: "100%" }}
                   >
-                    {koiFarmList.map((farm) => (
-                      <Select.Option key={farm.id} value={farm.id}>
-                        {farm.farmName}
+                    {koiFarmList.length > 0 ? (
+                      koiFarmList.map((farm) => (
+                        <Select.Option key={farm.id} value={farm.id}>
+                          {farm.farmName}
+                        </Select.Option>
+                      ))
+                    ) : (
+                      <Select.Option value="No farm" disabled>
+                        No farm
                       </Select.Option>
-                    ))}
+                    )}
                   </Select>
                 </div>
                 <div className="edit-detail-manager-koi">
                   <label>Image URL: </label>
                   <input
                     type="file"
-                    onChange={(e) => handleFileChange(e.target.files[0])} // Xử lý file upload
+                    onChange={(e) => handleFileChange(e.target.files[0])}
+                    required
                   />
                 </div>
                 <div className="popup-but-edit-manager-koi">

@@ -330,6 +330,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Koi Farm Name: </label>
                   <input
+                    required
                     type="text"
                     value={currentKoiFarm.farmName}
                     onChange={(e) =>
@@ -343,6 +344,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Location: </label>
                   <input
+                    required
                     type="text"
                     value={currentKoiFarm.location}
                     onChange={(e) =>
@@ -356,6 +358,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Description: </label>
                   <textarea
+                    required
                     value={currentKoiFarm.description}
                     onChange={(e) =>
                       setCurrentKoiFarm({
@@ -369,6 +372,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Phone: </label>
                   <input
+                    required
                     type="text"
                     value={currentKoiFarm.phone}
                     onChange={(e) =>
@@ -382,7 +386,8 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Email: </label>
                   <input
-                    type="text"
+                    required
+                    type="email"
                     value={currentKoiFarm.email}
                     onChange={(e) =>
                       setCurrentKoiFarm({
@@ -395,6 +400,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Upload Image: </label>
                   <input
+                    required
                     type="file"
                     onChange={(e) => handleFileChange(e.target.files[0])}
                   />
@@ -427,6 +433,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Koi Farm Name: </label>
                   <input
+                    required
                     type="text"
                     value={newFarm?.farmName || ""}
                     onChange={(e) =>
@@ -437,6 +444,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Koi Farm location: </label>
                   <input
+                    required
                     type="text"
                     value={newFarm?.location || ""}
                     onChange={(e) =>
@@ -447,6 +455,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Description: </label>
                   <textarea
+                    required
                     value={newFarm?.description || ""}
                     onChange={(e) =>
                       setNewFarm({ ...newFarm, description: e.target.value })
@@ -456,6 +465,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Phone: </label>
                   <input
+                    required
                     type="text"
                     value={newFarm?.phone || ""}
                     onChange={(e) =>
@@ -466,7 +476,8 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Email: </label>
                   <input
-                    type="text"
+                    required
+                    type="email"
                     value={newFarm?.email || ""}
                     onChange={(e) =>
                       setNewFarm({ ...newFarm, email: e.target.value })
@@ -476,6 +487,7 @@ const ManagerFarm = () => {
                 <div className="edit-detail-manager-koi">
                   <label>Upload Image: </label>
                   <input
+                    required
                     type="file"
                     onChange={(e) => handleFileChange(e.target.files[0])}
                   />
