@@ -53,24 +53,30 @@ function BookingStatusPage() {
       }
     }
 
+    const getBookingIdFromQuery = () => {
+      const query = new URLSearchParams(window.location.search);
+      return query.get("bookingId");
+    };
+    
     const fetchBookingData = async (bookingId) => {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
         const bookingData = bookingResponse.data;
-
+    
         if (bookingData && bookingData.length > 0) {
-          const storedBookingId = bookingId || localStorage.getItem("bookingId");
+          const storedBookingId = bookingId || getBookingIdFromQuery() || localStorage.getItem("bookingId");
           let specificBooking;
-
+    
           if (storedBookingId) {
-            specificBooking = bookingData.find((b) => b.id === parseInt(storedBookingId));
+            specificBooking = bookingData.find((b) => b.id === storedBookingId);
             setBooking(specificBooking || bookingData[0]);
           } else {
             bookingData.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
             setBooking(bookingData[0]);
           }
-          if (specificBooking) localStorage.setItem("bookingId", specificBooking.id);
-          handleCheckFeedback(specificBooking ? specificBooking.id : bookingData[0].id);
+          const selectedBookingId = specificBooking ? specificBooking.id : bookingData[0].id;
+          localStorage.setItem("bookingId", selectedBookingId);
+          handleCheckFeedback(selectedBookingId);
         } else {
           console.error("No booking found.");
         }
