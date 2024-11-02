@@ -42,20 +42,20 @@
 .account_profile_content_details {
   margin-top: 1rem;
   display: flex;
-  flex-direction: column;
 
   span {
     color: var(--purple1);
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
   }
 }
 
-.account_profile_content_label {}
+.account_profile_content_label {
+  font-size: 1.2rem;
+  padding-left: 3em;
+  width: 50%;
+}
 
 .account_profile_content_content {
   font-size: 1.2rem;
-  margin-bottom: 0.5rem;
 }
 
 .account_profile_content_button {

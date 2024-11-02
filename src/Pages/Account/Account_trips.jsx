@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Divider, ConfigProvider, Tabs, Card, Button, message, Row, Col, Spin, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/axios";
+import dayjs from "dayjs";
 
 const statusColors = {
   PENDING_CONFIRMATION: "orange",
@@ -28,7 +29,7 @@ const tabPanels = [
     label: status
       .replace(/_/g, " ")
       .toLowerCase()
-      .replace(/\b\w/g, (char) => char.toUpperCase()),  
+      .replace(/\b\w/g, (char) => char.toUpperCase()),
     status,
   })),
 ];
@@ -116,7 +117,7 @@ function Trips() {
                         ]}
                       >
                         <Card.Meta
-                          title={`Booking ID: ${booking.id}`}
+                          title={`Book Date: ${dayjs(booking.bookingDate).format("YYYY-MM-DD")}`}
                           description={
                             <>
                               <p>

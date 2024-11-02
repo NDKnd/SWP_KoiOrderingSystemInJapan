@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../services/axios'
-import { message, Modal, Select, Table } from 'antd'
+import { message, Modal, Popover, Select, Table } from 'antd'
 import styles from './account.module.css'
 import { Await } from 'react-router-dom'
+import dayjs from 'dayjs'
 
 const statusList = [
     "PENDING",
@@ -14,6 +15,8 @@ function Account_order() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filteredOrders, setFilteredOrders] = useState([]);
+
+    const [totalPrice, setTotalPrice] = useState(0);
 
     const fetchOrders = async () => {
         try {
@@ -32,8 +35,7 @@ function Account_order() {
             console.log("id: ", id)
             try {
                 const response = await api.post("transaction/order?orderId=" + id);
-                console.log("orders: ", response.data)
-                message.success(response.data);
+                console.log("Transaction", response.data);
                 fetchOrders();
             } catch (error) {
                 console.error("Error transaction orders:", error)
@@ -102,58 +104,59 @@ function Account_order() {
             </Select>
             <Table
                 loading={loading}
+                scroll={{ x: 780 }}
                 style={{ width: "100%", overflow: "auto" }}
                 dataSource={filteredOrders} columns={
                     [
                         {
                             title: "Order Address",
                             dataIndex: "address",
-                            key: "address"
+                            key: "address",
+                            render: (address) => (
+                                <Popover content={address} title="Order Address">
+                                    <span>{address}</span>
+                                </Popover>
+                            )
                         },
                         {
-                            title: "DeliveredDate",
+                            title: "Delivered Date",
                             dataIndex: "deliveredDate",
                             key: "deliveredDate",
-                            render: (text) => text ? text : 'not know',
+                            render: (text) => text ? text : (<p style={{ color: "gray" }}>N/A</p>),
                         },
                         {
                             title: "Expected date",
                             dataIndex: "expectedDate",
                             key: "expectedDate",
-                        },
-                        {
-                            title: "Booking ID",
-                            dataIndex: "booking",
-                            key: "booking",
-                            render: (booking) => booking
-                                ? booking.id
-                                : 'not know',
-                        },
-                        {
-                            title: "Booking trip Price",
-                            dataIndex: "booking",
-                            key: "booking",
-                            render: (booking) => booking
-                                ? booking.totalPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
-                                : 'not know',
+                            render: (expectedDate) => (
+                                <div style={{ width: "5rem" }}>{dayjs(expectedDate).format("YYYY-MM-DD")}</div>
+                            ),
                         },
                         {
                             title: "Order Details",
                             dataIndex: "orderDetailResponseList",
                             key: "orderDetailResponseList",
-                            render: (orderDetails) => orderDetails && orderDetails.length > 0
-                                ? (
-                                    <ul style={{ listStyle: "none", padding: 0, width: "20rem" }}>
-                                        {orderDetails.map((KoiOrder) => (
-                                            <li key={KoiOrder.id} style={{ marginBottom: "10px" }}>
-                                                <span style={{ marginRight: "10px" }}><strong>Koi Name:</strong> {KoiOrder.koiFishResponse.koiName}</span>
-                                                <span style={{ marginRight: "10px" }}><strong>Quantity:</strong> {KoiOrder.quantity}</span>
-                                                <span><strong>Price:</strong> {KoiOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )
-                                : 'None',
+                            render: (orderDetails) => {
+                                let tmpPrice = 0;
+                                orderDetails.forEach((orderDetail) => {
+                                    tmpPrice += orderDetail.price * orderDetail.quantity;
+                                })
+                                setTotalPrice(tmpPrice);
+                                return orderDetails && orderDetails.length > 0
+                                    ? (
+                                        <ul style={{ listStyle: "none", padding: 0, width: "25rem" }}>
+                                            {orderDetails.map((KoiOrder) =>
+                                            (
+                                                <li key={KoiOrder.id} style={{ marginBottom: "10px" }}>
+                                                    <span style={{ marginRight: "10px" }}><strong>Koi Name:</strong> {KoiOrder.koiFishResponse.koiName}</span>
+                                                    <span style={{ marginRight: "10px" }}><strong>Quantity:</strong> {KoiOrder.quantity}</span>
+                                                    <span><strong>Price:</strong> {KoiOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND ( 1 Koi )</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )
+                                    : 'None'
+                            }
                         },
                         {
                             title: "Order Status",
@@ -165,7 +168,24 @@ function Account_order() {
                             title: "Delivery Price",
                             dataIndex: "price",
                             key: "price",
-                            render: (price) => price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
+                            render: (price) => {
+                                setTotalPrice((prev) => prev + price);
+                                return price != null && price != 0
+                                    ? (
+                                        <div style={{ width: "9em" }}>{price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND</div>
+                                    )
+                                    : (<div style={{ width: "9em" }}>0 VND</div>);
+                            },
+                        },
+                        {
+                            title: "Total Price",
+                            dataIndex: "totalPrice",
+                            key: "totalPrice",
+                            render: () =>
+                            (
+                                <div style={{ width: "9em" }}>{totalPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND</div>
+                            )
+
                         },
                         {
                             title: "Action",

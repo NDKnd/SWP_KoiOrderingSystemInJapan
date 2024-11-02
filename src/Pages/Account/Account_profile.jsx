@@ -67,20 +67,18 @@ function Account_profile() {
         </div>
         {listContent.map((item, index) => (
           <div className={styles.account_profile_content_details} key={index}>
-            <Row>
-              <Col span={12} className={styles.account_profile_content_label}>
-                <span>{item.label}: </span>
-              </Col>
-              <Col span={12} className={styles.account_profile_content_content}>
-                {item.content !== "N/A" ? (
-                  item.content
-                ) : (
-                  <span style={{ color: "rgba(0, 0, 0, 0.25)" }}>
-                    {item.content}
-                  </span>
-                )}
-              </Col>
-            </Row>
+            <div className={styles.account_profile_content_label}>
+              <span>{item.label}: </span>
+            </div>
+            <div className={styles.account_profile_content_content}>
+              {item.content !== "N/A" ? (
+                item.content
+              ) : (
+                <span style={{ color: "rgba(0, 0, 0, 0.25)" }}>
+                  {item.content}
+                </span>
+              )}
+            </div>
           </div>
         ))}
 
