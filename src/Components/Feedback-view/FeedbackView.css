@@ -16,6 +16,14 @@
     box-sizing: border-box;
   }
   
+  .feedback-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center; 
+  }
+  
   @keyframes scroll-up {
     0% {
       transform: translateY(-100%);

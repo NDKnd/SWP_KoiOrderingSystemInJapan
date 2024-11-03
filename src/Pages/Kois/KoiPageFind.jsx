@@ -23,7 +23,10 @@ function KoiPageFind() {
   const [koiTypes, setKoiTypes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const koiPerPage = 12;
-
+  // const [bookingList, setBookingList] = useState([]);
+  // const [notInOrderBooking, setNotInOrderBooking] = useState([]);
+  const [orders, setOrders] = useState([]);
+  
   const fetchAllKoiAndTypes = async () => {
     try {
       const response = await api.get("/koi");
@@ -69,9 +72,6 @@ function KoiPageFind() {
     fetchBookingManager();
   }, []);
 
-  const [bookingList, setBookingList] = useState([]);
-  const [notInOrderBooking, setNotInOrderBooking] = useState([]);
-  const [orders, setOrders] = useState([]);
 
   const fetchBookingManager = async () => {
     const res = await api.get("booking/manager");
@@ -385,10 +385,14 @@ function KoiPageFind() {
                         <Popover
                           content={
                             <div className="popover-content">
-                              Description: {koi.description}
+                              <p><strong>Farm Name:</strong> {koi.farm.farmName}</p>
+                              <p><strong>Location:</strong> {koi.farm.location}</p>
+                              <p><strong>Phone:</strong> {koi.farm.phone}</p>
+                              <p><strong>Email:</strong> {koi.farm.email}</p>
+                              <p><strong>Description:</strong> {koi.farm.description}</p>
                             </div>
                           }
-                          title={koi.koiName}
+                          title={`Farm information of ${koi.koiName}`}
                           trigger="hover"
                         >
                           <img alt={koi.koiName} src={koi.image} className="card-image" />
@@ -399,8 +403,8 @@ function KoiPageFind() {
                         title={`${koi.koiName} - ${koi.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND`}
                         description={
                           <>
-                            <div>Farm: {koi.farm.farmName}</div>
                             <div>Type: {koi.type}</div>
+                            <div>Description: {koi.description}</div>
                           </>
                         }
                       />

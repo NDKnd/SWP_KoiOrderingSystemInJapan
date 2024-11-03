@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Button, Spin, message, Pagination, Input, DatePicker, Modal } from "antd";
+import { Layout, Row, Col, Card, Button, Spin, message, Pagination, Input, DatePicker, Modal, List } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -22,12 +22,19 @@ function TripPage() {
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
   const [dateRange, setDateRange] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  // Modal state for displaying farm details
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState(null);
 
   const fetchTrips = async () => {
     try {
       const response = await api.get("/trip");
-      setTripList(response.data);
-      setFilteredTripList(response.data);
+      const futureTrips = response.data.filter(trip => new Date(trip.startDate) > new Date());
+      setTripList(futureTrips);
+      setFilteredTripList(futureTrips);
     } catch (error) {
       console.log("Error fetching trips:", error);
     } finally {
@@ -60,7 +67,7 @@ function TripPage() {
           );
 
           if (incompleteBooking) {
-            message.error("You already have an active trip is in booking. Complete it before booking another trip.");
+            message.error("You already have an active trip in booking. Complete it before booking another trip.");
             return;
           }
 
@@ -82,7 +89,6 @@ function TripPage() {
           if (response.status === 200) {
             message.success("Trip booked successfully!");
             localStorage.setItem("bookingId", response.data.id)
-            console.log(response.data.id);
             navigate("/book-status");
           } else {
             message.error("Failed to book the trip. Please try again.");
@@ -92,7 +98,7 @@ function TripPage() {
           message.error("Failed to book the trip. Please try again.");
         }
       }
-    })
+    });
   };
 
   const handleSearch = () => {
@@ -100,14 +106,24 @@ function TripPage() {
       const matchesFarmName = farmName ? trip.farms.some((farm) => farm.farmName.toLowerCase().includes(farmName.toLowerCase())) : true;
       const matchesStartLocation = startLocation ? trip.startLocation.toLowerCase().includes(startLocation.toLowerCase()) : true;
       const matchesEndLocation = endLocation ? trip.endLocation.toLowerCase().includes(endLocation.toLowerCase()) : true;
-      const matchesDateRange =
-        dateRange.length === 2
-          ? new Date(trip.startDate) >= dateRange[0]._d && new Date(trip.endDate) <= dateRange[1]._d
-          : true;
+      const matchesStartDate = startDate ? new Date(trip.startDate) >= startDate : true;
+      const matchesEndDate = endDate ? new Date(trip.endDate) <= endDate : true;
 
-      return matchesFarmName && matchesStartLocation && matchesEndLocation && matchesDateRange;
+      return matchesFarmName && matchesStartLocation && matchesEndLocation && matchesStartDate && matchesEndDate;
     });
     setFilteredTripList(filtered);
+    setCurrentPage(1);
+  };
+
+
+  const showFarmDetails = (trip) => {
+    setSelectedTrip(trip);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedTrip(null);
   };
 
   useEffect(() => {
@@ -144,28 +160,36 @@ function TripPage() {
             </Col>
 
             <Col xs={24} sm={12} md={6}>
-              <label>Start Location</label>
+              <label>Depart Location</label>
               <Input
-                placeholder="Enter Start Location"
+                placeholder="Enter Depart Location"
                 value={startLocation}
                 onChange={(e) => setStartLocation(e.target.value)}
               />
             </Col>
 
             <Col xs={24} sm={12} md={6}>
-              <label>End Location</label>
+              <label>Arrive Location</label>
               <Input
-                placeholder="Enter End Location"
+                placeholder="Enter Arrive Location"
                 value={endLocation}
                 onChange={(e) => setEndLocation(e.target.value)}
               />
             </Col>
 
-            <Col xs={24} sm={12} md={6}>
-              <label>Date Range</label>
-              <RangePicker
-                value={dateRange}
-                onChange={(dates) => setDateRange(dates)}
+            <Col xs={24} sm={12} md={3}>
+              <label>Start Date</label>
+              <DatePicker
+                value={startDate}
+                onChange={(date) => setStartDate(date ? date : null)}
+              />
+            </Col>
+
+            <Col xs={24} sm={12} md={3}>
+              <label>End Date</label>
+              <DatePicker
+                value={endDate}
+                onChange={(date) => setEndDate(date ? date : null)}
               />
             </Col>
 
@@ -180,33 +204,33 @@ function TripPage() {
         ) : (
           <>
             <Row gutter={[16, 16]}>
-              {currentTripList.map((trip) =>
-                trip.farms.map((farm) => (
-                  <Col xs={24} sm={12} md={8} lg={6} key={`${trip.tripId}-${farm.id}`}>
-                    <Card hoverable className="trip-card">
-                      <div className="trip-image">
-                        <img src={farm.image} alt={farm.farmName} />
-                      </div>
-                      <Card.Meta
-                        title={`Trip to: ${farm.farmName}`}
-                        description={
-                          <>
-                            <div>From: {trip.startDate}</div>
-                            <div>To: {trip.endDate}</div>
-                            <div>Depart location: {trip.startLocation}</div>
-                            <div>Apart location: {trip.endLocation}</div>
-                          </>
-                        }
-                      />
-                      <div className="book-button">
-                        <Button type="primary" onClick={() => handleBookTrip(trip)}>
-                          Book Now
-                        </Button>
-                      </div>
-                    </Card>
-                  </Col>
-                ))
-              )}
+              {currentTripList.map((trip) => (
+                <Col xs={24} sm={12} md={8} lg={6} key={trip.id}>
+                  <Card hoverable className="trip-card">
+                    <Card.Meta
+                      title={
+                        <>
+                          Depart location: ${trip.startLocation} <br />
+                          Arrive location: ${trip.endLocation}
+                        </>}
+                      description={
+                        <>
+                          <div>From: {trip.startDate}</div>
+                          <div>To: {trip.endDate}</div>
+                        </>
+                      }
+                    />
+                    <div className="book-button">
+                      <Button type="primary" onClick={() => handleBookTrip(trip)}>
+                        Book Now
+                      </Button>
+                      <Button onClick={() => showFarmDetails(trip)} style={{ marginLeft: "10px" }}>
+                        Details
+                      </Button>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
             </Row>
             <Pagination
               current={currentPage}
@@ -217,6 +241,40 @@ function TripPage() {
             />
           </>
         )}
+        
+        <Modal
+          title="Farm Details"
+          visible={isModalVisible}
+          onCancel={handleModalClose}
+          footer={[
+            <Button key="close" onClick={handleModalClose}>
+              Close
+            </Button>,
+          ]}
+        >
+          {selectedTrip && (
+            <List
+              itemLayout="vertical"
+              dataSource={selectedTrip.farms}
+              renderItem={farm => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<img src={farm.image} alt={farm.farmName} style={{ width: 50, height: 50 }} />}
+                    title={farm.farmName}
+                    description={
+                      <>
+                        <p><strong>Location:</strong> {farm.location}</p>
+                        <p><strong>Description:</strong> {farm.description}</p>
+                        <p><strong>Phone:</strong> {farm.phone}</p>
+                        <p><strong>Email:</strong> {farm.email}</p>
+                      </>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          )}
+        </Modal>
       </Content>
       <Footer />
     </Layout>

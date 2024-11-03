@@ -22,7 +22,7 @@ function FeedbackView() {
     }, [isLoggedIn]);
 
     return (
-        <Card style={{ marginTop: "24px", height: "300px", overflow: "hidden", width: "100%" }}>
+        <Card style={{ height: "300px", overflow: "hidden", width: "100%" }}>
             {isLoggedIn ? (
                 <div className="scroll-container">
                     <div className="scroll-content">
@@ -37,12 +37,16 @@ function FeedbackView() {
                                 </div>
                             ))
                         ) : (
-                            <p>No feedback available.</p>
+                            <div className="feedback-text">
+                                <h3>No feedback available.</h3>
+                            </div>
                         )}
                     </div>
                 </div>
             ) : (
-                <p>Please log in to view feedback.</p>
+                <div className="feedback-text">
+                    <h3>Please log in to view feedback.</h3>
+                </div>
             )}
         </Card>
     );

@@ -5,8 +5,6 @@ import {
   Divider,
   Layout,
   Input,
-  Select,
-  Slider,
   Button,
   Row,
   Col,
@@ -21,7 +19,6 @@ import api from "../../services/axios";
 import { useNavigate } from "react-router-dom";
 
 const { Content } = Layout;
-const { Option } = Select;
 
 function FarmFindPage() {
   const navigate = useNavigate();
@@ -30,7 +27,6 @@ function FarmFindPage() {
   const [farmList, setFarmList] = useState([]);
   const [filterFarmList, setFilterFarmList] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [farmRatings, setFarmRatings] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const farmPerPage = 12;
 
@@ -47,39 +43,6 @@ function FarmFindPage() {
       setLoading(false);
     }
   };
-
-  // Function to fetch feedback and calculate average ratings for each farm
-  // const fetchFeedbackRatings = async () => {
-  //   try {
-  //     const response = await api.get("/feedback");
-  //     const feedbackData = response.data;
-
-  //     const ratings = feedbackData.reduce((acc, feedback) => {
-  //       const farms = feedback.booking.trip.farms;
-
-  //       farms.forEach((farm) => {
-  //         if (!acc[farm.id]) {
-  //           acc[farm.id] = { total: 0, count: 0 };
-  //         }
-  //         acc[farm.id].total += feedback.rating;
-  //         acc[farm.id].count += 1;
-  //       });
-
-  //       return acc;
-  //     }, {});
-
-  //     const avgRatings = Object.keys(ratings).reduce((acc, farmId) => {
-  //       acc[farmId] = (ratings[farmId].total / ratings[farmId].count).toFixed(1);
-  //       return acc;
-  //     }, {});
-
-  //     setFarmRatings(avgRatings);
-  //   } catch (error) {
-  //     console.error("Error fetching feedback:", error);
-  //     message.error("Failed to fetch feedback data.");
-  //   }
-  // };
-
 
   // Function to search farms
   const handleSearch = () => {
@@ -115,10 +78,9 @@ function FarmFindPage() {
     });
   };
 
-  // Fetch all farms and feedbacks
+  // Fetch all farms
   useEffect(() => {
     fetchFarms();
-    // fetchFeedbackRatings();
   }, []);
 
   return (
@@ -170,10 +132,22 @@ function FarmFindPage() {
                         <Popover
                           content={
                             <div className={styles.popover_content}>
-                              Description: {farm.description}
+                              <p><strong>Description:</strong> {farm.description}</p>
+                              <p><strong>Available Koi Fishes:</strong></p>
+                              <ul>
+                                {farm.koiFishResponseList && farm.koiFishResponseList.length > 0 ? (
+                                  farm.koiFishResponseList.map((koi) => (
+                                    <li key={koi.id}>
+                                      <strong>{koi.koiName}</strong> - {koi.price.toLocaleString()} VND
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li>No koi fishes available</li>
+                                )}
+                              </ul>
                             </div>
                           }
-                          title={farm.farmName}
+                          title={`Farm Detail`}
                           trigger="hover"
                         >
                           <img alt={farm.farmName} src={farm.image} className="card-image" />
@@ -188,10 +162,6 @@ function FarmFindPage() {
                             <div>Location: {farm.location}</div>
                             <div>Phone: {farm.phone}</div>
                             <div>Email: {farm.email}</div>
-                            {/* <div>
-                              Rating:{" "}
-                              {farmRatings[farm.id] ? `${farmRatings[farm.id]} / 5` : "No ratings"}
-                            </div> */}
                           </>
                         }
                       />
@@ -208,7 +178,7 @@ function FarmFindPage() {
                 ))
               ) : (
                 <Col span={24}>
-                  <p>No farm fishes found matching your findings.</p>
+                  <p>No farms found matching your search.</p>
                 </Col>
               )}
             </Row>

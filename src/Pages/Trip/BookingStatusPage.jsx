@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List } from "antd";
 import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -57,16 +57,16 @@ function BookingStatusPage() {
       const query = new URLSearchParams(window.location.search);
       return query.get("bookingId");
     };
-    
+
     const fetchBookingData = async (bookingId) => {
       try {
         const bookingResponse = await api.get(`/booking/customer`);
         const bookingData = bookingResponse.data;
-    
+
         if (bookingData && bookingData.length > 0) {
           const storedBookingId = bookingId || getBookingIdFromQuery() || localStorage.getItem("bookingId");
           let specificBooking;
-    
+
           if (storedBookingId) {
             specificBooking = bookingData.find((b) => b.id === storedBookingId);
             setBooking(specificBooking || bookingData[0]);
@@ -223,7 +223,6 @@ function BookingStatusPage() {
     try {
       const response = await api.get(`/feedback`);
       const feedbackData = response.data;
-      console.log("feedback lsit:", response.data);
       const existingFeedback = feedbackData.find(
         (feedback) => feedback.booking ? bookingid === feedback.booking.id : null
       );
@@ -297,15 +296,27 @@ function BookingStatusPage() {
                   </div>
                   <h3>Farm Information</h3>
                   {booking.trip.farms && booking.trip.farms.length > 0 ? (
-                    booking.trip.farms.map((farm, index) => (
-                      <div key={farm.id}>
-                        <p><strong>Farm No {index + 1}</strong></p>
-                        <p><strong>Name:</strong> {farm.farmName}</p>
-                        <p><strong>Location:</strong> {farm.location}</p>
-                        <p><strong>Phone:</strong> {farm.phone}</p>
-                        <p><strong>Email:</strong> {farm.email}</p>
-                      </div>
-                    ))
+                    <div className="farm-information">
+                      <List
+                        itemLayout="horizontal"
+                        dataSource={booking.trip.farms}
+                        renderItem={(farm, index) => (
+                          <List.Item>
+                            <List.Item.Meta
+                              title={<strong>Farm No {index + 1}</strong>}
+                              description={
+                                <>
+                                  <p><strong>Name:</strong> {farm.farmName}</p>
+                                  <p><strong>Location:</strong> {farm.location}</p>
+                                  <p><strong>Phone:</strong> {farm.phone}</p>
+                                  <p><strong>Email:</strong> {farm.email}</p>
+                                </>
+                              }
+                            />
+                          </List.Item>
+                        )}
+                      />
+                    </div>
                   ) : (
                     <p>No farms selected for this trip.</p>
                   )}
@@ -343,10 +354,17 @@ function BookingStatusPage() {
 
                   {booking.status !== "CANCEL" && booking.status !== "COMPLETED" && (
                     <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
-                      <Button className="cancel-button" type="primary" onClick={() => {
-                        handleCancel();
-                        refreshPage();
-                      }}>
+                      <Button className="cancel-button" type="primary"
+                        onClick={() => {
+                          Modal.confirm({
+                            title: "Cancel",
+                            content: "Are you sure you want to cancel this booking?",
+                            onOk: () => {
+                              handleCancel();
+                              refreshPage();
+                            },
+                          })
+                        }}>
                         Cancel
                       </Button>
                     </div>
@@ -366,14 +384,20 @@ function BookingStatusPage() {
                           <Input.TextArea
                             value={feedback}
                             onChange={(e) => setFeedback(e.target.value)}
-                            placeholder="Please leave your feedback here (atleast 3 characters)."
+                            placeholder="Please leave your feedback here."
                             rows={4}
                           />
                           <Button
                             type="primary"
                             onClick={() => {
-                              handleFeedbackSubmit();
-                              refreshPage();
+                              Modal.confirm({
+                                title: "Submit Feedback",
+                                content: "Are you sure you want to submit feedback?",
+                                onOk: () => {
+                                  handleFeedbackSubmit();
+                                  refreshPage();
+                                },
+                              })
                             }}
                             style={{ marginTop: "10px" }}
                           >
