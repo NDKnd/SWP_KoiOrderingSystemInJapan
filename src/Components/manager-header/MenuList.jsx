@@ -41,6 +41,11 @@ const MenuList = () => {
           label: "History",
           path: "/admin/ManagerOrderHistory",
         },
+        {
+          key: "/admin/ManagerBooking",
+          label: "Booking list",
+          path: "/admin/ManagerBooking",
+        },
       ],
     },
     {
@@ -60,18 +65,6 @@ const MenuList = () => {
       label: "Trip",
       icon: <IoCarSharp />,
       path: "/admin/ManagerTrip",
-    },
-    {
-      key: "/admin/ManagerBooking",
-      label: "Booking list",
-      icon: <IoList />,
-      path: "/admin/ManagerBooking",
-    },
-    {
-      key: "/admin/Setting",
-      label: "Setting",
-      icon: <IoMdSettings />,
-      path: "/admin/Setting",
     },
     {
       key: "logout",

@@ -21,8 +21,10 @@
 }
 
 .manager_trip_create_search {
-  /* background-color: rebeccapurple; */
   display: flex;
+  justify-content: space-between; /* Phân bố đều các phần tử */
+  width: calc(100% - 200px); /* Chiều rộng còn lại sau khi trừ thanh menu */
+  margin-left: 200px; /* Dịch sang phải để tránh bị che khuất */
 }
 
 .manager_trip_create {
@@ -35,24 +37,21 @@
 }
 
 .manager_trip_search {
-  /* background-color: rgba(0, 128, 0, 0.434); */
   display: flex;
   padding: 16px;
   border-radius: 8px;
   border: 1px solid #6c8c7b48;
 }
 
-.manager_trip_search_input {
-  color: var(--purple1);
-  font-size: 300;
-  width: 210px;
-  margin: 5px;
+.manager_trip_search_input,
+.manager_trip_search_select {
+    flex: 1;
+    margin-right: 10px;
 }
 
-.manager_trip_search_select {
-  font-size: 300;
-  width: 20rem !important;
-  margin: 5px;
+.manager_trip_search_input:last-child,
+.manager_trip_search_select:last-child {
+    margin-right: 0; 
 }
 
 .manager_trip_search_button {

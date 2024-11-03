@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/axios";
-import { message } from "antd";
+import { message, Table, Modal, Button, Spin } from "antd";
+import { Card, Typography, Image } from 'antd';
 import dayjs from "dayjs";
+import upFile from "../../utils/file";
 
 const OrderHistory = () => {
     const [loading, setLoading] = useState(true);
     const [orderList, setOrderList] = useState([]);
     const [currentOrder, setCurrentOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-
     const [uploadedOrderImage, setUploadedOrderImage] = useState(null);
     const [orderFile, setOrderFile] = useState(null);
-
     const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
     useEffect(() => {
@@ -31,226 +30,139 @@ const OrderHistory = () => {
         fetchData();
     }, []);
 
-    const today = dayjs();
-    const currentMonth = today.month() + 1;
-    const currentYear = today.year();
-    const currentDay = today.date();
-
-    const ordersThisMonth = orderList.filter(order => {
-        const deliveryDate = dayjs(order.deliveredDate, "YYYY-MM-DD");
-        return deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
-    });
-
-    const pendingOrdersThisMonth = ordersThisMonth.filter(order => order.status === "ON_DELIVERY");
-    const pendingOrdersToday = pendingOrdersThisMonth.filter(order => {
-        const deliveryDate = dayjs(order.deliveredDate, "YYYY-MM-DD");
-        return deliveryDate.date() === currentDay && deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
-    });
-
     const todayDate = dayjs().format("YYYY-MM-DD");
-    const filteredOrderList = orderList
-        .filter(order => order.deliveredDate === todayDate && order.status === "ON_DELIVERY")
-        .sort((a, b) => dayjs(b.deliveredDate).diff(dayjs(a.deliveredDate)));
-
     const filteredOrderListComplete = orderList
         .filter(order => order.status === "COMPLETED")
         .sort((a, b) => dayjs(b.deliveredDate).diff(dayjs(a.deliveredDate)));
 
     const handleDetail = (order) => {
         setCurrentOrder(order);
-        setIsModalOpen((prevState) => !prevState);
-    }
-
-    const handleDetailComplete = async (event) => {
-        event.preventDefault();
-
-        const dataToSend = {
-            image: uploadedOrderImage || "",
-        };
-
-        try {
-            const res = await api.put(`order/${currentOrder.id}`, dataToSend);
-            if (res.status >= 200 && res.status < 300) {
-                setOrderList((prevList) => prevList.filter((order) => order.id !== currentOrder.id));
-                message.success("Order completed successfully");
-            } else {
-                message.error("Failed to complete the order");
-            }
-        } catch (err) {
-            message.error(err.response?.data?.message || "Error completing the order");
-        }
+        setIsModalOpen(true);
     };
 
-    const handleOrderUploadChange = async (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            setUploadedOrderImage(reader.result);
-        };
-        setOrderFile(file);
-        console.log("Order image : ", file);
-    };
-
-    const handleOrderCheckIn = async () => {
-        const downloadURL = await upFile(orderFile, `Orders/${currentOrder.id}`);
-
-        if (downloadURL) {
-            try {
-                const res = await api.put(`order/${currentOrder.id}`, {
-                    image: downloadURL,
-                });
-                message.success("Image uploaded and order updated successfully!");
-            } catch (error) {
-                console.error("Error updating order:", error);
-            }
-        }
-        setOrderFile(null);
-    };
-
-    const handleCompleteClick = async (e) => {
-        e.preventDefault();
-        if (orderFile) {
-            await handleOrderCheckIn();
-        }
-
-        // await handleDetailComplete(e);
+    const handleCancel = () => {
         setIsModalOpen(false);
+        setCurrentOrder(null);
     };
 
-    const handleImageClick = () => {
-        setIsImagePopupOpen(true);
-    };
-
-    const handleCloseImagePopup = (e) => {
-        if (e.target === e.currentTarget) {
-            setIsImagePopupOpen(false);
-        }
-    };
+    const columns = [
+        {
+            title: 'Customer Name',
+            dataIndex: 'customerName',
+            render: (text, record) => (
+                <span style={{ fontSize: '16px' }}>{record.booking.account.firstName} {record.booking.account.lastName}</span>
+            ),
+        },
+        {
+            title: 'Koi Ordered',
+            dataIndex: 'koiOrdered',
+            render: (_, record) => (
+                record.orderDetailResponseList.length > 0 ?
+                    record.orderDetailResponseList.map((detail, index) => (
+                        <div key={index} style={{ fontSize: '16px' }}>{detail.koiFishResponse.koiName}</div>
+                    )) : <div style={{ fontSize: '16px' }}>No koi ordered</div>
+            ),
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            render: (_, record) => (
+                record.orderDetailResponseList.map((detail, index) => (
+                    <div key={index} style={{ fontSize: '16px' }}>{detail.quantity}</div>
+                ))
+            ),
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            render: (address) => <span style={{ fontSize: '16px' }}>{address}</span>,
+        },
+        {
+            title: 'Delivery Date',
+            dataIndex: 'deliveredDate',
+            render: (date) => <span style={{ fontSize: '16px' }}>{date ? date.split('T')[0] : "N/A"}</span>,
+        },
+        {
+            title: 'Total Payment',
+            dataIndex: 'price',
+            render: (price) => <span style={{ fontSize: '16px' }}>{price}</span>,
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            render: (_, record) => (
+                <Button onClick={() => handleDetail(record)} type="link">Detail</Button>
+            ),
+        },
+    ];
+    
 
     return (
         <>
             <div className="deliver-dashboard-home-content">
                 {loading ? (
-                    <div className="loading-spinner">
-                        Loading...
-                    </div>
+                    <Spin size="large" />
                 ) : (
                     <div className="deliver-dashboard-home-content-user">
-                        <div className="deliver-dashboard-home-content-user-card-item-3">
-                            <h3>Completed Order ({filteredOrderListComplete.length})</h3>
+                        <h3>Completed Order ({filteredOrderListComplete.length})</h3>
+                        <Table
+                            dataSource={filteredOrderListComplete}
+                            columns={columns}
+                            rowKey="id"
+                        />
+                    </div>
+                )}
+                {isModalOpen && currentOrder && (
+                    <Modal
+                        title="Order Detail"
+                        visible={isModalOpen}
+                        onCancel={handleCancel}
+                        footer={[
+                            <Button key="back" onClick={handleCancel}>
+                                Cancel
+                            </Button>
+                        ]}
+                        width={600} // Đặt chiều rộng của modal
+                    >
+                        <div className="manager-order-content-detail">
+                            <Card bordered={false} style={{ marginBottom: 16 }}>
+                                <Typography.Title level={4}>
+                                    Customer Information
+                                </Typography.Title>
+                                <Typography.Paragraph>
+                                    <strong>Name:</strong> {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}
+                                </Typography.Paragraph>
+                                <Typography.Paragraph>
+                                    <strong>Address:</strong> {currentOrder.address}
+                                </Typography.Paragraph>
+                                <Typography.Paragraph>
+                                    <strong>Delivery Date:</strong> {currentOrder.deliveredDate ? currentOrder.deliveredDate.split('T')[0] : "N/A"}
+                                </Typography.Paragraph>
+                                <Typography.Paragraph>
+                                    <strong>Total Payment:</strong> {currentOrder.price}
+                                </Typography.Paragraph>
+                            </Card>
+                            <Card bordered={false} style={{ textAlign: 'center' }}>
+                                <Typography.Title level={4}>
+                                    Uploaded Image
+                                </Typography.Title>
+                                <Image
+                                    preview={false}
+                                    src={currentOrder.image}
+                                    alt="Uploaded"
+                                    style={{ cursor: 'pointer', width: '100%', maxHeight: '200px', objectFit: 'cover' }}
+                                    onClick={() => setIsImagePopupOpen(true)}
+                                />
+                            </Card>
+                            {isImagePopupOpen && (
+                                <div className="deliver-image-popup" onClick={() => setIsImagePopupOpen(false)}>
+                                    <Image className="deliver-popup-image" src={currentOrder.image} alt="Popup" />
+                                </div>
+                            )}
                         </div>
-                        <table>
-                            <thead className="deliver-dashboard-home-content-user-header">
-                                <tr>
-                                    <th className="deliver-dashboard-home-content-user-header-1">Customer name</th>
-                                    <th className="deliver-dashboard-home-content-user-header-2">Koi ordered</th>
-                                    <th className="deliver-dashboard-home-content-user-header-3">Quantity</th>
-                                    <th className="deliver-dashboard-home-content-user-header-4">Address</th>
-                                    <th className="deliver-dashboard-home-content-user-header-5">Delivery date</th>
-                                    <th className="deliver-dashboard-home-content-user-header-6">Total Payment </th>
-                                    <th className="deliver-dashboard-home-content-user-header-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="deliver-dashboard-home-content-user-body">
-                                {filteredOrderListComplete.length > 0 ? (
-                                    filteredOrderListComplete.map((order) => (
-                                        <tr key={order.id}>
-                                            <td>{order.booking.account.firstName} {order.booking.account.lastName}</td>
-                                            <td>
-                                                {order.orderDetailResponseList && order.orderDetailResponseList.length > 0 ? (
-                                                    order.orderDetailResponseList.map((detail, index) => (
-                                                        <div key={index}>{detail.koiFishResponse.koiName}</div>
-                                                    ))
-                                                ) : (
-                                                    <div>No koi ordered</div>
-                                                )}
-                                            </td>
-                                            <td>
-                                                {order.orderDetailResponseList.map((detail, index) => (
-                                                    <div key={index}>{detail.quantity}</div>
-                                                ))}
-                                            </td>
-                                            <td>{order.address}</td>
-                                            <td>{order.deliveredDate ? order.deliveredDate.split('T')[0] : "N/A"}</td>
-                                            <td>{order.price}</td>
-                                            <td className="deliver-dashboard-home-content-user-body-button-box">
-                                                <a onClick={() => handleDetail(order)} className="deliver-dashboard-home-content-user-body-button">Detail</a>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="7" style={{ textAlign: 'center' }}>No orders</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>)}
-                {
-                    isModalOpen && currentOrder && (
-                        <div className="manager-order-modal">
-                            <div className="manager-order-modal-content">
-                                <h2 className="manager-order-title-detail">Order Detail</h2>
-                                <form className="manager-order-edit-detail">
-                                    <div className="manager-order-content-detail">
-                                        <label>Customer Name: {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}</label>
-                                    </div>
-                                    <div className="manager-order-content-detail">
-                                        <label>Address: {currentOrder.address}</label>
-                                    </div>
-                                    <table className="manager-order-table-detail">
-                                        <thead>
-                                            <tr>
-                                                <th>Koi Name</th>
-                                                <th>Quantity</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {currentOrder.orderDetailResponseList && currentOrder.orderDetailResponseList.length > 0 ? (
-                                                currentOrder.orderDetailResponseList.map((detail, index) => (
-                                                    <tr key={index}>
-                                                        <td>{detail.koiFishResponse.koiName}</td>
-                                                        <td>{detail.quantity}</td>
-                                                    </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td>No koi available</td>
-                                                    <td>-</td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    <div className="manager-order-content-detail">
-                                        <td>{currentOrder.deliveredDate ? currentOrder.deliveredDate.split('T')[0] : "N/A"}</td>
-                                    </div>
-                                    <div className="manager-order-content-detail">
-                                        <label>Total Payment: {currentOrder.price}</label>
-                                    </div>
-                                    <div>
-                                        <div className="deliver-uploaded-image-container">
-                                            <img className="ticket-img" src={currentOrder.image} alt="Uploaded" onClick={handleImageClick} />
-                                        </div>
-                                        {isImagePopupOpen && (
-                                            <div className="deliver-image-popup" onClick={handleCloseImagePopup}>
-                                                <img className="deliver-popup-image" src={currentOrder.image} alt="Popup" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="manager-order-content-detail-button">
-                                        <button
-                                            className="manager-order-content-detail-button-pop"
-                                            onClick={() => {
-                                                setIsModalOpen((prevState) => !prevState);
-                                                setCurrentOrder(null);
-                                            }}>Cancel</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    )
-                }
+                    </Modal>
+                )}
+
             </div>
         </>
     )
