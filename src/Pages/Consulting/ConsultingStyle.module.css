@@ -107,6 +107,15 @@
     color: #fff;
 }
 
+.list_order_detail {
+    list-style-type: none;
+}
+
+.list_order_detail_item {
+    background-color: #3bdc4074;
+    width: 100%;
+}
+
 .modal_content {
     display: flex;
     align-items: center;

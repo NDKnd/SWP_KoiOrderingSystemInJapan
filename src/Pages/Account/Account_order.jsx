@@ -16,7 +16,7 @@ function Account_order() {
     const [loading, setLoading] = useState(true);
     const [filteredOrders, setFilteredOrders] = useState([]);
 
-    const [totalPrice, setTotalPrice] = useState(0);
+    let totalPrice = 0;
 
     const fetchOrders = async () => {
         try {
@@ -91,6 +91,36 @@ function Account_order() {
         }
     }
 
+    const handleViewDetails = (details) => {
+        console.log("details", details);
+        Modal.info({
+            title: "Order Details",
+            width: 1000,
+            maskClosable: true,
+            footer: null,
+            content: (
+                <ul className={styles.list_order_detail}>
+                    {(details.orderDetails ? details.orderDetails : details.orderDetailResponseList)
+                        .map((detail, index) => (
+                            <li key={index}>
+                                {detail.koiId !== undefined ? (
+                                    <>
+                                        <b>Koi ID:</b> {detail.koiId}
+                                    </>
+                                ) : (
+                                    <>
+                                        <b>Koi Name:</b> {detail.koiFishResponse.koiName}{" "}
+                                        <b>Price:</b> {detail.koiFishResponse.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}{" "}
+                                    </>
+                                )}
+                                <b>Quantity:</b> {detail.quantity}
+                            </li>
+                        ))}
+                </ul>
+            ),
+        });
+    }
+
     return (
         <div>
             <h1>Order List</h1>
@@ -136,27 +166,20 @@ function Account_order() {
                             title: "Order Details",
                             dataIndex: "orderDetailResponseList",
                             key: "orderDetailResponseList",
-                            render: (orderDetails) => {
-                                let tmpPrice = 0;
-                                orderDetails.forEach((orderDetail) => {
-                                    tmpPrice += orderDetail.price * orderDetail.quantity;
-                                })
-                                setTotalPrice(tmpPrice);
-                                return orderDetails && orderDetails.length > 0
-                                    ? (
-                                        <ul style={{ listStyle: "none", padding: 0, width: "25rem" }}>
-                                            {orderDetails.map((KoiOrder) =>
-                                            (
-                                                <li key={KoiOrder.id} style={{ marginBottom: "10px" }}>
-                                                    <span style={{ marginRight: "10px" }}><strong>Koi Name:</strong> {KoiOrder.koiFishResponse.koiName}</span>
-                                                    <span style={{ marginRight: "10px" }}><strong>Quantity:</strong> {KoiOrder.quantity}</span>
-                                                    <span><strong>Price:</strong> {KoiOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND ( 1 Koi )</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )
-                                    : 'None'
-                            }
+                            width: 150,
+                            render: (text, record) => {
+                                const details = record.orderDetails || record.orderDetailResponseList;
+                                record.orderDetails === undefined &&
+                                    (totalPrice = details.reduce((sum, d) => sum + d.koiFishResponse.price * d.quantity, totalPrice));
+                                if (details && details.length > 0) {
+                                    return (
+                                        <button
+                                            className={styles.view_btn + " " + styles.button}
+                                            onClick={() => handleViewDetails(record)}>View Details</button>
+                                    );
+                                }
+                                return <div style={{ color: "gray" }}>No details</div>;
+                            },
                         },
                         {
                             title: "Order Status",
@@ -169,7 +192,7 @@ function Account_order() {
                             dataIndex: "price",
                             key: "price",
                             render: (price) => {
-                                setTotalPrice((prev) => prev + price);
+                                totalPrice += price;
                                 return price != null && price != 0
                                     ? (
                                         <div style={{ width: "9em" }}>{price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND</div>

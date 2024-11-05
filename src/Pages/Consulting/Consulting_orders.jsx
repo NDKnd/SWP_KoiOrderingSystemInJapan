@@ -168,7 +168,6 @@ function Consulting_orders() {
         // check xem đã có danh sách Booking hay ch?!
         if (bookingList.length == 0) {
             message.info("You haven't created any booking trips yet or all of them have been ordered.");
-            recommendFarmForKoi(values);
             return;
         }
 
@@ -185,7 +184,7 @@ function Consulting_orders() {
                     <p>Booking Trip Date:</p>
                     <Select
                         showSearch
-                        style={{ width: 150 }}
+                        style={{ width: 220 }}
                         placeholder="Select a trip"
                         optionFilterProp="children"
                         onChange={(value) => {
@@ -199,7 +198,7 @@ function Consulting_orders() {
                     >
                         {bookingList.length > 0 && bookingList.map((booking) => (
                             <Select.Option key={booking.id} value={booking.id}>
-                                {dayjs(booking.bookingDate).format(dateFormat)}
+                                {dayjs(booking.bookingDate).format(dateFormat) + " - " + booking.account.username}
                             </Select.Option>
                         ))
                         }
@@ -331,7 +330,7 @@ function Consulting_orders() {
         setLoading(false);
     };
 
-    const reflesh = () => {
+    const reload = () => {
         window.location.reload();
     }
 
@@ -340,6 +339,7 @@ function Consulting_orders() {
 
         Modal.confirm({
             loading: loading,
+            closable: true,
             title: "Confirm Update",
             content: (
                 <div>
@@ -365,8 +365,12 @@ function Consulting_orders() {
                 </div>
             ),
             onOk: async () => {
-                if (!record.price || record.price <= 10000 || !record.address) {
+                if (!record.price || !record.address) {
                     message.error("Please fill in all required fields");
+                    return;
+                }
+                if (record.price <= 10000) {
+                    message.error("The price must be above 10,000 VND");
                     return;
                 }
                 // let list = JSON.parse(localStorage.getItem("AwaitingSubmitOrder"));
@@ -385,7 +389,7 @@ function Consulting_orders() {
                     }
                     message.success("Update order successfully");
                     fetchAwaitngSubmit();
-                    reflesh();
+                    reload();
                 } catch (error) {
                     console.error("Error updating order:", error);
                     message.error("Failed to update order.");
@@ -394,12 +398,46 @@ function Consulting_orders() {
         });
     };
 
+    const handleViewDetails = (details) => {
+        console.log("details", details);
+        Modal.info({
+            title: "Order Details",
+            width: 1000,
+            maskClosable: true,
+            footer: null,
+            content: (
+                <ul className={styles.list_order_detail}>
+                    {(details.orderDetails ? details.orderDetails : details.orderDetailResponseList)
+                        .map((detail, index) => (
+                            <li key={index}>
+                                {detail.koiId !== undefined ? (
+                                    <>
+                                        <b>Koi ID:</b> {detail.koiId}
+                                    </>
+                                ) : (
+                                    <>
+                                        <b>Koi Name:</b> {detail.koiFishResponse.koiName}{" "}
+                                        <b>Price:</b> {detail.koiFishResponse.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}{" "}
+                                    </>
+                                )}
+                                <b>Quantity:</b> {detail.quantity}
+                            </li>
+                        ))}
+                </ul>
+            ),
+        });
+
+
+    }
+
     const displayOrders = (orderList, title) => {
+        let totalPrice = 0;
         return (
             <div className={styles.box_table}>
                 <h2 className={styles.title}>{title}</h2>
                 <Table
                     loading={loading}
+                    scroll={{ x: "max-content" }}
                     pagination={{
                         position: ["bottomCenter"],
                         showQuickJumper: true, // Cho phép nhảy tới trang cụ thể
@@ -427,27 +465,40 @@ function Consulting_orders() {
                             title: "Deliver Price",
                             dataIndex: "price",
                             key: "price",
-                            render: (price) => price
-                                ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
-                                : <div style={{ color: "gray" }}>N/A</div>
+                            render: (price) => {
+                                totalPrice += price || 0;
+                                console.log("totalPrice + delivery", totalPrice);
+                                return price
+                                    ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
+                                    : <div style={{ color: "gray" }}>N/A</div>
+                            }
                         },
                         {
                             title: "Order Details",
-                            dataIndex: "orderDetails",
+                            dataIndex: ["orderDetails", "orderDetailResponseList"],
                             key: "orderDetails",
-                            render: (orderDetails, record) =>
-                                orderDetails && orderDetails.length > 0 ? (
-                                    <ul>
-                                        {orderDetails.map((detail, index) => (
-                                            <li key={index}>
-                                                <b>Koi ID:</b> {detail.koiId ? detail.koiId : detail.koiFishResponse.koiName},{" "}
-                                                <b>Quantity:</b> {detail.quantity}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <div style={{ color: "gray" }}>No details</div>
-                                ),
+                            width: 150,
+                            render: (text, record) => {
+                                const details = record.orderDetails || record.orderDetailResponseList;
+                                record.orderDetails === undefined &&
+                                    (totalPrice = details.reduce((sum, d) => sum + d.koiFishResponse.price * d.quantity, totalPrice));
+                                if (details && details.length > 0) {
+                                    return (
+                                        <button
+                                            className={styles.view_btn + " " + styles.button}
+                                            onClick={() => handleViewDetails(record)}>View Details</button>
+                                    );
+                                }
+                                return <div style={{ color: "gray" }}>No details</div>;
+                            },
+                        },
+                        {
+                            title: "Total Price",
+                            dataIndex: "totalPrice",
+                            key: "totalPrice",
+                            render: () => totalPrice
+                                ? totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+                                : <div style={{ color: "gray" }}>N/A</div>
                         },
                         {
                             title: "Action",
@@ -487,6 +538,7 @@ function Consulting_orders() {
                 </button>
             </div>
             {displayOrders(awaitngSubmitOrder, "Awaiting Orders")}
+            {console.log("orderEdited", orderEdited)}
             {displayOrders(orderEdited, "Edited Orders")}
         </Layout>
     )
