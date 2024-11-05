@@ -29,7 +29,6 @@ function Consulting_orders() {
 
     const [allOrders, setAllOrders] = useState([]);
     const [bookingList, setBookingList] = useState([]);
-    const [awaitingOrders, setAwaitingOrders] = useState([]);
 
     const fetchOrders = async () => {
         try {
@@ -52,12 +51,6 @@ function Consulting_orders() {
                 {status}
             </div>
         );
-    };
-
-    const handleViewDetails = (record) => {
-        console.log("values", record);
-        setDrawerInformation(record);
-        setVisible(true);
     };
 
     const handlePreview = (record) => {
@@ -168,7 +161,6 @@ function Consulting_orders() {
     }
 
     const handleOpenOrderForm = async (values) => {
-        setAwaitingOrders(localStorage.getItem("AwaitingSubmitOrder"));
 
         console.log("booking list: ", bookingList);
         console.log("values is koi: ", values);
@@ -339,31 +331,44 @@ function Consulting_orders() {
         setLoading(false);
     };
 
+    const reflesh = () => {
+        window.location.reload();
+    }
+
     const handleUpdate = async (record) => {
         console.log("record", record);
 
         Modal.confirm({
+            loading: loading,
             title: "Confirm Update",
             content: (
                 <div>
-                    <p>New Price (above 10,000 VND):</p>
+                    <p>Delivery Price (above 10,000 VND):</p>
                     <Input
+                        required
                         type="number"
                         min={10000}
-                        onBlur={(e) =>
-                            parseInt(e.target.value) <= 10000
-                                ? message.error("The price must be above 10,000 VND")
-                                : (record.price = parseInt(e.target.value))}
+                        onBlur={(e) => {
+                            const value = parseInt(e.target.value);
+                            if (value <= 10000) {
+                                message.error("The price must be above 10,000 VND");
+                                e.target.focus();
+                            } else {
+                                record.price = value;
+                            }
+                        }}
+                    />
 
-                    />
                     <p>Delivery Address:</p>
-                    <Input
-                        onChange={(e) => (record.address = e.target.value)
-                        }
-                    />
+                    <Input required onChange={(e) => (record.address = e.target.value)} />
+
                 </div>
             ),
             onOk: async () => {
+                if (!record.price || record.price <= 10000 || !record.address) {
+                    message.error("Please fill in all required fields");
+                    return;
+                }
                 // let list = JSON.parse(localStorage.getItem("AwaitingSubmitOrder"));
                 // console.log("list", list);
                 // list = list.filter((item) => item.bookingId !== record.bookingId);
@@ -379,6 +384,8 @@ function Consulting_orders() {
                         localStorage.setItem("AwaitingSubmitOrder", JSON.stringify(list));
                     }
                     message.success("Update order successfully");
+                    fetchAwaitngSubmit();
+                    reflesh();
                 } catch (error) {
                     console.error("Error updating order:", error);
                     message.error("Failed to update order.");
@@ -417,7 +424,7 @@ function Consulting_orders() {
                             render: (status) => handleStatus(status),
                         },
                         {
-                            title: "Price",
+                            title: "Deliver Price",
                             dataIndex: "price",
                             key: "price",
                             render: (price) => price
@@ -433,7 +440,7 @@ function Consulting_orders() {
                                     <ul>
                                         {orderDetails.map((detail, index) => (
                                             <li key={index}>
-                                                <b>Koi ID:</b> {detail.koiId ? detail.koiId : detail.id},{" "}
+                                                <b>Koi ID:</b> {detail.koiId ? detail.koiId : detail.koiFishResponse.koiName},{" "}
                                                 <b>Quantity:</b> {detail.quantity}
                                             </li>
                                         ))}

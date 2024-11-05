@@ -1,51 +1,65 @@
 import React, { useEffect, useState } from 'react'
 import styles from './ConsultingStyle.module.css'
-import { Col, Drawer, Layout, List, message, Modal, Row, Table } from 'antd'
+import { Button, Col, Drawer, Layout, List, message, Modal, Row, Select, Table } from 'antd'
 import api from "../../services/axios";
 import dayjs from "dayjs";
+import { FaFilter } from 'react-icons/fa';
 
-const dateFormat = "MM-DD-YYYY";
+const dateFormat = "YYYY-MM-DD";
 
 const CheckInList = [
     "CHECK_IN",
 ];
 const CompleteList = [
-    // "PENDING_CONFIRMATION",
-    // "AWAITING_PAYMENT",
-    // "IN_PROGRESS",
-
     "COMPLETED",
-    // "CANCELED",
 ];
+
+const statusList = [
+    "CANCEL",
+    "COMPLETED"
+]
 
 function ConsultingPage() {
 
     console.log("token", localStorage.getItem("token"));
 
     const [loading, setLoading] = useState(true);
-
     const [visible, setVisible] = useState(false);
     const [drawerInformation, setDrawerInformation] = useState([]);
 
     const [bookingList, setBookingList] = useState([]);
-    const [bookingListCompleted, setBookingListCompleted] = useState([]);
+    const [bookingListCheckIn, setBookingListCheckIn] = useState([]);
 
-    const fetchBookingManger = async () => {
+    const [filterList, setFilterList] = useState([]);
+    const [filterUser1, setFilterUser1] = useState("All");
+
+    const [filterListCheckIn, setFilterListCheckIn] = useState([]);
+    const [filterUser2, setFilterUser2] = useState("All");
+    const [filterStatus2, setFilterStatus2] = useState("All");
+
+    const fetchBookingManager = async () => {
         const res = await api.get("booking/manager");
         setLoading(false);
         var list = res.data;
 
-        setBookingListCompleted(
+        setBookingListCheckIn(
             list
                 .filter((item) => CheckInList.includes(item.status))
                 .map((item) => ({
                     ...item,
                     key: item.id,
                 }))
-        )
+        );
         setBookingList(
             list
                 .filter((item) => CompleteList.includes(item.status))
+                .map((item) => ({
+                    ...item,
+                    key: item.id,
+                }))
+        );
+        setFilterList(
+            list.filter((item) => CompleteList.includes(item.status))
                 .map((item) => ({
                     ...item,
                     key: item.id,
@@ -55,9 +69,8 @@ function ConsultingPage() {
     };
 
     useEffect(() => {
-        fetchBookingManger();
+        fetchBookingManager();
     }, []);
-
 
     const handleStatus = (status) => {
         return (
@@ -77,30 +90,119 @@ function ConsultingPage() {
                 status: "COMPLETED",
             });
             console.log(res);
-            fetchBookingManger();
+            fetchBookingManager();
             message.success("Complete trip successfully");
-
         } catch (error) {
             console.log(error);
             message.error("Failed to complete trip");
         }
-    }
+    };
 
     const handleViewDetails = (record) => {
         console.log("values", record);
         setDrawerInformation(record);
         setVisible(true);
+    };
+
+    const handlePreview = (record) => {
+        Modal.info({
+            width: 600,
+            aspectRatio: 3 / 2,
+            title: <img src={record.image} className={styles.img_Koi} style={{ width: "100%", padding: "15px" }} alt="koi" />,
+            maskClosable: true,
+            closable: true,
+            footer: null,
+            icon: null,
+        });
+    };
+
+    const handleFilter = (type) => {
+
+        const filteredBookingTrips =
+            type === 1 ?
+                bookingListCheckIn.filter((booking) => {
+                    const matchesUser = filterUser1 === "All" ? true
+                        : booking.account.username.toLowerCase().includes(filterUser1.toLowerCase());
+                    console.log("matchesUser: ", matchesUser + " " + filterUser1);
+                    return (matchesUser);
+                }
+                )
+                :
+                bookingList.filter((booking) => {
+                    const matchesUser = filterUser2 === "All" ? true
+                        : booking.account.username.toLowerCase().includes(filterUser2.toLowerCase());
+                    const matchesStatus = filterStatus2 === "All" ? true
+                        : booking.status.toLowerCase().includes(filterStatus2.toLowerCase());
+                    console.log("matchesUser: ", matchesUser + " " + filterUser2);
+                    console.log("matchesStatus: ", matchesStatus + " " + filterStatus2);
+                    return (matchesUser && matchesStatus);
+                });
+        console.log("filteredTrips: ", filteredBookingTrips);
+        filteredBookingTrips.length > 0
+            ? type == 1
+                ? setFilterListCheckIn(filteredBookingTrips)
+                : setFilterList(filteredBookingTrips)
+            : (
+                setFilterListCheckIn([]),
+                setFilterList([]),
+                message.error("No booking found")
+            );
     }
 
-    const displayBooking = (booking, title) => {
+    const displayBooking = (booking, title, typeTable) => {
         return (
             <div className={styles.box_table}>
                 <h2 className={styles.title}>{title}</h2>
+                <div className={styles.filter}>{/* filter */}
+                    {typeTable !== 1 && (
+                        <div>{/*filter by status*/}
+                            <label htmlFor="filter">Status: </label>
+                            <Select
+                                id="filter"
+                                style={{ width: 200 }}
+                                onChange={
+                                    typeTable === 1
+                                        ? console.log("table 1")
+                                        : (value) => setFilterStatus2(value, typeTable)
+                                }
+                                defaultValue="All"
+                            >
+                                <Select.Option value="All">All</Select.Option>
+                                {statusList.map(status => <Select.Option key={status} value={status}>{status}</Select.Option>)}
+                            </Select>
+                        </div>
+                    )}
+                    <div> {/* filter by user */}
+                        <label htmlFor="filter1">User: </label>
+                        <Select
+                            id="filter1"
+                            style={{ width: 200 }}
+                            onChange={
+                                typeTable === 1
+                                    ? (value) => setFilterUser1(value, typeTable)
+                                    : (value) => setFilterUser2(value, typeTable)
+                            }
+                            defaultValue="All"
+                        >
+                            <Select.Option value="All">All</Select.Option>
+                            {[...new Set(booking.map((b) => b.account.username))]
+                                .map((u) => <Select.Option key={u} value={u}>{u}</Select.Option>)}
+                        </Select>
+                    </div>
+                    <div>
+                        <Button
+                            icon={<FaFilter />}
+                            className={styles.filter_button}
+                            onClick={() => handleFilter(typeTable)}
+                        >
+                        </Button>
+                    </div>
+                </div>
                 <Table
                     loading={loading}
                     pagination={{
                         position: ["bottomCenter"],
-                        showQuickJumper: true, // Cho phép nhảy tới trang cụ thể
+                        showQuickJumper: true,
                     }}
                     dataSource={booking}
                     columns={[
@@ -109,7 +211,9 @@ function ConsultingPage() {
                             dataIndex: "image",
                             key: "image",
                             render: (image) => (
-                                <img className={styles.img_first_farm} src={image} alt="img" />
+                                <a onClick={() => handlePreview({ image })}>
+                                    <img className={styles.img_first_farm} src={image} alt="img" />
+                                </a>
                             ),
                         },
                         {
@@ -122,7 +226,9 @@ function ConsultingPage() {
                             title: "Booking Date",
                             dataIndex: "bookingDate",
                             key: "bookingDate",
-                            render: (date) => dayjs(date).format(dateFormat),
+                            render: (date) => (
+                                <div style={{ width: "5rem" }}>{dayjs(date).format(dateFormat)}</div>
+                            ),
                         },
                         {
                             title: "Note",
@@ -173,9 +279,9 @@ function ConsultingPage() {
                                                 title: "Completed Trip",
                                                 content: "Are you sure you want to update status?",
                                                 onOk: () => {
-                                                    handleUpdateStatus(record)
+                                                    handleUpdateStatus(record);
                                                 },
-                                            })
+                                            });
                                         }}
                                         disabled={CheckInList.includes(record.status) === false}
                                     >
@@ -192,8 +298,16 @@ function ConsultingPage() {
 
     return (
         <Layout style={{ padding: "0 24px 24px" }} className={styles.container}>
-            {displayBooking(bookingListCompleted, "Booking Checked In")}
-            {displayBooking(bookingList, "Others Booking")}
+            {filterListCheckIn.length > 0 ?
+                displayBooking(filterListCheckIn, "Booking Checked In", 1)
+                : displayBooking(bookingListCheckIn, "Booking Checked In", 1)
+            }
+            {filterList.length > 0 ?
+                displayBooking(filterList, "Others Booking", 2)
+                : displayBooking(bookingList, "Others Booking", 2)
+            }
+
+
             <Drawer
                 title="Information Details"
                 placement="right"
@@ -205,7 +319,7 @@ function ConsultingPage() {
             >
                 <h1>Booking Information</h1>
                 <Row className={styles.booking_info}>
-                    <Col span={10} >
+                    <Col span={10}>
                         <p>
                             <b>Booking Date: </b>
                             {dayjs(drawerInformation.bookingDate).format(dateFormat)}
@@ -215,7 +329,7 @@ function ConsultingPage() {
                             {drawerInformation.note}
                         </p>
                     </Col>
-                    <Col span={12} >
+                    <Col span={12}>
                         <p className={styles.total_price}>
                             <b>Total: </b>
                             <span>{drawerInformation.totalPrice} VND</span>
@@ -227,7 +341,7 @@ function ConsultingPage() {
                     {drawerInformation?.trip && (
                         <>
                             <Row style={{ width: "100%" }}>
-                                <Col span={12} >
+                                <Col span={12}>
                                     <p>
                                         <b>Start date: </b>
                                         {drawerInformation.trip.startDate}
@@ -237,7 +351,7 @@ function ConsultingPage() {
                                         {drawerInformation.trip.endDate}
                                     </p>
                                 </Col>
-                                <Col span={12} >
+                                <Col span={12}>
                                     <p>
                                         <b>Start location: </b>
                                         {drawerInformation.trip.startLocation}
@@ -247,7 +361,6 @@ function ConsultingPage() {
                                         {drawerInformation.trip.endLocation}
                                     </p>
                                 </Col>
-
                             </Row>
 
                             <Row className={styles.farm_row}>
@@ -257,13 +370,11 @@ function ConsultingPage() {
                                     dataSource={drawerInformation.trip.farms}
                                     renderItem={(item) => (
                                         <List.Item className={styles.farm}>
-                                            {/* Hình ảnh farm */}
                                             <img
                                                 src={item.image || "https://via.placeholder.com/60"}
                                                 alt={item.farmName}
                                                 className={styles.farm_image}
                                             />
-                                            {/* Nội dung farm */}
                                             <div className={styles.farm_content}>
                                                 <h3>{item.farmName || "No farm name available"}</h3>
                                                 {item.location || "No farm location available"}
@@ -279,10 +390,9 @@ function ConsultingPage() {
                         </>
                     )}
                 </Row>
-
             </Drawer>
         </Layout>
-    )
+    );
 }
 
-export default ConsultingPage
+export default ConsultingPage;

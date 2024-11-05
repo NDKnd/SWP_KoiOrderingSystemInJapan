@@ -2,7 +2,6 @@ import {
   Button,
   Card,
   Col,
-  ConfigProvider,
   DatePicker,
   Form,
   Input,
@@ -11,7 +10,6 @@ import {
   Modal,
   Row,
   Select,
-  Table,
 } from "antd";
 import styles from "./ManagerTrip.module.css";
 import { useEffect, useState } from "react";
