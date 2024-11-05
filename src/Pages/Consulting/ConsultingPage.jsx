@@ -27,6 +27,7 @@ function ConsultingPage() {
     const [visible, setVisible] = useState(false);
     const [drawerInformation, setDrawerInformation] = useState([]);
 
+    const [listBookings, setListBookings] = useState([]);
     const [bookingList, setBookingList] = useState([]);
     const [bookingListCheckIn, setBookingListCheckIn] = useState([]);
 
@@ -41,7 +42,7 @@ function ConsultingPage() {
         const res = await api.get("booking/manager");
         setLoading(false);
         var list = res.data;
-
+        setListBookings(list);
         setBookingListCheckIn(
             list
                 .filter((item) => CheckInList.includes(item.status))
@@ -185,7 +186,12 @@ function ConsultingPage() {
                             defaultValue="All"
                         >
                             <Select.Option value="All">All</Select.Option>
-                            {[...new Set(booking.map((b) => b.account.username))]
+                            {listBookings.reduce((uniqueUsers, b) => {
+                                if (!uniqueUsers.includes(b.account.username)) {
+                                    uniqueUsers.push(b.account.username);
+                                }
+                                return uniqueUsers;
+                            }, [])
                                 .map((u) => <Select.Option key={u} value={u}>{u}</Select.Option>)}
                         </Select>
                     </div>

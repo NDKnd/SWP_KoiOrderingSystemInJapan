@@ -26,6 +26,7 @@ function Sale_Booking() {
   const [visible, setVisible] = useState(false);
   const [drawerInformation, setDrawerInformation] = useState([]);
 
+  const [bookingList, setBookingList] = useState([]);
   const [bookingListPending, setBookingListPending] = useState([]);
   const [bookingListAccept, setBookingListAccept] = useState([]);
 
@@ -60,7 +61,8 @@ function Sale_Booking() {
           key: item.id,
         }))
     );
-    console.log(res.data);
+    setBookingList(list);
+    console.log(list);
   };
 
   useEffect(() => {
@@ -84,7 +86,7 @@ function Sale_Booking() {
 
       Modal.info({
         title: "Update Price",
-        maskClosable: true,
+        closable: true,
         content: (
           <div className={styles.modal_content}>
             <label htmlFor="price">Price</label>
@@ -92,7 +94,6 @@ function Sale_Booking() {
               placeholder="Enter price" type="number" id="price"
               defaultValue={values.totalPrice.toFixed(2)}
               inputMode="decimal"
-              min="0"
             />
           </div>
         ),
@@ -114,7 +115,7 @@ function Sale_Booking() {
               content: "Update price successfully!",
               style: { position: "relative", top: "10px", right: "10px" },
             });
-            fetchBookingManger();
+            window.location.reload(true);
           } catch (error) {
             message.error("Error updating price!");
             console.log(error.message?.data || error);
@@ -182,7 +183,7 @@ function Sale_Booking() {
                 style={{ width: 200 }}
                 onChange={
                   typeTable === 1
-                    ? (value) => setFilterStatus1(value, typeTable)
+                    ? console.log("table1")
                     : (value) => setFilterStatus2(value, typeTable)
                 }
                 defaultValue="All"
@@ -205,7 +206,12 @@ function Sale_Booking() {
               defaultValue="All"
             >
               <Select.Option value="All">All</Select.Option>
-              {[...new Set(booking.map((b) => b.account.username))]
+              {bookingList.reduce((uniqueUsers, b) => {
+                if (!uniqueUsers.includes(b.account.username)) {
+                  uniqueUsers.push(b.account.username);
+                }
+                return uniqueUsers;
+              }, [])
                 .map((u) => <Select.Option key={u} value={u}>{u}</Select.Option>)}
             </Select>
           </div>
