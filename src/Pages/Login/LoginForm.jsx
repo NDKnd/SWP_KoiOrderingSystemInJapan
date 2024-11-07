@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./LoginForm.css";
-import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaHome, FaArrowAltCircleLeft } from "react-icons/fa";
+import { FaUser, FaEye, FaEyeSlash, FaEnvelope, FaPen, FaArrowAltCircleLeft } from "react-icons/fa";
 import api from "./../../services/axios";
 import { useNavigate } from "react-router-dom";
 import { message, Spin } from "antd";
@@ -140,6 +140,7 @@ const LoginForm = () => {
             <h1>Login</h1>
             <div className="input-box">
               <input
+                data-testid="username_login"
                 type="text"
                 name="username"
                 placeholder="Username"
@@ -149,6 +150,7 @@ const LoginForm = () => {
             </div>
             <div className="input-box">
               <input
+                data-testid="password_login"
                 type={seeLoginPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
