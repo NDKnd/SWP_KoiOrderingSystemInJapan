@@ -32,6 +32,7 @@ function TripPage() {
     try {
       const response = await api.get("/trip");
       const futureTrips = response.data.filter(trip => new Date(trip.startDate) > new Date());
+      console.log("res: ", response.data);
       setTripList(futureTrips);
       setFilteredTripList(futureTrips);
     } catch (error) {
@@ -125,8 +126,21 @@ function TripPage() {
     setSelectedTrip(null);
   };
 
+  const handlePreview = (record) => {
+    Modal.info({
+      width: 400,
+      title: <img src={record.image} className="img_preview" style={{ width: "100%", padding: "15px" }} alt="koi" />,
+      maskClosable: true,
+      closable: true,
+      footer: null,
+      icon: null,
+    });
+  }
+
   useEffect(() => {
     fetchTrips();
+    console.log("futuretrip", tripList);
+    console.log("filteredtrip", filteredTripList);
   }, []);
 
   useEffect(() => {
@@ -209,8 +223,8 @@ function TripPage() {
                     <Card.Meta
                       title={
                         <>
-                          Depart location: ${trip.startLocation} <br />
-                          Arrive location: ${trip.endLocation}
+                          Depart location: {trip.startLocation} <br />
+                          Arrive location: {trip.endLocation}
                         </>}
                       description={
                         <>
@@ -252,28 +266,30 @@ function TripPage() {
           ]}
         >
           {selectedTrip && (
-            <div className="farm-information">
-              <List
-                itemLayout="vertical"
-                dataSource={selectedTrip.farms}
-                renderItem={farm => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={<img src={farm.image} alt={farm.farmName} style={{ width: 50, height: 50 }} />}
-                      title={farm.farmName}
-                      description={
-                        <>
-                          <p><strong>Location:</strong> {farm.location}</p>
-                          <p><strong>Description:</strong> {farm.description}</p>
-                          <p><strong>Phone:</strong> {farm.phone}</p>
-                          <p><strong>Email:</strong> {farm.email}</p>
-                        </>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            </div>
+            <List
+              itemLayout="vertical"
+              dataSource={selectedTrip.farms}
+              renderItem={farm => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={
+                      <a onClick={() => handlePreview({ image: farm.image })}>
+                        <img src={farm.image} alt={farm.farmName} style={{ width: 50, height: 50 }} />
+                      </a>
+                    }
+                    title={farm.farmName}
+                    description={
+                      <>
+                        <p><strong>Location:</strong> {farm.location}</p>
+                        <p><strong>Description:</strong> {farm.description}</p>
+                        <p><strong>Phone:</strong> {farm.phone}</p>
+                        <p><strong>Email:</strong> {farm.email}</p>
+                      </>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
           )}
         </Modal>
       </Content>

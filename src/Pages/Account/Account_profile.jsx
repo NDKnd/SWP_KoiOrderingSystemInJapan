@@ -47,6 +47,7 @@ function Account_profile() {
   };
 
   const listContent = [
+    { label: "User name", content: user?.username || "N/A" },
     { label: "First name", content: user?.firstName || "N/A" },
     { label: "Last name", content: user?.lastName || "N/A" },
     { label: "Email", content: user?.email || "N/A" },
@@ -164,6 +165,7 @@ function Account_profile() {
             name="phone"
             rules={[
               { required: true, message: "Please input your phone number!" },
+              { pattern: /^\d{10}$/, message: "Please enter a valid 10-digit phone number!" },
             ]}
           >
             <Input />

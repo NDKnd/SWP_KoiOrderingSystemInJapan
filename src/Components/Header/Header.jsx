@@ -79,21 +79,13 @@ function Header() {
         </NavLink>
       </div>
       <div className="nav-item">
-        <p className="title">Services</p>
-        <FaAngleDown />
-        <ul className="dropdown">
-          <div className="drop-conts">
-            <li className="opt">
-              <NavLink to="/KoiPageFind">Kois</NavLink>
-            </li>
-            <li className="opt">
-              <NavLink to="/FarmFindPage">Farms</NavLink>
-            </li>
-            <li className="opt">
-              <NavLink to="/TripPage">Trips</NavLink>
-            </li>
-          </div>
-        </ul>
+        <NavLink to="/KoiPageFind">Kois</NavLink>
+      </div>
+      <div className="nav-item">
+        <NavLink to="/TripPage">Trips</NavLink>
+      </div>
+      <div className="nav-item">
+        <NavLink to="/FarmFindPage">Farms</NavLink>
       </div>
       {!token || tokenExpired(token) ? (
         <div className="nav-item">

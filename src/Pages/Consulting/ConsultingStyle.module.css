@@ -8,6 +8,13 @@
     flex-direction: column;
 }
 
+.filter {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .OrderKois_btn {
     display: flex;
     justify-content: flex-end;
@@ -98,6 +105,15 @@
 .delete_btn:hover {
     background-color: #e14643;
     color: #fff;
+}
+
+.list_order_detail {
+    list-style-type: none;
+}
+
+.list_order_detail_item {
+    background-color: #3bdc4074;
+    width: 100%;
 }
 
 .modal_content {

@@ -1,8 +1,9 @@
-import { Col, Drawer, Layout, List, message, Modal, Row, Table } from "antd";
+import { Button, Col, Drawer, Layout, List, message, Modal, Row, Select, Spin, Table } from "antd";
 import styles from "./SaleLayOut.module.css";
 import { useEffect, useState } from "react";
 import api from "../../services/axios";
 import dayjs from "dayjs";
+import { FaFilter } from "react-icons/fa";
 
 const dateFormat = "MM-DD-YYYY";
 const Able = [
@@ -13,7 +14,7 @@ const Unable = [
   "IN_PROGRESS",
   "CHECK_IN",
   "COMPLETED",
-  "CANCELED",
+  "CANCEL"
 ];
 
 
@@ -26,7 +27,16 @@ function Sale_Booking() {
   const [drawerInformation, setDrawerInformation] = useState([]);
 
   const [bookingList, setBookingList] = useState([]);
+  const [bookingListPending, setBookingListPending] = useState([]);
   const [bookingListAccept, setBookingListAccept] = useState([]);
+
+
+  const [filterList, setFilterList] = useState([]);
+  const [filterUser1, setFilterUser1] = useState("All");
+
+  const [filterListPending, setFilterListPending] = useState([]);
+  const [filterUser2, setFilterUser2] = useState("All");
+  const [filterStatus2, setFilterStatus2] = useState("All");
 
   const fetchBookingManger = async () => {
     const res = await api.get("booking/manager");
@@ -36,27 +46,28 @@ function Sale_Booking() {
     setBookingListAccept(
       list
         .filter((item) => item.status != "PENDING_CONFIRMATION")
+        .sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate))
         .map((item) => ({
           ...item,
           key: item.id,
         }))
     )
-    setBookingList(
+    setBookingListPending(
       list
         .filter((item) => item.status === "PENDING_CONFIRMATION")
+        .sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate))
         .map((item) => ({
           ...item,
           key: item.id,
         }))
     );
-    console.log(res.data);
+    setBookingList(list);
+    console.log(list);
   };
 
   useEffect(() => {
     fetchBookingManger();
   }, []);
-
-  const handleSearch = () => { };
 
   const handleStatus = (status) => {
     return (
@@ -75,7 +86,7 @@ function Sale_Booking() {
 
       Modal.info({
         title: "Update Price",
-        maskClosable: true,
+        closable: true,
         content: (
           <div className={styles.modal_content}>
             <label htmlFor="price">Price</label>
@@ -83,7 +94,6 @@ function Sale_Booking() {
               placeholder="Enter price" type="number" id="price"
               defaultValue={values.totalPrice.toFixed(2)}
               inputMode="decimal"
-              min="0"
             />
           </div>
         ),
@@ -105,7 +115,7 @@ function Sale_Booking() {
               content: "Update price successfully!",
               style: { position: "relative", top: "10px", right: "10px" },
             });
-            fetchBookingManger();
+            window.location.reload(true);
           } catch (error) {
             message.error("Error updating price!");
             console.log(error.message?.data || error);
@@ -125,16 +135,101 @@ function Sale_Booking() {
     setDrawerInformation(values);
     setVisible(true);
   };
-  const displayBooking = (booking, title) => {
+
+  const handleFilter = (type) => {
+
+    const filteredBookingTrips =
+      type === 1 ?
+        bookingListPending.filter((booking) => {
+          const matchesUser = filterUser1 === "All" ? true
+            : booking.account.username.toLowerCase().includes(filterUser1.toLowerCase());
+          console.log("matchesUser: ", matchesUser + " " + filterUser1);
+          return (matchesUser);
+        }
+        )
+
+        :
+        bookingListAccept.filter((booking) => {
+          const matchesUser = filterUser2 === "All" ? true
+            : booking.account.username.toLowerCase().includes(filterUser2.toLowerCase());
+          const matchesStatus = filterStatus2 === "All" ? true
+            : booking.status.toLowerCase().includes(filterStatus2.toLowerCase());
+          console.log("matchesUser: ", matchesUser + " " + filterUser2);
+          console.log("matchesStatus: ", matchesStatus + " " + filterStatus2);
+          return (matchesUser && matchesStatus);
+        });
+    console.log("filteredTrips: ", filteredBookingTrips);
+    filteredBookingTrips.length > 0
+      ? type == 1
+        ? setFilterListPending(filteredBookingTrips)
+        : setFilterList(filteredBookingTrips)
+      : (
+        setFilterListPending([]),
+        setFilterList([]),
+        message.error("No booking found")
+      );
+  }
+
+  const displayBooking = (booking, title, typeTable) => {
     return (
       <div className={styles.box_table}>
         <h2 className={styles.title}>{title}</h2>
+        <div className={styles.filter}>{/* filter */}
+          {typeTable !== 1 && (
+            <div>{/*filter by status*/}
+              <label htmlFor="filter">Status: </label>
+              <Select
+                id="filter"
+                style={{ width: 200 }}
+                onChange={
+                  typeTable === 1
+                    ? console.log("table1")
+                    : (value) => setFilterStatus2(value, typeTable)
+                }
+                defaultValue="All"
+              >
+                <Select.Option value="All">All</Select.Option>
+                {Unable.map(status => <Select.Option key={status} value={status}>{status}</Select.Option>)}
+              </Select>
+            </div>
+          )}
+          <div> {/* filter by user */}
+            <label htmlFor="filter1">User: </label>
+            <Select
+              id="filter1"
+              style={{ width: 200 }}
+              onChange={
+                typeTable === 1
+                  ? (value) => setFilterUser1(value, typeTable)
+                  : (value) => setFilterUser2(value, typeTable)
+              }
+              defaultValue="All"
+            >
+              <Select.Option value="All">All</Select.Option>
+              {bookingList.reduce((uniqueUsers, b) => {
+                if (!uniqueUsers.includes(b.account.username)) {
+                  uniqueUsers.push(b.account.username);
+                }
+                return uniqueUsers;
+              }, [])
+                .map((u) => <Select.Option key={u} value={u}>{u}</Select.Option>)}
+            </Select>
+          </div>
+          <div>
+            <Button
+              icon={<FaFilter />}
+              className={styles.filter_button}
+              onClick={() => handleFilter(typeTable)}
+            >
+            </Button>
+          </div>
+        </div>
         <Table
           loading={loading}
           pagination={{
             position: ["bottomCenter"],
-            showQuickJumper: true, // Cho phép nhảy tới trang cụ thể
           }}
+          style={{ overflow: "auto" }}
           dataSource={booking}
           columns={[
             {
@@ -207,8 +302,15 @@ function Sale_Booking() {
 
   return (
     <Layout style={{ padding: "0 24px 24px" }} className={styles.container}>
-      {displayBooking(bookingList, "Booking List")}
-      {displayBooking(bookingListAccept, "Booking List Accept")}
+      {filterListPending.length > 0 ?
+        displayBooking(filterListPending, "Booking List Pending", 1)
+        : displayBooking(bookingListPending, "Booking List Pending", 1)
+      }
+      {filterList.length > 0 ?
+        displayBooking(filterList, "Booking List Accept", 2)
+        : displayBooking(bookingListAccept, "Booking List Accept", 2)
+      }
+
 
       <Drawer
         title="Information Details"
@@ -297,9 +399,10 @@ function Sale_Booking() {
         </Row>
 
       </Drawer>
-
     </Layout>
   );
 }
 
 export default Sale_Booking;
+
+
