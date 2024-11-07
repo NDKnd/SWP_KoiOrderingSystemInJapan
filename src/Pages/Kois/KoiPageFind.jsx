@@ -54,7 +54,6 @@ function KoiPageFind() {
       return matchesKoiName && matchesFarmName && matchesType && matchesPrice;
     });
     setFilteredKoiList(filtered);
-    message.success("Search completed successfully!");
   };
 
   // Pagination

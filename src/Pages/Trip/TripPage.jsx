@@ -21,7 +21,6 @@ function TripPage() {
   const [farmName, setFarmName] = useState(location.state?.farmName || "");
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
-  const [dateRange, setDateRange] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -241,7 +240,7 @@ function TripPage() {
             />
           </>
         )}
-        
+
         <Modal
           title="Farm Details"
           visible={isModalVisible}
@@ -253,26 +252,28 @@ function TripPage() {
           ]}
         >
           {selectedTrip && (
-            <List
-              itemLayout="vertical"
-              dataSource={selectedTrip.farms}
-              renderItem={farm => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<img src={farm.image} alt={farm.farmName} style={{ width: 50, height: 50 }} />}
-                    title={farm.farmName}
-                    description={
-                      <>
-                        <p><strong>Location:</strong> {farm.location}</p>
-                        <p><strong>Description:</strong> {farm.description}</p>
-                        <p><strong>Phone:</strong> {farm.phone}</p>
-                        <p><strong>Email:</strong> {farm.email}</p>
-                      </>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+            <div className="farm-information">
+              <List
+                itemLayout="vertical"
+                dataSource={selectedTrip.farms}
+                renderItem={farm => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={<img src={farm.image} alt={farm.farmName} style={{ width: 50, height: 50 }} />}
+                      title={farm.farmName}
+                      description={
+                        <>
+                          <p><strong>Location:</strong> {farm.location}</p>
+                          <p><strong>Description:</strong> {farm.description}</p>
+                          <p><strong>Phone:</strong> {farm.phone}</p>
+                          <p><strong>Email:</strong> {farm.email}</p>
+                        </>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            </div>
           )}
         </Modal>
       </Content>

@@ -68,9 +68,9 @@ function Home() {
           <Col xs={24} md={12}>
             <Card className="info-card">
               <p>
-                The purpose of the Koi Ordering System is to provide a seamless
-                platform for users to browse, search, and book trips to Koi farms
-                in Japan. Users can create custom itineraries, manage bookings,
+                The purpose of our services is to provide a seamless
+                platform for customers to browse, search, and book trips to Koi farms
+                in Japan. Customers can create custom itineraries, manage bookings,
                 and even purchase Koi fish to be shipped home as part of the
                 experience.
               </p>
@@ -82,8 +82,7 @@ function Home() {
           <Col xs={24} md={12}>
             <Card className="info-card">
               <p>
-                Our services include booking trips to renowned Koi farms, creating
-                custom trip itineraries, managing booking processes, offering
+                Our services include booking trips to renowned Koi farms, managing booking processes, offering
                 optional Koi fish purchasing services, and processing payments. We
                 also provide a feedback and rating system to enhance customer
                 experience.
@@ -94,11 +93,10 @@ function Home() {
             <Card cover={<img alt="Service" className="fixed-height-image" src={"https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/HomePage%2FCnP_30102024_225634.png?alt=media&token=5630ac78-a5d3-490f-a233-fda3ab55933f"} />}></Card>
           </Col>
         </Row>
-        <Divider />
+        <Divider>Service process stages</Divider>
         <Row justify="center">
           <Col xs={24} md={16}>
-            <Card cover={<img alt="State Machine Diagram" src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/HomePage%2Fstate%20machine%20diagram.png?alt=media&token=be58cbca-9bd9-4666-937f-9b52acad4f27" />}>
-              <p style={{ textAlign: "center", fontSize: "20px" }}><strong>Service Process</strong></p>
+            <Card cover={<img alt="State Machine Diagram" src="https://firebasestorage.googleapis.com/v0/b/koiorderingjapan.appspot.com/o/HomePage%2Fstate%20machine%20diagram.png?alt=media&token=a12a307c-217d-473c-8415-38f071ef27b3" />}>
             </Card>
           </Col>
         </Row>

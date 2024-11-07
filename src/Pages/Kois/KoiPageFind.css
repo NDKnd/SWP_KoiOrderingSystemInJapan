@@ -1,57 +1,61 @@
 .layout {
-    padding: 20px 24px;
-  }
-  
-  .card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  .search-button {
-    text-align: center;
-  }
-
-  .search-button .ant-btn-primary {
-    font-size: 18px;
-    max-width: 100px;
-    max-height: 50px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  flex-grow: 1;
 }
-  
-  .price-range {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .koi-list-title {
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .order-button {
-    display: flex;
-    justify-content: center;
-    margin-top: 16px; 
-  }
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 
-  .popover-content {
-    max-width: 300px;
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 2;
-    padding: 5px;
-  }
+.search-button {
+  text-align: center;
+}
 
-  .card-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-  }
+.search-button .ant-btn-primary {
+  font-size: 18px;
+  max-width: 100px;
+  max-height: 50px;
+}
+
+.price-range {
+  display: flex;
+  justify-content: space-between;
+}
+
+.koi-list-title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.order-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.popover-content {
+  max-width: 300px;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 2;
+  padding: 5px;
+}
+
+.card-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}

@@ -56,7 +56,6 @@ function FarmFindPage() {
       return matchesFarmName && matchesLocation;
     });
     setFilterFarmList(filtered);
-    message.success("Search completed successfully!");
   };
 
   // Pagination
@@ -72,7 +71,6 @@ function FarmFindPage() {
   };
 
   const handleBooking = (farm) => {
-    message.success("Trips to that farm are shown!");
     navigate("/TripPage", {
       state: { farmName: farm.farmName },
     });
