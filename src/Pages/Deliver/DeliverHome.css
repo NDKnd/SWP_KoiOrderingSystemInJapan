@@ -339,8 +339,9 @@
 }
 
 .deliver-popup-image {
-    max-width: 90%; /* Đảm bảo ảnh không vượt quá 90% chiều rộng */
-    max-height: 90%; /* Đảm bảo ảnh không vượt quá 90% chiều cao */
+    max-width: 90%;
+    max-height: 90%; 
+    max-height: 700px;
 }
 
 .deliver-uploaded-image-container{
