@@ -1,26 +1,20 @@
-import { expect, describe, it } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom'; // Import MemoryRouter
+import { expect, describe, it, vi } from 'vitest';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter, useNavigate } from 'react-router-dom'; // Import MemoryRouter
+import api from "../services/axios";
 
 import LoginForm from '../Pages/Login/LoginForm.jsx';
 import BookingPage from '../Pages/Trip/TripPage.jsx';
+import BookingStatusPage from '../Pages/Trip/BookingStatusPage.jsx';
 import OrderPage from '../Pages/Consulting/Consulting_orders.jsx';
-// import PaymentPage from '../Pages/Payment/PaymentPage.jsx';
-import { useNavigate } from "react-router-dom";
+import { message, Modal } from 'antd';
 
+// Mocking API calls
+vi.mock("../../services/axios", () => ({
+    get: vi.fn(),
+    post: vi.fn(),
+}));
 
-const fillPaymentForm = (paymentType) => {
-    // Nhập thông tin thanh toán chung
-    fireEvent.change(screen.getByTestId(`${paymentType}_card_number`), {
-        target: { value: "1234567812345678" },
-    });
-    fireEvent.change(screen.getByTestId(`${paymentType}_expiration_date`), {
-        target: { value: "12/24" },
-    });
-    fireEvent.change(screen.getByTestId(`${paymentType}_cvc`), {
-        target: { value: "123" },
-    });
-};
 
 describe("Payment Function & Order Function", () => {
 
@@ -55,51 +49,66 @@ describe("Payment Function & Order Function", () => {
         });
     });
 
-    it("Happy Case: Đặt Booking Trip thành công", async () => {
-        render(
-            <MemoryRouter>
-                <BookingPage /> {/* Trang Booking Trip */}
-            </MemoryRouter>
-        );
+    it("step by step", async () => {
 
-        // Giả lập hành động đặt Booking
-
-        // FAIL  src/Test/PaymentAndOrder.test.jsx > Payment Function & Order Function 
-        // > Happy Case: Đặt Booking Trip thành công
-        // TestingLibraryElementError: 
-        // Unable to find an accessible element with the role "button" and name `/Book Now/i`
-
-
-        const bookNowButtons = screen.getAllByRole("button", { name: /Book Now/i });
-        fireEvent.click(bookNowButtons[0]);
-
-        // Kiểm tra xem thông tin Booking có hiển thị trên trang Booking-status không
-        await waitFor(() => {
-            expect(screen.getByText("Trip booked successfully!")).toBeInTheDocument();
-            expect(localStorage.getItem("bookingId")).toBeDefined();
-            expect(window.location.pathname).toEqual("/book-status");
+        // Mock các hàm Modal
+        const modalConfirmMock = vi.fn().mockImplementation((options) => {
+            options.onOk();  // Mô phỏng nhấn nút OK trong Modal.confirm
         });
+        Modal.confirm = modalConfirmMock;
+        const apiPostMock = vi.fn().mockResolvedValue({ status: 200, data: { id: 123 } });
+        api.post = apiPostMock;
+
+
+        // Đợi cho đến khi tripList được hiển thị trên giao diện
+        await waitFor(() => {
+            render(
+                <MemoryRouter>
+                    <BookingPage />
+                </MemoryRouter>
+            );
+            // Kiểm tra danh sách trip hiện tại có độ dài lớn hơn 0
+            expect(screen.getAllByRole("listitem").length).toBeGreaterThan(0);
+        });
+
+        // Lấy nút 'Book Now' đầu tiên và đảm bảo rằng phần tử này đã được render
+        const bookNowButtons = await screen.findAllByText("Book Now");
+        const bookNowButton = bookNowButtons[0];
+        expect(bookNowButton).toBeInTheDocument();
+
+        // Tìm phần tử Card chứa nút "Book Now"
+        const cardElement = bookNowButton.closest('.trip-card');
+
+        // Đảm bảo rằng phần tử Card không phải là null
+        expect(cardElement).not.toBeNull();
+
+        // Lấy trip dữ liệu từ phần tử Card
+        const trip = {
+            id: cardElement.dataset.tripId,
+            startLocation: cardElement.dataset.startLocation,
+            endLocation: cardElement.dataset.endLocation,
+            startDate: cardElement.dataset.startDate,
+            endDate: cardElement.dataset.endDate,
+        };
+
+        const handleBookTripMock = vi.fn();
+
+        // Mô phỏng nhấn nút "Book Now"
+        fireEvent.click(bookNowButton, { trip });
+        // Kiểm tra xem Modal.confirm đã được gọi với tham số đúng
+        expect(modalConfirmMock).toHaveBeenCalled();
+        expect(modalConfirmMock).toHaveBeenCalledWith(expect.objectContaining({
+            title: expect.any(String),  // Kiểm tra rằng title là một chuỗi
+            content: expect.any(String), // Kiểm tra content là chuỗi
+        }));
+
+        // Giả lập nhấn OK trong Modal.confirm
+        await act(async () => {
+            modalConfirmMock.mock.calls[0][0].onOk();
+        });
+
+        expect(window.location.pathname).toEqual("/book-status");
+
     });
-
-    // it("Unhappy Case: Đặt Booking Trip thất bại", async () => {
-    //     render(
-    //         <MemoryRouter>
-    //             <BookingPage /> {/* Trang Booking Trip */}
-    //         </MemoryRouter>
-    //     );
-
-    //     // Giả lập hành động đặt Booking
-    //     const bookNowButtons = screen.getAllByRole("button", { name: /Book Now/i });
-    //     fireEvent.click(bookNowButtons[0]);
-
-    //     // Kiểm tra xem thông tin Booking có hiển thị trên trang Booking-status không
-    //     await waitFor(() => {
-    //         expect(screen.getByText("You already have an active trip in booking. Complete it before booking another trip.")).toBeInTheDocument();
-    //         expect(screen.queryByText("Trip booked successfully!")).not.toBeInTheDocument();
-    //         expect(localStorage.getItem("bookingId")).toBeNull();
-    //         expect(window.location.pathname).toEqual("/trips");
-    //     });
-    // });
-
 
 });

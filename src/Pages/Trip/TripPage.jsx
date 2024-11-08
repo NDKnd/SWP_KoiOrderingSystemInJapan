@@ -214,7 +214,7 @@ function TripPage() {
         </div>
 
         {loading ? (
-          <Spin tip="Loading trips..." />
+          <Spin size="large" />
         ) : (
           <>
             <Row gutter={[16, 16]}>
@@ -258,7 +258,7 @@ function TripPage() {
 
         <Modal
           title="Farm Details"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={handleModalClose}
           footer={[
             <Button key="close" onClick={handleModalClose}>
