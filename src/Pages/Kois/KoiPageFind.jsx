@@ -16,7 +16,7 @@ function KoiPageFind() {
   const [koiName, setKoiName] = useState("");
   const [farmName, setFarmName] = useState("");
   const [type, setType] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [priceRange, setPriceRange] = useState([0, 250000]);
   const [koiList, setKoiList] = useState([]);
   const [filteredKoiList, setFilteredKoiList] = useState([]);
   const [loading, setLoading] = useState(true);
