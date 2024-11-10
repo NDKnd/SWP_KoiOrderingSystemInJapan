@@ -106,8 +106,14 @@ function TripPage() {
       const matchesFarmName = farmName ? trip.farms.some((farm) => farm.farmName.toLowerCase().includes(farmName.toLowerCase())) : true;
       const matchesStartLocation = startLocation ? trip.startLocation.toLowerCase().includes(startLocation.toLowerCase()) : true;
       const matchesEndLocation = endLocation ? trip.endLocation.toLowerCase().includes(endLocation.toLowerCase()) : true;
-      const matchesStartDate = startDate ? new Date(trip.startDate) >= startDate : true;
-      const matchesEndDate = endDate ? new Date(trip.endDate) <= endDate : true;
+
+      const tripStartDate = new Date(trip.startDate).setHours(0, 0, 0, 0);
+      const tripEndDate = new Date(trip.endDate).setHours(0, 0, 0, 0);
+      const searchStartDate = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : null;
+      const searchEndDate = endDate ? new Date(endDate).setHours(0, 0, 0, 0) : null;
+
+      const matchesStartDate = searchStartDate ? tripStartDate >= searchStartDate : true;
+      const matchesEndDate = searchEndDate ? tripEndDate <= searchEndDate : true;
 
       return matchesFarmName && matchesStartLocation && matchesEndLocation && matchesStartDate && matchesEndDate;
     });

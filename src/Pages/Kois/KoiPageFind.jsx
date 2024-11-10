@@ -16,7 +16,7 @@ function KoiPageFind() {
   const [koiName, setKoiName] = useState("");
   const [farmName, setFarmName] = useState("");
   const [type, setType] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 0]);
+  const [priceRange, setPriceRange] = useState([0, 100000]);
   const [koiList, setKoiList] = useState([]);
   const [filteredKoiList, setFilteredKoiList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ function KoiPageFind() {
   const koiPerPage = 12;
   // const [bookingList, setBookingList] = useState([]);
   // const [notInOrderBooking, setNotInOrderBooking] = useState([]);
-  const [orders, setOrders] = useState([]);
+  // const [orders, setOrders] = useState([]);
   
   const fetchAllKoiAndTypes = async () => {
     try {
@@ -68,46 +68,46 @@ function KoiPageFind() {
   // Fetch all Koi fishes and types
   useEffect(() => {
     fetchAllKoiAndTypes();
-    fetchBookingManager();
+    // fetchBookingManager();
   }, []);
 
 
-  const fetchBookingManager = async () => {
-    const res = await api.get("booking/manager");
-    console.log(res.data);
-    setLoading(false);
-    var list = res.data;
+  // const fetchBookingManager = async () => {
+  //   const res = await api.get("booking/manager");
+  //   console.log(res.data);
+  //   setLoading(false);
+  //   var list = res.data;
 
-    setBookingList(
-      list
-        .filter((item) => item.status == "CHECK_IN")
-        .map((item) => ({
-          ...item,
-          key: item.id,
-        }))
-    );
-    await fetchOrders();
-    console.log("list: ", list);
-    setNotInOrderBooking(
-      list
-        .filter((item) => item.status === "CHECK_IN" &&
-          !orders.some((order) => order.booking.id === item.id))
-        .map((item) => ({
-          ...item,
-          key: item.id,
-        }))
-    );
-  };
+  //   setBookingList(
+  //     list
+  //       .filter((item) => item.status == "CHECK_IN")
+  //       .map((item) => ({
+  //         ...item,
+  //         key: item.id,
+  //       }))
+  //   );
+  //   await fetchOrders();
+  //   console.log("list: ", list);
+  //   setNotInOrderBooking(
+  //     list
+  //       .filter((item) => item.status === "CHECK_IN" &&
+  //         !orders.some((order) => order.booking.id === item.id))
+  //       .map((item) => ({
+  //         ...item,
+  //         key: item.id,
+  //       }))
+  //   );
+  // };
 
-  const fetchOrders = async () => {
-    try {
-      const response = await api.get("/order/manager");
-      setOrders(response.data);
-      console.log("orders: ", response.data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
+  // const fetchOrders = async () => {
+  //   try {
+  //     const response = await api.get("/order/manager");
+  //     setOrders(response.data);
+  //     console.log("orders: ", response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching orders:", error);
+  //   }
+  // };
 
   // const recommendFarmForKoi = (values) => { //gợi ý booking theo farm của Koi mún đặt 
   //   if (!values.farm || !values.farm.farmName) {
