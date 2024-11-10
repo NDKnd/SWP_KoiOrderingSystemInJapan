@@ -14,6 +14,8 @@ const OrderHistory = () => {
     const [orderFile, setOrderFile] = useState(null);
     const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
+    let TotalPrice;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -66,11 +68,17 @@ const OrderHistory = () => {
         {
             title: 'Quantity',
             dataIndex: 'quantity',
-            render: (_, record) => (
-                record.orderDetailResponseList.map((detail, index) => (
-                    <div key={index} style={{ fontSize: '16px' }}>{detail.quantity}</div>
-                ))
-            ),
+            render: (_, record) => {
+                TotalPrice = record.orderDetailResponseList.reduce((sum, detail) => sum + detail.quantity * detail.koiFishResponse.price, 0);
+                console.log("TotalPrice", TotalPrice);
+                return (
+                    record.orderDetailResponseList.map((detail, index) => (
+                        <div key={index} style={{ fontSize: '16px' }}>
+                            {detail.quantity}
+                        </div>
+                    ))
+                )
+            },
         },
         {
             title: 'Address',
@@ -85,7 +93,12 @@ const OrderHistory = () => {
         {
             title: 'Total Payment',
             dataIndex: 'price',
-            render: (price) => <span style={{ fontSize: '16px' }}>{price}</span>,
+            render: (price) => {
+                console.log("price", price);
+                TotalPrice += price;
+                console.log("TotalPrice", TotalPrice);
+                return <span style={{ fontSize: '16px' }}>{TotalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>;
+            },
         },
         {
             title: 'Action',
@@ -95,7 +108,7 @@ const OrderHistory = () => {
             ),
         },
     ];
-    
+
 
     return (
         <>

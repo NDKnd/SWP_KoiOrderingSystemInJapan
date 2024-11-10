@@ -16,7 +16,7 @@ function Account_order() {
     const [loading, setLoading] = useState(true);
     const [filteredOrders, setFilteredOrders] = useState([]);
 
-    let totalPrice = 0;
+    let totalPrice;
 
     const fetchOrders = async () => {
         try {
@@ -121,6 +121,18 @@ function Account_order() {
         });
     }
 
+    const handlePreview = (record) => {
+        Modal.info({
+            width: 600,
+            aspectRatio: 3 / 2,
+            title: <img src={record.image} className={styles.img_Koi} style={{ width: "100%", padding: "15px" }} alt="koi" />,
+            maskClosable: true,
+            closable: true,
+            footer: null,
+            icon: null,
+        });
+    };
+
     return (
         <div>
             <h1>Order List</h1>
@@ -149,10 +161,24 @@ function Account_order() {
                             )
                         },
                         {
+                            title: "Delivery Pic",
+                            dataIndex: "image",
+                            key: "image",
+                            render: (image) => {
+                                return image ? (
+                                    <a onClick={() => handlePreview({ image })}>
+                                        <img className={styles.img_first_farm} src={image} alt="img" />
+                                    </a>
+                                ) : (
+                                    <p style={{ color: "gray" }}>N/A</p>
+                                )
+                            },
+                        },
+                        {
                             title: "Delivered Date",
                             dataIndex: "deliveredDate",
                             key: "deliveredDate",
-                            render: (text) => text ? text : (<p style={{ color: "gray" }}>N/A</p>),
+                            render: (text) => text ? dayjs(text).format("YYYY-MM-DD") : (<p style={{ color: "gray" }}>N/A</p>),
                         },
                         {
                             title: "Expected date",
@@ -170,7 +196,7 @@ function Account_order() {
                             render: (text, record) => {
                                 const details = record.orderDetails || record.orderDetailResponseList;
                                 record.orderDetails === undefined &&
-                                    (totalPrice = details.reduce((sum, d) => sum + d.koiFishResponse.price * d.quantity, totalPrice));
+                                    (totalPrice = details.reduce((sum, d) => sum + d.koiFishResponse.price * d.quantity, 0));
                                 if (details && details.length > 0) {
                                     return (
                                         <button

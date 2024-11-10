@@ -21,20 +21,21 @@ function Consulting_orders() {
 
     const [loading, setLoading] = useState(true);
 
-    const [visible, setVisible] = useState(false);
-    const [drawerInformation, setDrawerInformation] = useState([]);
-
     const [orderEdited, setOrderEdited] = useState([]);
     const [awaitngSubmitOrder, setAwaitngSubmitOrder] = useState([]);
 
     const [allOrders, setAllOrders] = useState([]);
     const [bookingList, setBookingList] = useState([]);
 
+    let totalPrice = 0;
+
     const fetchOrders = async () => {
         try {
             const response = await api.get("/order/manager");
             setAllOrders(response.data);
-            setOrderEdited(response.data.filter((order) => order.address !== null && order.price !== null));
+            setOrderEdited(
+                response.data.filter((order) => order.address !== null && order.price !== null)
+            );
             setLoading(false);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -74,16 +75,31 @@ function Consulting_orders() {
 
     const getBookinglist = async () => {
         const res1 = await api.get("booking/manager");
-        setBookingList(res1.data
+        setBookingList(res1.data.sort((a, b) => dayjs(b.bookingDate).diff(dayjs(a.bookingDate)))
             .filter((b) => b.status === "CHECK_IN"
                 && !allOrders.some((o) => o.booking.id === b.id)
             ));
     }
 
     const handleChooseKois = async () => {
+
+        // check xem đã có danh sách Booking hay ch?!
+        if (bookingList.length == 0) {
+            message.info("Customer haven't created any booking trips yet or all of them have been ordered.");
+            return;
+        }
+
+        // lấy cá koi thuộc farm của booking trip đã trạng thái CHECK_IN
         const res = await api.get("/koi");
-        const KoiToOrders = res.data;
-        console.log("Kois", res.data);
+        console.log("bookingList", bookingList);
+        const farmIds = [...new Set(bookingList.flatMap((b) => b.trip.farms.map((f) => f.id)))];
+        console.log("farmIds", farmIds);
+        const filteredKoi = res.data.filter((koi) => farmIds.includes(koi.farm.id));
+
+        // const KoiToOrders = res.data;
+        // console.log("Kois", res.data);
+        const KoiToOrders = filteredKoi;
+        console.log("Kois", filteredKoi);
 
         await getBookinglist();
         console.log("bookinglist", bookingList);
@@ -97,7 +113,6 @@ function Consulting_orders() {
             maskClosable: true,
             content: (
                 <div>
-
                     <Table
                         className={styles.table_kois}
                         dataSource={KoiToOrders}
@@ -167,7 +182,7 @@ function Consulting_orders() {
 
         // check xem đã có danh sách Booking hay ch?!
         if (bookingList.length == 0) {
-            message.info("You haven't created any booking trips yet or all of them have been ordered.");
+            message.info("Customer haven't created any booking trips yet or all of them have been ordered.");
             return;
         }
 
@@ -184,7 +199,7 @@ function Consulting_orders() {
                     <p>Booking Trip Date:</p>
                     <Select
                         showSearch
-                        style={{ width: 220 }}
+                        style={{ width: 250 }}
                         placeholder="Select a trip"
                         optionFilterProp="children"
                         onChange={(value) => {
@@ -198,7 +213,7 @@ function Consulting_orders() {
                     >
                         {bookingList.length > 0 && bookingList.map((booking) => (
                             <Select.Option key={booking.id} value={booking.id}>
-                                {dayjs(booking.bookingDate).format(dateFormat) + " - " + booking.account.username}
+                                {dayjs(booking.bookingDate).format(dateFormat) + " - " + booking.account.email}
                             </Select.Option>
                         ))
                         }
@@ -417,7 +432,10 @@ function Consulting_orders() {
                                 ) : (
                                     <>
                                         <b>Koi Name:</b> {detail.koiFishResponse.koiName}{" "}
-                                        <b>Price:</b> {detail.koiFishResponse.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}{" "}
+                                        <b>Price:</b> {detail.koiFishResponse.price.toLocaleString("vi-VN", {
+                                            style: "currency",
+                                            currency: "VND"
+                                        })}{" "}
                                     </>
                                 )}
                                 <b>Quantity:</b> {detail.quantity}
@@ -462,6 +480,25 @@ function Consulting_orders() {
                             render: (status) => handleStatus(status),
                         },
                         {
+                            title: "Order Details",
+                            dataIndex: ["orderDetails", "orderDetailResponseList"],
+                            key: "orderDetails",
+                            width: 150,
+                            render: (text, record) => {
+                                const details = record.orderDetails || record.orderDetailResponseList;
+                                record.orderDetails === undefined &&
+                                    (totalPrice = details.reduce((sum, d) => sum + d.koiFishResponse.price * d.quantity, 0));
+                                if (details && details.length > 0) {
+                                    return (
+                                        <button
+                                            className={styles.view_btn + " " + styles.button}
+                                            onClick={() => handleViewDetails(record)}>View Details</button>
+                                    );
+                                }
+                                return <div style={{ color: "gray" }}>No details</div>;
+                            },
+                        },
+                        {
                             title: "Deliver Price",
                             dataIndex: "price",
                             key: "price",
@@ -472,25 +509,6 @@ function Consulting_orders() {
                                     ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
                                     : <div style={{ color: "gray" }}>N/A</div>
                             }
-                        },
-                        {
-                            title: "Order Details",
-                            dataIndex: ["orderDetails", "orderDetailResponseList"],
-                            key: "orderDetails",
-                            width: 150,
-                            render: (text, record) => {
-                                const details = record.orderDetails || record.orderDetailResponseList;
-                                record.orderDetails === undefined &&
-                                    (totalPrice = details.reduce((sum, d) => sum + d.koiFishResponse.price * d.quantity, totalPrice));
-                                if (details && details.length > 0) {
-                                    return (
-                                        <button
-                                            className={styles.view_btn + " " + styles.button}
-                                            onClick={() => handleViewDetails(record)}>View Details</button>
-                                    );
-                                }
-                                return <div style={{ color: "gray" }}>No details</div>;
-                            },
                         },
                         {
                             title: "Total Price",

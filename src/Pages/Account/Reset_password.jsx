@@ -1,6 +1,6 @@
 // import api from "../../services/axios";
 import { Button, Form, Input, message } from "antd";
-import { FaLock, FaUserLock } from "react-icons/fa";
+import { FaLock, FaArrowAltCircleLeft } from "react-icons/fa";
 import styles from "./Reset_password.module.css";
 import api from "../../services/axios";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +42,9 @@ function Reset_password() {
 
   return (
     <div className={styles.body}>
+      <button onClick={() => navigate("/login")} className="back_home_btn">
+        <FaArrowAltCircleLeft className="icon" />
+      </button>
       <Form className={styles.form} onFinish={handleReset}>
         <h1 className={styles.title}>Reset Password</h1>
         <Form.Item
