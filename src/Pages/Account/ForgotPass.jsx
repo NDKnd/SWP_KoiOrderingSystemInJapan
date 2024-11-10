@@ -1,4 +1,4 @@
-import { FaEnvelope } from "react-icons/fa";
+import { FaEnvelope, FaArrowAltCircleLeft } from "react-icons/fa";
 
 import styles from "./Forgot.module.css";
 import { Button, Form, Input, message } from "antd";
@@ -22,6 +22,9 @@ function ForgotPass() {
 
   return (
     <div className={styles.body}>
+      <button onClick={() => navigate("/login")} className="back_home_btn">
+        <FaArrowAltCircleLeft className="icon" />
+      </button>
       <Form className={styles.form} onFinish={handleForgot}>
         <h1 className={styles.title}>Forgot Password</h1>
         <Form.Item name="email">

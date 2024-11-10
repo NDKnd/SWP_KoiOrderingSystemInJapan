@@ -39,6 +39,14 @@
   }
 }
 
+.img_first_farm {
+  width: 3rem;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  border: 1px solid #ccc;
+  border-radius: 7%;
+}
+
 .account_profile_content_details {
   margin-top: 1rem;
   display: flex;

@@ -20,6 +20,8 @@ const PendingOrder = () => {
     const currentYear = today.year();
     const currentDay = today.date();
 
+    let TotalPrice;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -92,12 +94,18 @@ const PendingOrder = () => {
         },
         {
             title: 'Quantity',
-            dataIndex: 'orderDetailResponseList',
-            render: (orderDetails) => (
-                orderDetails.map((detail, index) => (
-                    <div key={index}>{detail.quantity}</div>
-                ))
-            ),
+            dataIndex: 'quantity',
+            render: (_, record) => {
+                TotalPrice = record.orderDetailResponseList.reduce((sum, detail) => sum + detail.quantity * detail.koiFishResponse.price, 0);
+                console.log("TotalPrice", TotalPrice);
+                return (
+                    record.orderDetailResponseList.map((detail, index) => (
+                        <div key={index} style={{ fontSize: '16px' }}>
+                            {detail.quantity}
+                        </div>
+                    ))
+                )
+            },
         },
         {
             title: 'Address',
@@ -110,7 +118,12 @@ const PendingOrder = () => {
         {
             title: 'Total Payment',
             dataIndex: 'price',
-            render: (text) => `${text.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} VND`,
+            render: (price) => {
+                console.log("price", price);
+                TotalPrice += price;
+                console.log("TotalPrice", TotalPrice);
+                return <span style={{ fontSize: '16px' }}>{TotalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>;
+            },
         },
         {
             title: 'Action',
@@ -140,36 +153,36 @@ const PendingOrder = () => {
                 )}
             </div>
             <Modal
-    title="Order Detail"
-    visible={isModalOpen}
-    onCancel={() => setIsModalOpen(false)}
-    footer={[
-        <Button key="back" onClick={() => setIsModalOpen(false)}>Cancel</Button>,
-    ]}
-    width={600} // Đặt chiều rộng của modal
->
-    {currentOrder && (
-        <div className="manager-order-content-detail">
-            <Card bordered={false} style={{ marginBottom: 16 }}>
-                <Typography.Title level={4}>
-                    Customer Information
-                </Typography.Title>
-                <Typography.Paragraph>
-                    <strong>Customer Name:</strong> {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}
-                </Typography.Paragraph>
-                <Typography.Paragraph>
-                    <strong>Address:</strong> {currentOrder.address}
-                </Typography.Paragraph>
-                <Typography.Paragraph>
-                    <strong>Expected Date:</strong> {currentOrder.expectedDate}
-                </Typography.Paragraph>
-                <Typography.Paragraph>
-                    <strong>Total Payment:</strong> {currentOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} VND
-                </Typography.Paragraph>
-            </Card>
-        </div>
-    )}
-</Modal>
+                title="Order Detail"
+                visible={isModalOpen}
+                onCancel={() => setIsModalOpen(false)}
+                footer={[
+                    <Button key="back" onClick={() => setIsModalOpen(false)}>Cancel</Button>,
+                ]}
+                width={600} // Đặt chiều rộng của modal
+            >
+                {currentOrder && (
+                    <div className="manager-order-content-detail">
+                        <Card bordered={false} style={{ marginBottom: 16 }}>
+                            <Typography.Title level={4}>
+                                Customer Information
+                            </Typography.Title>
+                            <Typography.Paragraph>
+                                <strong>Customer Name:</strong> {currentOrder.booking.account.firstName} {currentOrder.booking.account.lastName}
+                            </Typography.Paragraph>
+                            <Typography.Paragraph>
+                                <strong>Address:</strong> {currentOrder.address}
+                            </Typography.Paragraph>
+                            <Typography.Paragraph>
+                                <strong>Expected Date:</strong> {currentOrder.expectedDate}
+                            </Typography.Paragraph>
+                            <Typography.Paragraph>
+                                <strong>Total Payment:</strong> {currentOrder.price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} VND
+                            </Typography.Paragraph>
+                        </Card>
+                    </div>
+                )}
+            </Modal>
         </>
     );
 };
