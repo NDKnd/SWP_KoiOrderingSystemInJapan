@@ -21,6 +21,8 @@ const statusColors = {
   CANCELED: "red",
 };
 
+const statusSteps = ["Pending Confirmation", "Awaiting Payment", "In Progress", "Check In", "Completed", "Canceled"];
+
 function BookingStatusPage() {
   const [booking, setBooking] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -184,9 +186,18 @@ function BookingStatusPage() {
 
   const handleCancel = async () => {
     try {
-      await api.put(`/booking/status/${booking.id}`, {
-        status: "CANCEL",
-      });
+    const today = new Date();
+    const start = new Date(booking.trip.startDate);
+
+    const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
+
+    if (daysDifference >= 3) {
+      await api.post(`/transaction/refundBooking?bookingId=${booking.id}`);
+      message.success("Booking canceled with refund.");
+    } else {
+      await api.post("/booking/cancel/no-refund", { bookingId: booking.id });
+      message.warning("Booking canceled without refund.");
+    }
       setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
     } catch (error) {
       console.error("Error canceling booking:", error);
@@ -194,15 +205,10 @@ function BookingStatusPage() {
   };
 
   const handleFeedbackSubmit = async () => {
-    if (!feedback.trim()) {
-      message.error("Please enter feedback before submitting.");
+    if (!feedback.trim() || rating < 1) {
+      message.error("Please provide both a comment and a rating.");
       return;
     }
-    if (rating < 1) {
-      message.error("Please select a rating before submitting.");
-      return;
-    }
-
     try {
       await api.post(`/feedback`,
         {
@@ -293,23 +299,26 @@ function BookingStatusPage() {
                     <p><strong>End Date:</strong> {booking.trip.endDate}</p>
                     <p><strong>Start Location:</strong> {booking.trip.startLocation}</p>
                     <p><strong>End Location:</strong> {booking.trip.endLocation}</p>
+                    <p><strong>Trip Price:</strong> {booking.trip.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</p>
                   </div>
                   <h3>Farm Information</h3>
-                  {booking.trip.farms && booking.trip.farms.length > 0 ? (
+                  {booking.trip.tripDetails && booking.trip.tripDetails.length > 0 ? (
                     <div className="farm-information">
                       <List
                         itemLayout="horizontal"
-                        dataSource={booking.trip.farms}
-                        renderItem={(farm, index) => (
+                        dataSource={booking.trip.tripDetails}
+                        renderItem={(tripDetail, index) => (
                           <List.Item>
                             <List.Item.Meta
-                              title={<strong>Farm No {index + 1}</strong>}
+                              title={<strong>Destination Order {index + 1}</strong>}
                               description={
                                 <>
-                                  <p><strong>Name:</strong> {farm.farmName}</p>
-                                  <p><strong>Location:</strong> {farm.location}</p>
-                                  <p><strong>Phone:</strong> {farm.phone}</p>
-                                  <p><strong>Email:</strong> {farm.email}</p>
+                                  <p><strong>Farm Name:</strong> {tripDetail.farm.farmName}</p>
+                                  <p><strong>Location:</strong> {tripDetail.farm.location}</p>
+                                  <p><strong>Description:</strong> {tripDetail.farm.description}</p>
+                                  <p><strong>Phone:</strong> {tripDetail.farm.phone}</p>
+                                  <p><strong>Email:</strong> {tripDetail.farm.email}</p>
+                                  <p><strong>Travel Date:</strong> {tripDetail.travelDate}</p>
                                 </>
                               }
                             />
@@ -324,25 +333,33 @@ function BookingStatusPage() {
               </Col>
               <Col xs={24} md={12}>
                 <Card title="Booking Information" className="information-card" bordered>
-                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                  <div className="booking-information-content">
                     <span><strong>Booking ID:</strong></span>
                     <span>{booking.id}</span>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                  <div className="booking-information-content">
                     <span><strong>Booking Date:</strong></span>
-                    <span>{new Date(booking.bookingDate).toLocaleDateString()}</span>
+                    <span>{booking.bookingDate.split("T")[0]}</span>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
+                  <div className="booking-information-content">
+                    <span><strong>Number of Tickets:</strong></span>
+                    <span>{booking.quantity}</span>
+                  </div>
+                  <div className="booking-information-content">
+                    <span><strong>Price Per Ticket:</strong></span>
+                    <span>{booking.ticketPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
+                  </div>
+                  <div className="booking-information-content">
+                    <span><strong>Total Price:</strong></span>
+                    <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
+                  </div>
+                  <p className="booking-information-content"><strong>Note:</strong> {booking.note}</p>
+                  <div className="booking-information-content">
                     <span><strong>Status:</strong></span>
                     <Tag color={statusColors[booking.status]}>
                       {booking.status.replace("_", " ")}
                     </Tag>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "10px" }}>
-                    <span><strong>Total Price:</strong></span>
-                    <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
-                  </div>
-                  <p><strong>Note:</strong> {booking.note}</p>
 
                   {booking.status === "AWAITING_PAYMENT" && (
                     <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
@@ -361,7 +378,6 @@ function BookingStatusPage() {
                             content: "Are you sure you want to cancel this booking?",
                             onOk: () => {
                               handleCancel();
-                              refreshPage();
                             },
                           })
                         }}>

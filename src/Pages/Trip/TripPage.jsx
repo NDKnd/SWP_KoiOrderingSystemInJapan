@@ -23,20 +23,24 @@ function TripPage() {
   const [endLocation, setEndLocation] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [quantity, setQuantity] = useState();
+  const [note, setNote] = useState();
 
-  // Modal state for displaying farm details
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState(null);
 
   const fetchTrips = async () => {
     try {
       const response = await api.get("/trip");
-      const futureTrips = response.data.filter(trip => new Date(trip.startDate) > new Date());
-      console.log("res: ", response.data);
+
+      const checkForAvailableTrips = new Date();
+      checkForAvailableTrips.setDate(checkForAvailableTrips .getDate() + 2  );
+
+      const futureTrips = response.data.filter(trip => new Date(trip.startDate) >    checkForAvailableTrips);
       setTripList(futureTrips);
       setFilteredTripList(futureTrips);
     } catch (error) {
-      console.log("Error fetching trips:", error);
+      console.error("Error fetching trips:", error);
     } finally {
       setLoading(false);
     }
@@ -56,8 +60,26 @@ function TripPage() {
 
     Modal.confirm({
       title: "Confirm Booking",
-      content: "Are you sure you want to book this trip?",
-      onCancel: () => { },
+      content: (
+        <div>
+          <h3>Are you sure you want to book this trip?</h3>
+          If yes, please choose a number of tickets that you need for this trip:
+          <Input
+            type="number"
+            min={1}
+            max={10}
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            style={{ width: "100px", marginLeft: "10px" }}
+          />
+          <p>Note: </p>
+          <Input
+            type="TextArea"
+            placeholder="Enter your note for this trip."
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
+      ),
       onOk: async () => {
         try {
           const bookingsResponse = await api.get("/booking/customer");
@@ -74,9 +96,9 @@ function TripPage() {
           const response = await api.post(
             "/booking",
             {
-              image: "",
               status: "PENDING_CONFIRMATION",
-              note: "",
+              quantity: parseInt(quantity),
+              note: note,
               tripId: trip.id,
             },
             {
@@ -88,7 +110,7 @@ function TripPage() {
 
           if (response.status === 200) {
             message.success("Trip booked successfully!");
-            localStorage.setItem("bookingId", response.data.id)
+            localStorage.setItem("bookingId", response.data.id);
             navigate("/book-status");
           } else {
             message.error("Failed to book the trip. Please try again.");
@@ -97,7 +119,7 @@ function TripPage() {
           console.error("Error booking trip:", error);
           message.error("Failed to book the trip. Please try again.");
         }
-      }
+      },
     });
   };
 
@@ -121,7 +143,6 @@ function TripPage() {
     setCurrentPage(1);
   };
 
-
   const showFarmDetails = (trip) => {
     setSelectedTrip(trip);
     setIsModalVisible(true);
@@ -141,12 +162,10 @@ function TripPage() {
       footer: null,
       icon: null,
     });
-  }
+  };
 
   useEffect(() => {
     fetchTrips();
-    console.log("futuretrip", tripList);
-    console.log("filteredtrip", filteredTripList);
   }, []);
 
   useEffect(() => {
@@ -262,7 +281,7 @@ function TripPage() {
         )}
 
         <Modal
-          title="Farm Details"
+          title="Trip Itinerary"
           visible={isModalVisible}
           onCancel={handleModalClose}
           footer={[
@@ -274,22 +293,24 @@ function TripPage() {
           {selectedTrip && (
             <List
               itemLayout="vertical"
-              dataSource={selectedTrip.farms}
-              renderItem={farm => (
+              dataSource={selectedTrip.tripDetails}
+              renderItem={(tripDetail, index) => (
                 <List.Item>
                   <List.Item.Meta
                     avatar={
-                      <a onClick={() => handlePreview({ image: farm.image })}>
-                        <img src={farm.image} alt={farm.farmName} style={{ width: 50, height: 50 }} />
+                      <a onClick={() => handlePreview({ image: tripDetail.farm.image })}>
+                        <img src={tripDetail.farm.image} alt={tripDetail.farm.farmName} style={{ width: 50, height: 50 }} />
                       </a>
                     }
-                    title={farm.farmName}
+                    title={<strong>Destination Order {index + 1}</strong>}
                     description={
                       <>
-                        <p><strong>Location:</strong> {farm.location}</p>
-                        <p><strong>Description:</strong> {farm.description}</p>
-                        <p><strong>Phone:</strong> {farm.phone}</p>
-                        <p><strong>Email:</strong> {farm.email}</p>
+                        <p><strong>Farm Name:</strong> {tripDetail.farm.farmName}</p>
+                        <p><strong>Location:</strong> {tripDetail.farm.location}</p>
+                        <p><strong>Description:</strong> {tripDetail.farm.description}</p>
+                        <p><strong>Phone:</strong> {tripDetail.farm.phone}</p>
+                        <p><strong>Email:</strong> {tripDetail.farm.email}</p>
+                        <p><strong>Travel Date:</strong> {tripDetail.travelDate}</p>
                       </>
                     }
                   />
@@ -304,4 +325,4 @@ function TripPage() {
   );
 }
 
-export default TripPage;
+export default TripPage;  
