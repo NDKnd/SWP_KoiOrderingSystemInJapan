@@ -79,7 +79,7 @@ function ManagerTrip() {
     setisCreateModalOpen((prevState) => !prevState);
   };
   const handleCreateTrip = async (values) => {
-    // try {
+    setFieldForFarms([]);
     // Lấy dữ liệu từ RangePicker
     const formValues = values;
     values.tripDetailRequests = fieldForFarm;
@@ -102,6 +102,7 @@ function ManagerTrip() {
       startLocation: formValues.startLocation,
       endLocation: formValues.endLocation,
       tripDetailRequests: tripsDetails,
+      price: formValues.price
     };
     console.log("data for create trip: ", newTrip);
     try {
@@ -133,10 +134,22 @@ function ManagerTrip() {
   };
 
   const handleOpenEditModal = (tripId) => {
+    setFieldForFarms([]);
     console.log("tripIdEdit: ", tripId);
     const tripBef = tripList.find((trip) => trip.id === tripId);
+    const details = tripBef?.tripDetails.map((dt, index) => ({
+      farmId: dt.farm.id,
+      name: index,
+      travelDate: dayjs(dt.travelDate),
+    })) || [];
+    setRangeDate({
+      startDate: dayjs(tripBef?.startDate),
+      endDate: dayjs(tripBef?.endDate),
+    });
     setInfoTripDefault(tripBef);
+    setFieldForFarms(details);
     console.log("infoTripDefault: ", infoTripDefault);
+    console.log("fieldForFarms: ", fieldForFarm);
     setIsEditModalOpen((prevState) => !prevState);
   };
   const handleEditTrip = async (values) => {
@@ -144,12 +157,25 @@ function ManagerTrip() {
       console.log("tripBef: ", infoTripDefault);
       const formValues = values;
       console.log("trip after : ", formValues);
+      // Xử lý nghịch lý ngày đi
+      const isTravelDateInRange = fieldForFarm.every(field => {
+        const travelDate = field.travelDate;
+        return travelDate.isSameOrAfter(dayjs(formValues.date[0])) && travelDate.isSameOrBefore(dayjs(formValues.date[1]));
+      });
+      if (!isTravelDateInRange) {
+        message.warning("One or more travel dates are outside the start and end date range.");
+        return;
+      }
       const infoTripForEdit = {
         startDate: formValues.date[0].format(dateFormat),
         endDate: formValues.date[1].format(dateFormat),
         startLocation: formValues.startLocation,
         endLocation: formValues.endLocation,
-        farmIds: formValues.farms,
+        tripDetailRequests: fieldForFarm.map((field) => ({
+          farmId: field.farmId,
+          travelDate: field.travelDate.format(dateFormat),
+        })),
+        price: formValues.price
       };
       console.log("Change for edit: ", infoTripForEdit);
       const res = await api.put(`trip/${infoTripDefault.id}`, infoTripForEdit);
@@ -160,6 +186,7 @@ function ManagerTrip() {
       message.error("Error edit trips");
       console.log(error.message.data);
     } finally {
+      setFieldForFarms([]);
       setIsEditModalOpen(false);
     }
   };
@@ -184,8 +211,9 @@ function ManagerTrip() {
       endDate: trip.endDate,
       startLocation: trip.startLocation,
       endLocation: trip.endLocation,
+      price: trip.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
     };
-    const EachFarm = trip.tripDetails;
+    const EachFarm = trip.tripDetails.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate));
     // console.log("eachTrip: ", Eachtrip);
     // console.log("list farms of the above trip: ", EachFarm);
     return (
@@ -193,7 +221,7 @@ function ManagerTrip() {
         className={styles.manager_trip_card}
         title={
           <Row>
-            <Col span={12}>
+            <Col span={8}>
               <p className={styles.manager_trip_title}>
                 <b>From: </b>
                 <span>{Eachtrip.startLocation}</span>
@@ -203,7 +231,7 @@ function ManagerTrip() {
                 <span>{Eachtrip.endLocation}</span>
               </p>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <p className={styles.manager_trip_title}>
                 <b>Start Date: </b>
                 <span>{Eachtrip.startDate}</span>
@@ -212,6 +240,12 @@ function ManagerTrip() {
                 <b>End Date: </b>
                 <span>{Eachtrip.endDate}</span>
               </p>
+            </Col>
+            <Col span={8}>
+              <h1 className={styles.manager_trip_title} style={{ fontSize: "1.7rem" }}>
+                <b>Price: </b>
+                <span>{Eachtrip.price || "No price available"}</span>
+              </h1>
             </Col>
           </Row>
         }
@@ -225,8 +259,10 @@ function ManagerTrip() {
               className={styles.manager_trip_list} // Thêm class CSS vào danh sách
               bordered
               dataSource={EachFarm}
-              renderItem={(item) => (
+              renderItem={(item, index) => (
                 <List.Item className={styles.manager_trip_item}>
+                  {/* Thứ tự đi của trip */}
+                  <span className={styles.manager_trip_number}>{index + 1}</span>
                   {/* Hình ảnh của farm */}
                   <a onClick={() => handlePreview(item.farm)}>
                     <img className={styles.manager_trip_image}
@@ -236,12 +272,14 @@ function ManagerTrip() {
                   </a>
                   {/* Nội dung farm */}
                   <div className={styles.manager_trip_content}>
-                    <h3>{item.farm.farmName || "No farm name available"}</h3>
-                    {item.farm.location || "No farm location available"}
+                    <h3><b>{item.farm.farmName || "No farm name available"}</b></h3>
+                    <b>Travel Date: </b>{item.travelDate || "No travel date available"}
                     <br />
-                    {item.farm.phone || "No farm phone available"}
+                    <b>Location: </b>{item.farm.location || "No farm location available"}
                     <br />
-                    {item.farm.email || "No farm email available"}
+                    <b>Phone: </b>{item.farm.phone || "No farm phone available"}
+                    <br />
+                    <b>Email: </b>{item.farm.email || "No farm email available"}
                   </div>
                 </List.Item>
               )}
@@ -642,6 +680,25 @@ function ManagerTrip() {
                 ))}
               </Select>
             </Form.Item>
+
+            <Form.Item
+              label="Trip Price"
+              name="price"
+              rules={[
+                { required: true, message: "Please input your trip price!" },
+                {
+                  validator(_, value) {
+                    if (value < 10000) {
+                      return Promise.reject("Price must be at least 10,000 VND!");
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Input type="number" style={{ width: 292 }} />
+            </Form.Item>
+
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Submit
@@ -665,12 +722,13 @@ function ManagerTrip() {
             initialValues={{
               id: infoTripDefault.id,
               date: [
-                dayjs(infoTripDefault.startDate, dateFormat),
-                dayjs(infoTripDefault.endDate, dateFormat),
+                dayjs(infoTripDefault.startDate),
+                dayjs(infoTripDefault.endDate),
               ],
               startLocation: infoTripDefault.startLocation,
               endLocation: infoTripDefault.endLocation,
-              tripDetails: infoTripDefault.tripDetails.map((dt) => dt.farm.id),
+              tripDetails: fieldForFarm,
+              price: infoTripDefault.price,
             }}
             autoComplete="off"
             onFinish={handleEditTrip}
@@ -683,7 +741,15 @@ function ManagerTrip() {
               ]}
               style={{ width: "100%" }}
             >
-              <RangePicker minDate={dayjs(new Date())} />
+              <RangePicker
+                onChange={(dates) => {
+                  setRangeDate({
+                    startDate: dates ? dates[0] : null,
+                    endDate: dates ? dates[1] : null,
+                  });
+                }}
+                minDate={dayjs(new Date())}
+              />
             </Form.Item>
             <Form.Item
               label="Start Location"
@@ -711,29 +777,6 @@ function ManagerTrip() {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item
-              label="End Location"
-              name="endLocation"
-              rules={[
-                { required: true, message: "Please input your end location!" },
-              ]}
-            >
-              <Select
-                showSearch
-                placeholder="Select a location"
-                style={{ width: 292 }}
-                loading={loading}
-                filterOption={(input, option) =>
-                  option?.children?.toLowerCase().includes(input.trim().toLowerCase())
-                }
-              >
-                {optionsLocationJapan.map((option) => (
-                  <Select.Option key={option.toponymName} value={option.toponymName}>
-                    {option.toponymName}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
 
             <Form.List name="tripDetails">
               {(fields, { add, remove }) => (
@@ -742,6 +785,7 @@ function ManagerTrip() {
                     <Form.Item {...restField} label="Farms" required={false} key={key}>
                       <Form.Item
                         {...restField}
+                        valuePropName={[name, "farmId"]}
                         validateTrigger={["onChange", "onBlur"]}
                         rules={[{ required: true, whitespace: true, message: "Please select your farm!" }]}
                         noStyle
@@ -749,6 +793,7 @@ function ManagerTrip() {
                         <Select
                           placeholder="Please select"
                           style={{ width: 292 }}
+                          defaultValue={fieldForFarm.find((selectedFarm) => selectedFarm.name === name)?.farmId}
                           onChange={(value) => {
                             setFieldForFarms((prev) => {
                               const index = prev.findIndex((farm) => farm.name === name);
@@ -763,7 +808,8 @@ function ManagerTrip() {
                         >
                           {farmsOpts.map((farm) => (
                             <Select.Option key={farm.id} value={farm.id}
-                              disabled={fieldForFarm.some((selectedFarm) => selectedFarm.farmId === farm.id)}>
+                              disabled={fieldForFarm.some((selectedFarm) => selectedFarm.farmId === farm.id)}
+                            >
                               {farm.farmName}
                             </Select.Option>
                           ))}
@@ -772,6 +818,7 @@ function ManagerTrip() {
 
                       <Form.Item
                         {...restField}
+                        name={[name, "travelDate"]}
                         validateTrigger={["onChange", "onBlur"]}
                         rules={[{ required: true, message: "Please input your travel date!" }]}
                         noStyle
@@ -860,6 +907,48 @@ function ManagerTrip() {
                 </div>
               )}
             </Form.List>
+
+            <Form.Item
+              label="End Location"
+              name="endLocation"
+              rules={[
+                { required: true, message: "Please input your end location!" },
+              ]}
+            >
+              <Select
+                showSearch
+                placeholder="Select a location"
+                style={{ width: 292 }}
+                loading={loading}
+                filterOption={(input, option) =>
+                  option?.children?.toLowerCase().includes(input.trim().toLowerCase())
+                }
+              >
+                {optionsLocationJapan.map((option) => (
+                  <Select.Option key={option.toponymName} value={option.toponymName}>
+                    {option.toponymName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Trip Price"
+              name="price"
+              rules={[
+                { required: true, message: "Please input your trip price!" },
+                {
+                  validator(_, value) {
+                    if (value < 10000) {
+                      return Promise.reject("Price must be at least 10,000 VND!");
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Input type="number" style={{ width: 292 }} />
+            </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">

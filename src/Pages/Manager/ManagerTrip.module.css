@@ -87,7 +87,9 @@
 }
 
 .manager_trip_list {
-  max-height: 238px;
+  /* background-color: antiquewhite; */
+  max-height: 282px;
+  min-height: 143px;
   /* Chiều cao tối đa cho danh sách */
   overflow-y: auto;
   /* Kích hoạt scrollbar */
@@ -97,10 +99,25 @@
   /* Tạo khoảng trống tránh che bởi scrollbar */
 }
 
+.manager_trip_number {
+  /* background-color: aqua; */
+  color: var(--purple1);
+  font-weight: bold;
+  margin: 1rem;
+  height: fit-content;
+  padding: 0.3rem;
+}
+
 .manager_trip_item {
   display: flex;
   align-items: center;
   scroll-snap-type: center;
+}
+
+.manager_trip_item:hover {
+  background-color: #f2f2f2;
+  transform: scale(1.01);
+  transition: transform 0.3s ease;
 }
 
 .manager_trip_image {
