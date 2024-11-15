@@ -18,7 +18,7 @@ import { MdOutlineCreateNewFolder } from "react-icons/md";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { FaDeleteLeft, FaRegCircleXmark } from "react-icons/fa6";
 import { FaPlusCircle } from "react-icons/fa";
 
 // Kích hoạt plugin
@@ -45,9 +45,10 @@ function ManagerTrip() {
   const [searchFarms, setSearchFarms] = useState([]);
 
   const [optionsLocation, setOptionLocation] = useState([]);
-  const [farmSelected, setFarmSelected] = useState(farmsOpts);
-  const [farmAvailable, setFarmAvailable] = useState(farmsOpts);
+  const [optionsLocationJapan, setOptionLocationJapan] = useState([]);
+  const [farmAvailable, setFarmAvailable] = useState([]);
   const [fieldForFarm, setFieldForFarms] = useState([]);
+  const [rangeDate, setRangeDate] = useState([]);
 
   const fetchFarms = async () => {
     try {
@@ -74,7 +75,7 @@ function ManagerTrip() {
 
   const handleOpenModal = () => {
     setFieldForFarms([]);
-    setFarmSelected(farmsOpts);
+    setFarmAvailable(farmsOpts);
     setisCreateModalOpen((prevState) => !prevState);
   };
   const handleCreateTrip = async (values) => {
@@ -103,17 +104,17 @@ function ManagerTrip() {
       tripDetailRequests: tripsDetails,
     };
     console.log("data for create trip: ", newTrip);
-
-    //   const res = await api.post("trip", newTrip);
-    //   console.log("res data:", res);
-    //   fetchTrips();
-    //   message.success("Create trip successfully");
-    // } catch (error) {
-    //   message.error("Error create trips");
-    //   console.log(error.message.toString());
-    // } finally {
-    //   handleOpenModal();
-    // }
+    try {
+      const res = await api.post("trip", newTrip);
+      console.log("res data:", res);
+      fetchTrips();
+      message.success("Create trip successfully");
+    } catch (error) {
+      message.error("Error create trips");
+      console.log(error.message.toString());
+    } finally {
+      handleOpenModal();
+    }
   };
 
   const handleDeleteTrip = async (tripId) => {
@@ -163,6 +164,19 @@ function ManagerTrip() {
     }
   };
 
+  const handlePreview = (record) => {
+    Modal.info({
+      width: 600,
+      aspectRatio: 3 / 2,
+      title: <img src={record.image}
+        className={styles.img_Koi} style={{ width: "100%", padding: "15px" }} alt="koi" />,
+      maskClosable: true,
+      closable: true,
+      footer: null,
+      icon: null,
+    });
+  };
+
   const dispalyListTrips = (trip) => {
     const Eachtrip = {
       id: trip.id,
@@ -171,7 +185,7 @@ function ManagerTrip() {
       startLocation: trip.startLocation,
       endLocation: trip.endLocation,
     };
-    const EachFarm = trip.farms;
+    const EachFarm = trip.tripDetails;
     // console.log("eachTrip: ", Eachtrip);
     // console.log("list farms of the above trip: ", EachFarm);
     return (
@@ -214,19 +228,20 @@ function ManagerTrip() {
               renderItem={(item) => (
                 <List.Item className={styles.manager_trip_item}>
                   {/* Hình ảnh của farm */}
-                  <img
-                    src={item.image || "https://via.placeholder.com/60"} // Hiển thị hình ảnh hoặc placeholder
-                    alt={item.farmName}
-                    className={styles.manager_trip_image}
-                  />
+                  <a onClick={() => handlePreview(item.farm)}>
+                    <img className={styles.manager_trip_image}
+                      src={item.farm.image || "https://via.placeholder.com/60"}
+                      alt="img"
+                    />
+                  </a>
                   {/* Nội dung farm */}
                   <div className={styles.manager_trip_content}>
-                    <h3>{item.farmName || "No farm name available"}</h3>
-                    {item.location || "No farm location available"}
+                    <h3>{item.farm.farmName || "No farm name available"}</h3>
+                    {item.farm.location || "No farm location available"}
                     <br />
-                    {item.phone || "No farm phone available"}
+                    {item.farm.phone || "No farm phone available"}
                     <br />
-                    {item.email || "No farm email available"}
+                    {item.farm.email || "No farm email available"}
                   </div>
                 </List.Item>
               )}
@@ -315,14 +330,20 @@ function ManagerTrip() {
   const handleFetchLocation = async () => {
     setLoading(true);
     try {
+      // Fetch vị trí địa lý Việt Nam
       const response = await fetch("https://provinces.open-api.vn/api/");
       const data = Array.from(await response.json());
       console.log("data", data);
-      // Kiểm tra dữ liệu trả về có phải là mảng không và không bị undefined
-      const filteredLocations = data;
-      console.log("fukte", filteredLocations);
+      setOptionLocation(data);
 
-      setOptionLocation(filteredLocations);
+      // Fetch vị trí địa lý Nhật Bản
+      const response1 = await fetch(`http://api.geonames.org/searchJSON?formatted=true&q=Japan&maxRows=95&username=coconut&lang=ja`);
+      const data1 = await response1.json();
+      // Lọc các đối tượng có fcl là "L" và fcode là "RGN"
+      const filteredData = data1.geonames.filter(location => location.fcl === "P");
+      // Cập nhật state với dữ liệu đã lọc
+      console.log("dataJapn", filteredData);
+      setOptionLocationJapan(filteredData);
     } catch (error) {
       console.error("Error fetching location data:", error);
     } finally {
@@ -421,8 +442,9 @@ function ManagerTrip() {
           <Form
             name="basic"
             labelCol={{ span: 7 }}
+            labelWrap={{ style: { width: 150 } }}
             wrapperCol={{ span: 15 }}
-            style={{ maxWidth: 600 }}
+            style={{ maxWidth: 700 }}
             initialValues={{ remember: true }}
             autoComplete="off"
             onFinish={handleCreateTrip}
@@ -435,10 +457,16 @@ function ManagerTrip() {
               ]}
               style={{ width: "100%" }}
             >
-              <RangePicker minDate={dayjs(new Date())} />
+              <RangePicker minDate={dayjs(new Date())}
+                onChange={(dates) => {
+                  setRangeDate({
+                    startDate: dates ? dates[0] : null,
+                    endDate: dates ? dates[1] : null,
+                  });
+                }} />
             </Form.Item>
             <Form.Item
-              label="Start Location"
+              label="Start Location (Province of VietNam)"
               name="startLocation"
               rules={[
                 {
@@ -457,7 +485,7 @@ function ManagerTrip() {
                 }
               >
                 {optionsLocation.map((option) => (
-                  <Select.Option key={option.code} value={option.code}>
+                  <Select.Option key={option.code} value={option.name}>
                     {option.name}
                   </Select.Option>
                 ))}
@@ -480,16 +508,20 @@ function ManagerTrip() {
                           placeholder="Please select"
                           style={{ width: 292 }}
                           onChange={(value) => {
-                            // Lưu thông tin farmId khi chọn và loại bỏ khỏi farmSelected
-                            const farmChosen = farmSelected.find((farm) => farm.id === value);
-                            if (farmChosen) {
-                              setFieldForFarms((prev) => [...prev, { farmId: value, name, travelDate: null }]);
-                              setFarmSelected((prev) => prev.filter((farm) => farm.id !== value));
-                            }
+                            setFieldForFarms((prev) => {
+                              const index = prev.findIndex((farm) => farm.name === name);
+                              if (index !== -1) {
+                                const updatedFarms = [...prev];
+                                updatedFarms[index].farmId = value;
+                                return updatedFarms;
+                              }
+                              return [...prev, { farmId: value, name, travelDate: null }];
+                            });
                           }}
                         >
-                          {farmSelected.map((farm) => (
-                            <Select.Option key={farm.id} value={farm.id}>
+                          {farmsOpts.map((farm) => (
+                            <Select.Option key={farm.id} value={farm.id}
+                              disabled={fieldForFarm.some((selectedFarm) => selectedFarm.farmId === farm.id)}>
                               {farm.farmName}
                             </Select.Option>
                           ))}
@@ -506,8 +538,20 @@ function ManagerTrip() {
                           format={dateFormat}
                           style={{ width: 200 }}
                           placeholder="Please select your travel date"
+                          disabledDate={(current) => {
+                            const { startDate, endDate } = rangeDate;
+                            const index = fieldForFarm.findIndex((farm) => farm.name === name);
+                            const previousFarm = fieldForFarm[index - 1];
+                            return (
+                              current && (
+                                current < dayjs() || // Không cho chọn ngày trước hôm nay
+                                (previousFarm && current < dayjs(previousFarm.travelDate)) || // Ngày đi của farm sau phải lớn hơn ngày đi của farm trước
+                                (startDate && current < dayjs(startDate)) || // Ngày đi phải lớn hơn ngày bắt đầu
+                                (endDate && current > dayjs(endDate).add(-1, "day"))  // Ngày đi phải nhỏ hơn ngày về
+                              )
+                            );
+                          }}
                           onChange={(date) => {
-                            // Cập nhật ngày xuất phát trong fieldForFarms
                             setFieldForFarms((prev) =>
                               prev.map((farm) =>
                                 farm.name === name ? { ...farm, travelDate: date } : farm
@@ -517,20 +561,34 @@ function ManagerTrip() {
                         />
                       </Form.Item>
 
-                      <FaDeleteLeft
+                      <FaRegCircleXmark
+                        style={{ fontSize: "1.5rem" }}
                         className="dynamic-delete-button"
                         onClick={() => {
+                          console.log("BeforeDelete", fieldForFarm);
                           // Tìm farm theo name để lấy farmId và travelDate
                           const fieldRemoved = fieldForFarm.find((f) => f.name === name);
+                          console.log("the one removed", fieldRemoved);
                           if (fieldRemoved) {
-                            const farmRemoved = farmsOpts.find((f) => f.id === fieldRemoved.farmId);
-                            if (farmRemoved) {
-                              // Thêm lại farmRemoved vào farmSelected khi xóa
-                              setFarmSelected((prev) => [...prev, farmRemoved]);
+                            const index = fieldForFarm.indexOf(fieldRemoved);
+                            // Các trường cần xóa từ trường hiện tại trở đi
+                            const fieldsToRemove = fieldForFarm.slice(index);
+                            if (fieldsToRemove.length > 1) {
+                              // Nếu có nhiều hơn một trường, yêu cầu xác nhận xóa
+                              const confirmRemove = window.confirm(`Remove ${fieldsToRemove.length} fields after this field?`);
+                              if (confirmRemove) {
+                                setFieldForFarms((prev) =>
+                                  prev.filter((farm, idx) => idx < index)
+                                );
+
+                                remove(fieldsToRemove.map(f => f.name)); // Remove by their 'name'
+                              }
+                            } else {
+                              setFieldForFarms((prev) =>
+                                prev.filter((farm) => farm.farmId !== fieldRemoved.farmId)
+                              );
+                              remove(name);
                             }
-                            // Xóa farm khỏi fieldForFarms và Form List
-                            setFieldForFarms((prev) => prev.filter((farm) => farm.name !== name));
-                            remove(name);
                           }
                         }}
                       />
@@ -541,7 +599,11 @@ function ManagerTrip() {
                     <Button
                       type="dashed"
                       onClick={() => {
-                        if (farmSelected.length === 0) {
+                        console.log("BeforeAdd", fieldForFarm);
+                        const farmAvailableFiltered = farmAvailable.filter(
+                          (farm) => !fieldForFarm.some((f) => f.farmId === farm.id)
+                        );
+                        if (farmAvailableFiltered.length === 0) {
                           message.warning("No farms available!");
                           return;
                         }
@@ -558,13 +620,27 @@ function ManagerTrip() {
             </Form.List>
 
             <Form.Item
-              label="End Location"
+              label="End Location (Province of Japan)"
               name="endLocation"
               rules={[
                 { required: true, message: "Please input your end location!" },
               ]}
             >
-              <Input style={{ width: 292 }} />
+              <Select
+                showSearch
+                placeholder="Select a location"
+                style={{ width: 292 }}
+                loading={loading}
+                filterOption={(input, option) =>
+                  option?.children?.toLowerCase().includes(input.trim().toLowerCase())
+                }
+              >
+                {optionsLocationJapan.map((option) => (
+                  <Select.Option key={option.toponymName} value={option.toponymName}>
+                    {option.toponymName}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
@@ -594,7 +670,7 @@ function ManagerTrip() {
               ],
               startLocation: infoTripDefault.startLocation,
               endLocation: infoTripDefault.endLocation,
-              farms: infoTripDefault.farms.map((farm) => farm.id),
+              tripDetails: infoTripDefault.tripDetails.map((dt) => dt.farm.id),
             }}
             autoComplete="off"
             onFinish={handleEditTrip}
@@ -619,7 +695,21 @@ function ManagerTrip() {
                 },
               ]}
             >
-              <Input style={{ width: 292 }} />
+              <Select
+                showSearch
+                placeholder="Select a location"
+                style={{ width: 292 }}
+                loading={loading}
+                filterOption={(input, option) =>
+                  option?.children?.toLowerCase().includes(input.trim().toLowerCase())
+                }
+              >
+                {optionsLocation.map((option) => (
+                  <Select.Option key={option.code} value={option.name}>
+                    {option.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item
               label="End Location"
@@ -628,26 +718,149 @@ function ManagerTrip() {
                 { required: true, message: "Please input your end location!" },
               ]}
             >
-              <Input style={{ width: 292 }} />
-            </Form.Item>
-            <Form.Item
-              label="Farms"
-              name="farms"
-              rules={[{ required: true, message: "Please select your farms!" }]}
-            >
               <Select
-                mode="multiple"
-                allowClear
+                showSearch
+                placeholder="Select a location"
                 style={{ width: 292 }}
-                placeholder="Please select"
+                loading={loading}
+                filterOption={(input, option) =>
+                  option?.children?.toLowerCase().includes(input.trim().toLowerCase())
+                }
               >
-                {farmsOpts.map((farm) => (
-                  <Select.Option key={farm.id} value={farm.id}>
-                    {farm.farmName}
+                {optionsLocationJapan.map((option) => (
+                  <Select.Option key={option.toponymName} value={option.toponymName}>
+                    {option.toponymName}
                   </Select.Option>
                 ))}
               </Select>
             </Form.Item>
+
+            <Form.List name="tripDetails">
+              {(fields, { add, remove }) => (
+                <div className={styles.selector_farms}>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <Form.Item {...restField} label="Farms" required={false} key={key}>
+                      <Form.Item
+                        {...restField}
+                        validateTrigger={["onChange", "onBlur"]}
+                        rules={[{ required: true, whitespace: true, message: "Please select your farm!" }]}
+                        noStyle
+                      >
+                        <Select
+                          placeholder="Please select"
+                          style={{ width: 292 }}
+                          onChange={(value) => {
+                            setFieldForFarms((prev) => {
+                              const index = prev.findIndex((farm) => farm.name === name);
+                              if (index !== -1) {
+                                const updatedFarms = [...prev];
+                                updatedFarms[index].farmId = value;
+                                return updatedFarms;
+                              }
+                              return [...prev, { farmId: value, name, travelDate: null }];
+                            });
+                          }}
+                        >
+                          {farmsOpts.map((farm) => (
+                            <Select.Option key={farm.id} value={farm.id}
+                              disabled={fieldForFarm.some((selectedFarm) => selectedFarm.farmId === farm.id)}>
+                              {farm.farmName}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+
+                      <Form.Item
+                        {...restField}
+                        validateTrigger={["onChange", "onBlur"]}
+                        rules={[{ required: true, message: "Please input your travel date!" }]}
+                        noStyle
+                      >
+                        <DatePicker
+                          format={dateFormat}
+                          style={{ width: 200 }}
+                          placeholder="Please select your travel date"
+                          disabledDate={(current) => {
+                            const { startDate, endDate } = rangeDate;
+                            const index = fieldForFarm.findIndex((farm) => farm.name === name);
+                            const previousFarm = fieldForFarm[index - 1];
+                            return (
+                              current && (
+                                current < dayjs() || // Không cho chọn ngày trước hôm nay
+                                (previousFarm && current < dayjs(previousFarm.travelDate)) || // Ngày đi của farm sau phải lớn hơn ngày đi của farm trước
+                                (startDate && current < dayjs(startDate)) || // Ngày đi phải lớn hơn ngày bắt đầu
+                                (endDate && current > dayjs(endDate).add(-1, "day"))  // Ngày đi phải nhỏ hơn ngày về
+                              )
+                            );
+                          }}
+                          onChange={(date) => {
+                            setFieldForFarms((prev) =>
+                              prev.map((farm) =>
+                                farm.name === name ? { ...farm, travelDate: date } : farm
+                              )
+                            );
+                          }}
+                        />
+                      </Form.Item>
+
+                      <FaRegCircleXmark
+                        style={{ fontSize: "1.5rem" }}
+                        className="dynamic-delete-button"
+                        onClick={() => {
+                          console.log("BeforeDelete", fieldForFarm);
+                          // Tìm farm theo name để lấy farmId và travelDate
+                          const fieldRemoved = fieldForFarm.find((f) => f.name === name);
+                          console.log("the one removed", fieldRemoved);
+                          if (fieldRemoved) {
+                            const index = fieldForFarm.indexOf(fieldRemoved);
+                            // Các trường cần xóa từ trường hiện tại trở đi
+                            const fieldsToRemove = fieldForFarm.slice(index);
+                            if (fieldsToRemove.length > 1) {
+                              // Nếu có nhiều hơn một trường, yêu cầu xác nhận xóa
+                              const confirmRemove = window.confirm(`Remove ${fieldsToRemove.length} fields after this field?`);
+                              if (confirmRemove) {
+                                setFieldForFarms((prev) =>
+                                  prev.filter((farm, idx) => idx < index)
+                                );
+
+                                remove(fieldsToRemove.map(f => f.name)); // Remove by their 'name'
+                              }
+                            } else {
+                              setFieldForFarms((prev) =>
+                                prev.filter((farm) => farm.farmId !== fieldRemoved.farmId)
+                              );
+                              remove(name);
+                            }
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                  ))}
+
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => {
+                        console.log("BeforeAdd", fieldForFarm);
+                        const farmAvailableFiltered = farmAvailable.filter(
+                          (farm) => !fieldForFarm.some((f) => f.farmId === farm.id)
+                        );
+                        if (farmAvailableFiltered.length === 0) {
+                          message.warning("No farms available!");
+                          return;
+                        }
+                        add();
+                      }}
+                      block
+                      className={styles.button_addFarms}
+                    >
+                      <FaPlusCircle /> Add farm
+                    </Button>
+                  </Form.Item>
+                </div>
+              )}
+            </Form.List>
+
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Submit Edit
