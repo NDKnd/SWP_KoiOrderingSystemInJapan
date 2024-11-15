@@ -85,3 +85,9 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
+.booking-information-content{
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
