@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List, Form, Select } from "antd";
 import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -32,6 +32,10 @@ function BookingStatusPage() {
   const [rating, setRating] = useState(0);
   const [existingFeedback, setExistingFeedback] = useState(null);
   const location = useLocation();
+  const [isRefundModalVisible, setIsRefundModalVisible] = useState(false);
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountName, setAccountName] = useState("");
 
   useEffect(() => {
 
@@ -186,21 +190,39 @@ function BookingStatusPage() {
 
   const handleCancel = async () => {
     try {
-    const today = new Date();
-    const start = new Date(booking.trip.startDate);
+      const today = new Date();
+      const start = new Date(booking.trip.startDate);
+      const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
 
-    const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
-
-    if (daysDifference >= 3) {
-      await api.post(`/transaction/refundBooking?bookingId=${booking.id}`);
-      message.success("Booking canceled with refund.");
-    } else {
-      await api.post("/booking/cancel/no-refund", { bookingId: booking.id });
-      message.warning("Booking canceled without refund.");
-    }
+      if (daysDifference >= 3) {
+        setIsRefundModalVisible(true);
+      } else {
+        await api.post("/booking/cancel/no-refund", { bookingId: booking.id });
+        message.warning("Booking canceled without refund.");
+      }
       setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
     } catch (error) {
       console.error("Error canceling booking:", error);
+    }
+  };
+
+  const handleRefundSubmit = async () => {
+    try {
+      await api.put(`booking/provide-refund-account/${booking.id}`, {
+        bankName: bankName,
+        accountNumber: accountNumber,
+        accountName: accountName
+      });
+      message.success("Booking canceled with refund.");
+      setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
+    } catch (error) {
+      console.error("Error providing refund:", error);
+      message.error("Failed to process refund.");
+    } finally {
+      setIsRefundModalVisible(false);
+      setBankName("");
+      setAccountNumber("");
+      setAccountName("");
     }
   };
 
@@ -256,30 +278,30 @@ function BookingStatusPage() {
             <Steps current={getCurrentStep(booking.status)}>
               <Steps.Step
                 title="Pending Confirmation"
-                description={booking.status === "CANCEL"}
-                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
+                description={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND"}
+                icon={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="Awaiting Payment"
-                description={booking.status === "CANCEL"}
-                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
+                description={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND"}
+                icon={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="In Progress"
-                description={booking.status === "CANCEL"}
-                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
+                description={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND"}
+                icon={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="Check In"
-                description={booking.status === "CANCEL"}
-                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
+                description={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND"}
+                icon={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
               <Steps.Step
                 title="Completed"
-                description={booking.status === "CANCEL"}
-                icon={booking.status === "CANCEL" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
+                description={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND"}
+                icon={booking.status === "CANCEL" || booking.status === "AWAITING_REFUND" ? <CloseCircleOutlined style={{ color: "red" }} /> : undefined}
               />
-              {booking.status === "CANCEL" && (
+              {booking.status === "CANCEL" || booking.status === "AWAITING_REFUND" && (
                 <Steps.Step
                   title="Canceled"
                   status="error"
@@ -353,7 +375,16 @@ function BookingStatusPage() {
                     <span><strong>Total Price:</strong></span>
                     <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
                   </div>
-                  <p className="booking-information-content"><strong>Note:</strong> {booking.note}</p>
+                  {booking.status === "AWAITING_REFUND" ? (
+                    <div  className="booking-information-content">
+                      <p><strong>Refund Information</strong></p>
+                      <p>Bank: {booking.note.split(" - ")[0]}</p> 
+                      <p>Account Number: {booking.note.split(" - ")[1]}</p>
+                      <p>Account Name: {booking.note.split(" - ")[2]}</p>
+                    </div>
+                  ) : (
+                    <p className="booking-information-content"><strong>Note:</strong> {booking.note}</p>
+                  )}
                   <div className="booking-information-content">
                     <span><strong>Status:</strong></span>
                     <Tag color={statusColors[booking.status]}>
@@ -383,6 +414,46 @@ function BookingStatusPage() {
                         }}>
                         Cancel
                       </Button>
+                      <Modal
+                        title="Provide Refund Account Details"
+                        visible={isRefundModalVisible}
+                        onCancel={() => setIsRefundModalVisible(false)}
+                        onOk={handleRefundSubmit}
+                      >
+                        <div>
+                          <label>Bank Name</label>
+                          <Select
+                            value={bankName}
+                            onChange={(value) => setBankName(value)}
+                            placeholder="Select your bank"
+                            style={{ width: "100%", marginBottom: "16px" }}
+                          >
+                            <Select.Option value="BankA">Bank A</Select.Option>
+                            <Select.Option value="BankB">Bank B</Select.Option>
+                            <Select.Option value="BankC">Bank C</Select.Option>
+                          </Select>
+
+                          <label>Account Number</label>
+                          <Input
+                            value={accountNumber}
+                            onChange={(e) => {
+                              const input = e.target.value;
+                              if (/^\d{0,19}$/.test(input)) setAccountNumber(input);
+                            }}
+                            placeholder="Enter your 19-digit account number"
+                            maxLength={19}
+                            style={{ width: "100%", marginBottom: "16px" }}
+                          />
+
+                          <label>Account Name</label>
+                          <Input
+                            value={accountName}
+                            onChange={(e) => setAccountName(e.target.value)}
+                            placeholder="Enter the account holder's name"
+                            style={{ width: "100%" }}
+                          />
+                        </div>
+                      </Modal>
                     </div>
                   )}
                   {(booking.status === "COMPLETED" || booking.status === "CANCEL") && (

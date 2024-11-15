@@ -130,7 +130,16 @@ function Trips() {
                                   {booking.status.replace("_", " ")}
                                 </Tag>
                               </p>
-                              <p><strong>Note:</strong> {booking.note || "No additional notes"}</p>
+                              {booking.status === "AWAITING_REFUND" ? (
+                                <>
+                                  <p><strong>Refund Information</strong></p>
+                                  <p>Bank: {booking.note.split(" - ")[0]}</p>
+                                  <p>Account Number: {booking.note.split(" - ")[1]}</p>
+                                  <p>Account Name: {booking.note.split(" - ")[2]}</p>
+                                </>
+                              ) : (
+                                <p><strong>Note:</strong> {booking.note}</p>
+                              )}
                             </>
                           }
                         />
