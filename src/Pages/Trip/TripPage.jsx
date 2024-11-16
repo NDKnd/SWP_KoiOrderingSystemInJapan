@@ -34,9 +34,9 @@ function TripPage() {
       const response = await api.get("/trip");
 
       const checkForAvailableTrips = new Date();
-      checkForAvailableTrips.setDate(checkForAvailableTrips .getDate() + 2  );
+      checkForAvailableTrips.setDate(checkForAvailableTrips.getDate() + 2);
 
-      const futureTrips = response.data.filter(trip => new Date(trip.startDate) >    checkForAvailableTrips);
+      const futureTrips = response.data.filter(trip => new Date(trip.startDate) > checkForAvailableTrips);
       setTripList(futureTrips);
       setFilteredTripList(futureTrips);
     } catch (error) {
@@ -92,7 +92,7 @@ function TripPage() {
             message.error("You already have an active trip in booking. Complete it before booking another trip.");
             return;
           }
-
+          console.log("trip book", trip);
           const response = await api.post(
             "/booking",
             {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List, Form, Select } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List, Form, Select, Table, Image } from "antd";
 import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -376,9 +376,9 @@ function BookingStatusPage() {
                     <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
                   </div>
                   {booking.status === "AWAITING_REFUND" ? (
-                    <div  className="booking-information-content">
+                    <div className="booking-information-content">
                       <p><strong>Refund Information</strong></p>
-                      <p>Bank: {booking.note.split(" - ")[0]}</p> 
+                      <p>Bank: {booking.note.split(" - ")[0]}</p>
                       <p>Account Number: {booking.note.split(" - ")[1]}</p>
                       <p>Account Name: {booking.note.split(" - ")[2]}</p>
                     </div>
@@ -501,44 +501,75 @@ function BookingStatusPage() {
               <Row style={{ marginTop: "20px" }}>
                 <Col xs={24}>
                   {!booking.image ? (
-                    <Card title="Upload Ticket Image" bordered>
-                      <input type="file" onChange={(e) => handleUploadChange(e)} />
-                      {uploadedImage && (
-                        <div className="uploaded-image-container">
-                          <div className="upload-btn">
-                            <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
-                          </div>
-                          <div className="upload-btn">
-                            <Button
-                              icon={<UploadOutlined />}
-                              style={{
-                                width: "200%",
-                                fontSize: "20px",
-                              }}
-                              type="primary"
-                              onClick={() => {
-                                Modal.confirm({
-                                  title: "Check in",
-                                  content: "Are you sure you want to check in?",
-                                  onOk: () => {
-                                    handleCheckIn();
-                                  },
-                                })
-                              }}
-                            >
-                              Submit Check In
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  )
-                    : (
-                      <Card title="Uploaded Ticket Image" bordered>
-                        <img className="ticket-img" src={booking.image} alt="Uploaded" />
-                      </Card>
-                    )
-                  }
+                    <div>No image uploaded</div>
+                  ) : (
+                    (() => {
+                      const urls = booking.image.split(";").filter((url) => url);
+                      return (
+                        <Card title="Uploaded Ticket Image" bordered>
+                          <Table
+                            dataSource={urls.map((url, index) => ({
+                              key: index,
+                              url,
+                            }))}
+                            columns={[
+                              {
+                                title: "Image",
+                                dataIndex: "url",
+                                render: (url) => {
+                                  const eachFile = decodeURIComponent(url.split("/").pop().split("?")[0])
+                                  const isPDF = eachFile.toLowerCase().endsWith(".pdf"); // Kiểm tra đuôi file
+                                  return (
+                                    <List.Item>
+                                      <div
+                                      // className={styles.file_preview}
+                                      >
+                                        <p style={{ fontSize: "1rem", fontWeight: "bold" }} >
+                                          {decodeURIComponent(url).split("/").pop().split("?")[0]}
+                                        </p>
+                                        {isPDF ? (
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              justifyContent: "flex-start",
+                                              gap: "1rem",
+                                            }}
+                                          >
+                                            <Button
+                                              type="primary"
+                                              href={url}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                            >
+                                              View PDF
+                                            </Button>
+                                            <Button
+                                              type="primary"
+                                              href={url}
+                                              download={decodeURIComponent(url.split("/").pop().split("?")[0])}
+                                            >
+                                              Download
+                                            </Button>
+                                          </div>
+                                        ) : (
+                                          <Image
+                                            src={url}
+                                            alt="preview"
+                                            style={{ width: "100%", height: "7rem" }}
+                                          />
+                                        )}
+                                      </div>
+                                    </List.Item>
+                                  );
+                                }
+                              },
+                            ]}
+                            pagination={false}
+                          />
+                        </Card>
+                      );
+                    })()
+                  )}
                 </Col>
               </Row>
             )}

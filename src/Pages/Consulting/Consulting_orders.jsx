@@ -90,10 +90,10 @@ function Consulting_orders() {
         }
 
         // lấy cá koi thuộc farm của booking trip đã trạng thái CHECK_IN
-        const res = await api.get("/koi");
         console.log("bookingList", bookingList);
-        const farmIds = [...new Set(bookingList.flatMap((b) => b.trip.farms.map((f) => f.id)))];
+        const farmIds = [...new Set(bookingList.flatMap((b) => b.trip.tripDetails.map((f) => f.farm.id)))];
         console.log("farmIds", farmIds);
+        const res = await api.get("/koi");
         const filteredKoi = res.data.filter((koi) => farmIds.includes(koi.farm.id));
 
         // const KoiToOrders = res.data;
@@ -115,6 +115,7 @@ function Consulting_orders() {
                 <div>
                     <Table
                         className={styles.table_kois}
+                        scroll={{ y: 400 }}
                         dataSource={KoiToOrders}
                         columns={
                             [
@@ -238,7 +239,7 @@ function Consulting_orders() {
                     if (booking.id == values.bookingId) {
                         console.log("booking: ", booking);
                         let isFound = false;
-                        booking.trip.farms.forEach((farm) => {
+                        booking.trip.tripDetails.forEach((farm) => {
                             console.log(farm.farmName + " == " + values.farm.farmName);
                             if (farm.farmName === values.farm.farmName) {
                                 isFound = true;
