@@ -8,6 +8,8 @@ import api from "../../services/axios";
 
 function Header() {
   const token = localStorage.getItem("token");
+  const [quantity, setQuantity] = useState(0);
+
   if (token) {
     // showing how many time left for valid token
     const parts = token.split(".");
@@ -41,8 +43,14 @@ function Header() {
     }
   };
   // console.log(userInfo);
-  const [quantity, setQuantity] = useState(0);
-
+  const handleQuantityOrder = async () => {
+    try {
+      const res = await api.get("/order/customer");
+      setQuantity(res.data.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleLogout = () => {
     const navigate = useNavigate;
     // Xoá token khỏi localStorage
@@ -69,6 +77,7 @@ function Header() {
 
   useEffect(() => {
     activeNav();
+    handleQuantityOrder();
   }, []);
 
   return (
@@ -79,13 +88,19 @@ function Header() {
         </NavLink>
       </div>
       <div className="nav-item">
-        <NavLink to="/KoiPageFind">Kois</NavLink>
+        <NavLink to="/KoiPageFind">
+          <b>Kois</b>
+        </NavLink>
       </div>
       <div className="nav-item">
-        <NavLink to="/TripPage">Trips</NavLink>
+        <NavLink to="/TripPage">
+          <b>Trips</b>
+        </NavLink>
       </div>
       <div className="nav-item">
-        <NavLink to="/FarmFindPage">Farms</NavLink>
+        <NavLink to="/FarmFindPage">
+          <b>Farms</b>
+        </NavLink>
       </div>
       {!token || tokenExpired(token) ? (
         <div className="nav-item">
