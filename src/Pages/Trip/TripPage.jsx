@@ -23,20 +23,28 @@ function TripPage() {
   const [endLocation, setEndLocation] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [quantity, setQuantity] = useState();
+  const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState(null);
+  const [showNotification, setShowNotification] = useState(true);
+  const [bookingModal, setBookingModal] = useState(false);
+
+  const indexOfLastTrip = currentPage * tripsPerPage;
+  const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
+  const currentTripList = filteredTripList.slice(indexOfFirstTrip, indexOfLastTrip);
+
+  const handlePageChange = (page) => setCurrentPage(page);
 
   const fetchTrips = async () => {
     try {
       const response = await api.get("/trip");
 
       const checkForAvailableTrips = new Date();
-      checkForAvailableTrips.setDate(checkForAvailableTrips .getDate() + 2  );
+      checkForAvailableTrips.setDate(checkForAvailableTrips.getDate() + 2);
 
-      const futureTrips = response.data.filter(trip => new Date(trip.startDate) >    checkForAvailableTrips);
+      const futureTrips = response.data.filter(trip => new Date(trip.startDate) > checkForAvailableTrips);
       setTripList(futureTrips);
       setFilteredTripList(futureTrips);
     } catch (error) {
@@ -46,9 +54,8 @@ function TripPage() {
     }
   };
 
-  const handleBookTrip = async (trip) => {
+  const handleBookingModal = (trip) => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       Modal.info({
         title: "Please log in",
@@ -57,88 +64,105 @@ function TripPage() {
       });
       return;
     }
-
-    Modal.confirm({
-      title: "Confirm Booking",
-      content: (
-        <div>
-          <h3>Are you sure you want to book this trip?</h3>
-          If yes, please choose a number of tickets that you need for this trip:
-          <Input
-            type="number"
-            min={1}
-            max={10}
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            style={{ width: "100px", marginLeft: "10px" }}
-          />
-          <p>Note: </p>
-          <Input
-            type="TextArea"
-            placeholder="Enter your note for this trip."
-            onChange={(e) => setNote(e.target.value)}
-          />
-        </div>
-      ),
-      onOk: async () => {
-        try {
-          const bookingsResponse = await api.get("/booking/customer");
-
-          const incompleteBooking = bookingsResponse.data.some(
-            (booking) => booking.status !== "COMPLETED" && booking.status !== "CANCEL"
-          );
-
-          if (incompleteBooking) {
-            message.error("You already have an active trip in booking. Complete it before booking another trip.");
-            return;
-          }
-
-          const response = await api.post(
-            "/booking",
-            {
-              status: "PENDING_CONFIRMATION",
-              quantity: parseInt(quantity),
-              note: note,
-              tripId: trip.id,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (response.status === 200) {
-            message.success("Trip booked successfully!");
-            localStorage.setItem("bookingId", response.data.id);
-            navigate("/book-status");
-          } else {
-            message.error("Failed to book the trip. Please try again.");
-          }
-        } catch (error) {
-          console.error("Error booking trip:", error);
-          message.error("Failed to book the trip. Please try again.");
-        }
-      },
-    });
+    setSelectedTrip(trip);
+    setBookingModal(true);
   };
+
+  const handleBookTrip = async () => {
+    if (!quantity || quantity <= 0) {
+      message.error("Please enter a valid quantity.");
+      return;
+    }
+
+    try {
+      const bookingsResponse = await api.get("/booking/customer");
+
+      const incompleteBooking = bookingsResponse.data.some(
+        (booking) =>
+          booking.status !== "COMPLETED" &&
+          booking.status !== "CANCEL" &&
+          booking.status !== "AWAITING_REFUND"
+      );
+
+      if (incompleteBooking) {
+        message.error("You already have an active trip in booking. Complete it before booking another trip.");
+        return;
+      }
+
+      const response = await api.post("/booking", {
+        status: "PENDING_CONFIRMATION",
+        quantity: parseInt(quantity),
+        note: note,
+        tripId: selectedTrip.id,
+      });
+
+      if (response.status === 200) {
+        message.success("Trip booked successfully!");
+        localStorage.setItem("bookingId", response.data.id);
+        setBookingModal(false);
+        navigate("/book-status");
+      } else {
+        message.error("Failed to book the trip. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error booking trip:", error);
+      message.error("Failed to book the trip. Please try again.");
+    }
+  };
+
+  const handleBookingModalClose = () => {
+    setBookingModal(false);
+    setQuantity(0);
+    setNote("");
+  };
+
 
   const handleSearch = () => {
     const filtered = tripList.filter((trip) => {
-      const matchesFarmName = farmName ? trip.farms.some((farm) => farm.farmName.toLowerCase().includes(farmName.toLowerCase())) : true;
-      const matchesStartLocation = startLocation ? trip.startLocation.toLowerCase().includes(startLocation.toLowerCase()) : true;
-      const matchesEndLocation = endLocation ? trip.endLocation.toLowerCase().includes(endLocation.toLowerCase()) : true;
+      const matchesFarmName = farmName
+        ? trip.tripDetails.some(
+          (detail) =>
+            detail.farm &&
+            detail.farm.farmName &&
+            detail.farm.farmName.toLowerCase().includes(farmName.toLowerCase())
+        )
+        : true;
+
+      const matchesStartLocation = startLocation
+        ? trip.startLocation &&
+        trip.startLocation.toLowerCase().includes(startLocation.toLowerCase())
+        : true;
+
+      const matchesEndLocation = endLocation
+        ? trip.endLocation &&
+        trip.endLocation.toLowerCase().includes(endLocation.toLowerCase())
+        : true;
 
       const tripStartDate = new Date(trip.startDate).setHours(0, 0, 0, 0);
       const tripEndDate = new Date(trip.endDate).setHours(0, 0, 0, 0);
-      const searchStartDate = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : null;
-      const searchEndDate = endDate ? new Date(endDate).setHours(0, 0, 0, 0) : null;
+      const searchStartDate = startDate
+        ? new Date(startDate).setHours(0, 0, 0, 0)
+        : null;
+      const searchEndDate = endDate
+        ? new Date(endDate).setHours(0, 0, 0, 0)
+        : null;
 
-      const matchesStartDate = searchStartDate ? tripStartDate >= searchStartDate : true;
-      const matchesEndDate = searchEndDate ? tripEndDate <= searchEndDate : true;
+      const matchesStartDate = searchStartDate
+        ? tripStartDate >= searchStartDate
+        : true;
+      const matchesEndDate = searchEndDate
+        ? tripEndDate <= searchEndDate
+        : true;
 
-      return matchesFarmName && matchesStartLocation && matchesEndLocation && matchesStartDate && matchesEndDate;
+      return (
+        matchesFarmName &&
+        matchesStartLocation &&
+        matchesEndLocation &&
+        matchesStartDate &&
+        matchesEndDate
+      );
     });
+
     setFilteredTripList(filtered);
     setCurrentPage(1);
   };
@@ -164,6 +188,10 @@ function TripPage() {
     });
   };
 
+  const handleNotification = () => {
+    setShowNotification(false);
+  };
+
   useEffect(() => {
     fetchTrips();
   }, []);
@@ -173,12 +201,6 @@ function TripPage() {
       handleSearch();
     }
   }, [farmName, tripList]);
-
-  const indexOfLastTrip = currentPage * tripsPerPage;
-  const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
-  const currentTripList = filteredTripList.slice(indexOfFirstTrip, indexOfLastTrip);
-
-  const handlePageChange = (page) => setCurrentPage(page);
 
   return (
     <Layout>
@@ -259,7 +281,7 @@ function TripPage() {
                       }
                     />
                     <div className="book-button">
-                      <Button type="primary" onClick={() => handleBookTrip(trip)}>
+                      <Button type="primary" onClick={() => handleBookingModal(trip)}>
                         Book Now
                       </Button>
                       <Button onClick={() => showFarmDetails(trip)} style={{ marginLeft: "10px" }}>
@@ -287,7 +309,7 @@ function TripPage() {
           footer={[
             <Button key="close" onClick={handleModalClose}>
               Close
-            </Button>,
+            </Button>
           ]}
         >
           {selectedTrip && (
@@ -317,6 +339,60 @@ function TripPage() {
                 </List.Item>
               )}
             />
+          )}
+        </Modal>
+        <Modal
+          title="Trip Notification"
+          visible={showNotification}
+          onClose={handleNotification}
+          footer={[
+            <Button key="close" onClick={handleNotification}>
+              Close
+            </Button>
+          ]}
+        >
+          <h3>Please be advised that our service is currently only able to approve trips that are scheduled to depart within three days of the trip's start date.</h3>
+        </Modal>
+        <Modal
+          title={`Confirm Booking`}
+          visible={bookingModal}
+          onOk={() => {
+            if (quantity < 1 || quantity > 10) {
+              message.error("Please enter a number of tickets between 1 and 10.");
+            } else {
+              handleBookTrip(selectedTrip);
+            }
+          }}
+          onCancel={handleBookingModalClose}
+          cancelText="Cancel"
+        >
+          {selectedTrip && (
+            <>
+              <p>
+                <h3>Are you sure you want to book this trip?</h3>
+                If yes, please choose a number of tickets that you need for this trip:
+              </p>
+              <div>
+                <div>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    style={{ marginBottom: "10px" }}
+                  />
+                </div>
+                <div>
+                  <h3>Note:</h3>
+                  <Input.TextArea
+                    placeholder="Enter your note for this trip."
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                  />
+                </div>
+              </div>
+            </>
           )}
         </Modal>
       </Content>

@@ -7,10 +7,11 @@ import dayjs from "dayjs";
 const statusColors = {
   PENDING_CONFIRMATION: "orange",
   AWAITING_PAYMENT: "blue",
+  AWAITING_REFUND: "yellow",
   IN_PROGRESS: "green",
   CHECK_IN: "purple",
   COMPLETED: "green",
-  CANCELED: "red",
+  CANCEL: "red",
 };
 
 const statusOrder = [
@@ -19,6 +20,7 @@ const statusOrder = [
   "IN_PROGRESS",
   "CHECK_IN",
   "COMPLETED",
+  "AWAITING_REFUND",
   "CANCEL",
 ];
 
@@ -96,10 +98,10 @@ function Trips() {
                       <Card
                         hoverable
                         cover={
-                          booking.trip.farms && booking.trip.farms[0] && booking.trip.farms[0].image ? (
+                          booking.trip.tripDetails[0].farm.image ? (
                             <img
                               alt="trip"
-                              src={booking.trip.farms[0].image}
+                              src={booking.trip.tripDetails[0].farm.image}
                               style={{ height: "200px", objectFit: "cover" }}
                             />
                           ) : (

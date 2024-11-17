@@ -9,19 +9,19 @@ import "../Trip/BookingStatusPage.css";
 import upFile from "../../utils/file";
 import storage from "../../config/firebase";
 import { deleteObject, ref } from "firebase/storage";
+import axios from "axios";
 
 const { Content } = Layout;
 
 const statusColors = {
   PENDING_CONFIRMATION: "orange",
   AWAITING_PAYMENT: "blue",
+  AWAITING_REFUND: "yellow",
   IN_PROGRESS: "green",
   CHECK_IN: "purple",
   COMPLETED: "green",
-  CANCELED: "red",
+  CANCEL: "red",
 };
-
-const statusSteps = ["Pending Confirmation", "Awaiting Payment", "In Progress", "Check In", "Completed", "Canceled"];
 
 function BookingStatusPage() {
   const [booking, setBooking] = useState(null);
@@ -33,6 +33,8 @@ function BookingStatusPage() {
   const [existingFeedback, setExistingFeedback] = useState(null);
   const location = useLocation();
   const [isRefundModalVisible, setIsRefundModalVisible] = useState(false);
+
+  const [banks, setBanks] = useState([]);
   const [bankName, setBankName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -113,8 +115,20 @@ function BookingStatusPage() {
     const queryParams = new URLSearchParams(location.search);
     const bookingId = queryParams.get("bookingId");
 
+    const fetchBanks = async () => {
+      try {
+        const response = await axios.get("https://api.vietqr.io/v2/banks");
+        if (response.data.code === "00") {
+          setBanks(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching bank list:", error);
+      }
+    };
+
     fetchBookingData(bookingId);
     checkPaymentStatus();
+    fetchBanks();
   }, [location]);
 
   const getCurrentStep = (status) => {
@@ -190,17 +204,19 @@ function BookingStatusPage() {
 
   const handleCancel = async () => {
     try {
-      const today = new Date();
-      const start = new Date(booking.trip.startDate);
-      const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
-
-      if (daysDifference >= 3) {
-        setIsRefundModalVisible(true);
+      if (booking.status === "PENDING_CONFIRMATION" || booking.status === "AWAITING_PAYMENT") {
+        await api.put(`/booking/cancle/no-refund/${booking.id}`);
+        refreshPage();
       } else {
-        await api.post("/booking/cancel/no-refund", { bookingId: booking.id });
-        message.warning("Booking canceled without refund.");
+        const today = new Date();
+        const start = new Date(booking.trip.startDate);
+        const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
+        if (daysDifference >= 3) {
+          setIsRefundModalVisible(true);
+        } else {
+          await api.put(`/booking/cancle/no-refund/${booking.id}`);
+        }
       }
-      setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
     } catch (error) {
       console.error("Error canceling booking:", error);
     }
@@ -213,16 +229,15 @@ function BookingStatusPage() {
         accountNumber: accountNumber,
         accountName: accountName
       });
-      message.success("Booking canceled with refund.");
-      setBooking((prevBooking) => ({ ...prevBooking, status: "CANCELED" }));
+      refreshPage();
     } catch (error) {
       console.error("Error providing refund:", error);
-      message.error("Failed to process refund.");
     } finally {
       setIsRefundModalVisible(false);
       setBankName("");
       setAccountNumber("");
       setAccountName("");
+      refreshPage();
     }
   };
 
@@ -376,14 +391,17 @@ function BookingStatusPage() {
                     <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
                   </div>
                   {booking.status === "AWAITING_REFUND" ? (
-                    <div  className="booking-information-content">
+                    <div className="booking-information-content">
                       <p><strong>Refund Information</strong></p>
-                      <p>Bank: {booking.note.split(" - ")[0]}</p> 
+                      <p>Bank: {booking.note.split(" - ")[0]}</p>
                       <p>Account Number: {booking.note.split(" - ")[1]}</p>
                       <p>Account Name: {booking.note.split(" - ")[2]}</p>
                     </div>
                   ) : (
                     <p className="booking-information-content"><strong>Note:</strong> {booking.note}</p>
+                  )}
+                  {(booking.status === "CANCEL" || booking.status === "AWAITING_REFUND") && (
+                    <p className="booking-information-content"><strong>Cancel Date:</strong> {booking.cancelDate.split("T")[0]}</p>
                   )}
                   <div className="booking-information-content">
                     <span><strong>Status:</strong></span>
@@ -400,13 +418,18 @@ function BookingStatusPage() {
                     </div>
                   )}
 
-                  {booking.status !== "CANCEL" && booking.status !== "COMPLETED" && (
+                  {booking.status !== "CANCEL" && booking.status !== "COMPLETED" && booking.status !== "AWAITING_REFUND" && (
                     <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
                       <Button className="cancel-button" type="primary"
                         onClick={() => {
                           Modal.confirm({
                             title: "Cancel",
-                            content: "Are you sure you want to cancel this booking?",
+                            content: (
+                              <div className="cancel-notification">
+                                <h3>Are you sure you want to cancel this booking?</h3>
+                                <p>Please note that the trip price will only be refunded if the cancellation is made before the trip's departure date, which is three days from the start of the trip.</p>
+                              </div>
+                            ),
                             onOk: () => {
                               handleCancel();
                             },
@@ -425,13 +448,12 @@ function BookingStatusPage() {
                           <Select
                             value={bankName}
                             onChange={(value) => setBankName(value)}
-                            placeholder="Select your bank"
                             style={{ width: "100%", marginBottom: "16px" }}
-                          >
-                            <Select.Option value="BankA">Bank A</Select.Option>
-                            <Select.Option value="BankB">Bank B</Select.Option>
-                            <Select.Option value="BankC">Bank C</Select.Option>
-                          </Select>
+                            options={banks.map((bank) => ({
+                              value: bank.shortName,
+                              label: bank.shortName,
+                            }))}
+                          />
 
                           <label>Account Number</label>
                           <Input
@@ -500,42 +522,15 @@ function BookingStatusPage() {
             {["IN_PROGRESS", "CHECK_IN"].includes(booking.status) && (
               <Row style={{ marginTop: "20px" }}>
                 <Col xs={24}>
-                  {!booking.image ? (
-                    <Card title="Upload Ticket Image" bordered>
-                      <input type="file" onChange={(e) => handleUploadChange(e)} />
-                      {uploadedImage && (
-                        <div className="uploaded-image-container">
-                          <div className="upload-btn">
-                            <img className="ticket-img" src={uploadedImage} alt="Uploaded" />
-                          </div>
-                          <div className="upload-btn">
-                            <Button
-                              icon={<UploadOutlined />}
-                              style={{
-                                width: "200%",
-                                fontSize: "20px",
-                              }}
-                              type="primary"
-                              onClick={() => {
-                                Modal.confirm({
-                                  title: "Check in",
-                                  content: "Are you sure you want to check in?",
-                                  onOk: () => {
-                                    handleCheckIn();
-                                  },
-                                })
-                              }}
-                            >
-                              Submit Check In
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  )
-                    : (
+                  {booking.image && !booking.refundImage && (
                       <Card title="Uploaded Ticket Image" bordered>
                         <img className="ticket-img" src={booking.image} alt="Uploaded" />
+                      </Card>
+                    )
+                  }
+                  {booking.refundImage && (booking.status === "COMPLETED" || booking.status === "CANCEL") && (
+                      <Card title="Uploaded Ticket Image" bordered>
+                        <img className="ticket-img" src={booking.refundImage} alt="Uploaded" />
                       </Card>
                     )
                   }
