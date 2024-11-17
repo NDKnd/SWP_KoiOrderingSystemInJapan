@@ -478,44 +478,6 @@ function BookingStatusPage() {
                       </Modal>
                     </div>
                   )}
-                  {(booking.status === "COMPLETED" || booking.status === "CANCEL") && (
-                    <Card title="Feedback" className="feedback-card" bordered>
-                      {existingFeedback ? (
-                        <>
-                          <p><strong>Rating:</strong> <Rate disabled value={existingFeedback.rating} /></p>
-                          <p><strong>Date:</strong> {new Date(existingFeedback.createAt).toLocaleString()}</p>
-                          <p><strong>Comment:</strong> {existingFeedback.comment}</p>
-                        </>
-                      ) : (
-                        <>
-                          <p>Rate your experience:</p>
-                          <Rate value={rating} onChange={setRating} />
-                          <Input.TextArea
-                            value={feedback}
-                            onChange={(e) => setFeedback(e.target.value)}
-                            placeholder="Please leave your feedback here."
-                            rows={4}
-                          />
-                          <Button
-                            type="primary"
-                            onClick={() => {
-                              Modal.confirm({
-                                title: "Submit Feedback",
-                                content: "Are you sure you want to submit feedback?",
-                                onOk: () => {
-                                  handleFeedbackSubmit();
-                                  refreshPage();
-                                },
-                              })
-                            }}
-                            style={{ marginTop: "10px" }}
-                          >
-                            Submit
-                          </Button>
-                        </>
-                      )}
-                    </Card>
-                  )}
                 </Card>
               </Col>
             </Row>
@@ -543,9 +505,7 @@ function BookingStatusPage() {
                                   const isPDF = eachFile.toLowerCase().endsWith(".pdf"); // Kiểm tra đuôi file
                                   return (
                                     <List.Item>
-                                      <div
-                                      // className={styles.file_preview}
-                                      >
+                                      <div>
                                         <p style={{ fontSize: "1rem", fontWeight: "bold" }} >
                                           {decodeURIComponent(url).split("/").pop().split("?")[0]}
                                         </p>
@@ -595,6 +555,57 @@ function BookingStatusPage() {
                 </Col>
               </Row>
             )}
+            <Row  gutter={[16, 16]} style={{ marginTop: "20px" }}>
+              {booking.status === "CANCEL" && (
+                <Col xs={24} md={12}>
+                  {booking.refundImage && (
+                    <Card title="Refund Image" className="information-card" bordered>
+                      <img style={{ width: "100%" }} src={booking.refundImage} />
+                    </Card>
+                  )}
+                </Col>
+              )}
+              <Col xs={24} md={12}>
+                {(booking.status === "COMPLETED" || booking.status === "CANCEL") && (
+                  <Card title="Feedback" className="information-card" bordered>
+                    {existingFeedback ? (
+                      <>
+                        <p><strong>Rating:</strong> <Rate disabled value={existingFeedback.rating} /></p>
+                        <p><strong>Date:</strong> {new Date(existingFeedback.createAt).toLocaleString()}</p>
+                        <p><strong>Comment:</strong> {existingFeedback.comment}</p>
+                      </>
+                    ) : (
+                      <>
+                        <p>Rate your experience:</p>
+                        <Rate value={rating} onChange={setRating} />
+                        <Input.TextArea
+                          value={feedback}
+                          onChange={(e) => setFeedback(e.target.value)}
+                          placeholder="Please leave your feedback here."
+                          rows={4}
+                        />
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            Modal.confirm({
+                              title: "Submit Feedback",
+                              content: "Are you sure you want to submit feedback?",
+                              onOk: () => {
+                                handleFeedbackSubmit();
+                                refreshPage();
+                              },
+                            })
+                          }}
+                          style={{ marginTop: "10px" }}
+                        >
+                          Submit
+                        </Button>
+                      </>
+                    )}
+                  </Card>
+                )}
+              </Col>
+            </Row>
           </>
         ) : (
           <p>No trip status available.</p>
