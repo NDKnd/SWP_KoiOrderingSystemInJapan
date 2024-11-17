@@ -390,7 +390,7 @@ function BookingStatusPage() {
                     <span><strong>Total Price:</strong></span>
                     <span>{booking.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</span>
                   </div>
-                  {booking.status === "AWAITING_REFUND" ? (
+                  {(booking.status === "AWAITING_REFUND" || booking.refundImage) ? (
                     <div className="booking-information-content">
                       <p><strong>Refund Information</strong></p>
                       <p>Bank: {booking.note.split(" - ")[0]}</p>
