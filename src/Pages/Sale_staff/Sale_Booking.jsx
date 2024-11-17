@@ -33,10 +33,12 @@ function Sale_Booking() {
 
   const [filterList, setFilterList] = useState([]);
   const [filterUser1, setFilterUser1] = useState("All");
+  const [filterTrip, setFilterTrip] = useState("All");
 
   const [filterListPending, setFilterListPending] = useState([]);
   const [filterUser2, setFilterUser2] = useState("All");
   const [filterStatus2, setFilterStatus2] = useState("All");
+  const [filterTrip2, setFilterTrip2] = useState("All");
 
   const fetchBookingManger = async () => {
     const res = await api.get("booking/manager");
@@ -85,7 +87,7 @@ function Sale_Booking() {
     try {
 
       Modal.info({
-        title: "Update Price",
+        title: "Update Ticket Price",
         closable: true,
         content: (
           <div className={styles.modal_content}>
@@ -108,7 +110,7 @@ function Sale_Booking() {
           try {
             message.warning("Please wait...");
             const res = await api.put(`booking/price/${values.id}`, {
-              totalPrice: price,
+              ticketPrice: price,
             });
             console.log(res.data);
             message.success({
@@ -143,20 +145,25 @@ function Sale_Booking() {
         bookingListPending.filter((booking) => {
           const matchesUser = filterUser1 === "All" ? true
             : booking.account.username.toLowerCase().includes(filterUser1.toLowerCase());
+          const matchesTrip = filterTrip === "All" ? true
+            : booking.trip.id === parseInt(filterTrip);
+          console.log("matchesTrip: ", matchesTrip + " " + filterTrip);
           console.log("matchesUser: ", matchesUser + " " + filterUser1);
-          return (matchesUser);
+          return (matchesUser && matchesTrip);
         }
         )
-
         :
         bookingListAccept.filter((booking) => {
           const matchesUser = filterUser2 === "All" ? true
             : booking.account.username.toLowerCase().includes(filterUser2.toLowerCase());
           const matchesStatus = filterStatus2 === "All" ? true
             : booking.status.toLowerCase().includes(filterStatus2.toLowerCase());
+          const matchesTrip = filterTrip2 === "All" ? true
+            : booking.trip.id === parseInt(filterTrip2);
+          console.log("matchesTrip: ", matchesTrip + " " + filterTrip2);
           console.log("matchesUser: ", matchesUser + " " + filterUser2);
           console.log("matchesStatus: ", matchesStatus + " " + filterStatus2);
-          return (matchesUser && matchesStatus);
+          return (matchesUser && matchesStatus && matchesTrip);
         });
     console.log("filteredTrips: ", filteredBookingTrips);
     filteredBookingTrips.length > 0
@@ -169,6 +176,19 @@ function Sale_Booking() {
         message.error("No booking found")
       );
   }
+
+  const handlePreview = (record) => {
+    Modal.info({
+      width: 600,
+      aspectRatio: 3 / 2,
+      title: <img src={record.image}
+        className={styles.img_Koi} style={{ width: "100%", padding: "15px" }} alt="koi" />,
+      maskClosable: true,
+      closable: true,
+      footer: null,
+      icon: null,
+    });
+  };
 
   const displayBooking = (booking, title, typeTable) => {
     return (
@@ -215,6 +235,33 @@ function Sale_Booking() {
                 .map((u) => <Select.Option key={u} value={u}>{u}</Select.Option>)}
             </Select>
           </div>
+          <div> {/* filter by trip */}
+            <label htmlFor="filter3">Trip: </label>
+            <Select
+              id="filter3"
+              style={{ width: 240 }}
+              onChange={
+                typeTable === 1
+                  ? (value) => setFilterTrip(value, typeTable)
+                  : (value) => setFilterTrip2(value, typeTable)
+              }
+              defaultValue="All"
+            >
+              <Select.Option value="All">All</Select.Option>
+              {bookingList.reduce((uniqueTrips, b) => {
+                const tripIdentifier = `${b.trip.id}-${b.trip.startLocation}-${b.trip.endLocation}`;
+                if (!uniqueTrips.some(trip => trip.identifier === tripIdentifier)) {
+                  uniqueTrips.push({ identifier: tripIdentifier, ...b.trip });
+                }
+                return uniqueTrips;
+              }, []).map(trip => (
+                <Select.Option key={trip.id} value={trip.id}>
+                  {`${trip.startLocation} - ${trip.endLocation}`}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+
           <div>
             <Button
               icon={<FaFilter />}
@@ -256,15 +303,15 @@ function Sale_Booking() {
               render: (account) => account?.username,
             },
             {
-              title: "Total Price",
-              dataIndex: "totalPrice",
-              key: "totalPrice",
+              title: "Ticket Price",
+              dataIndex: "ticketPrice",
+              key: "ticketPrice",
               render: (price) => {
                 return price != null && price != 0
                   ? <span style={{ color: "black" }}>
-                    {price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                    {price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })} / person
                   </span>
-                  : <span style={{ color: "gray" }}>{price}</span>
+                  : <span style={{ color: "gray" }}>{price} / person</span>
               }
             },
             {
@@ -336,7 +383,7 @@ function Sale_Booking() {
           <Col span={11} >
             <p className={styles.total_price}>
               <b>Total: </b>
-              <span>{drawerInformation.totalPrice?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} VND</span>
+              <span>{drawerInformation.totalPrice?.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
             </p>
           </Col>
         </Row>
@@ -372,23 +419,26 @@ function Sale_Booking() {
                 <List
                   className={styles.farm_list}
                   bordered
-                  dataSource={drawerInformation.trip.farms}
+                  dataSource={drawerInformation.trip.tripDetails}
                   renderItem={(item) => (
                     <List.Item className={styles.farm}>
                       {/* Hình ảnh farm */}
-                      <img
-                        src={item.image || "https://via.placeholder.com/60"}
-                        alt={item.farmName}
-                        className={styles.farm_image}
-                      />
+                      <a onClick={() => handlePreview(item.farm)}>
+                        <img className={styles.farm_image}
+                          src={item.farm.image || "https://via.placeholder.com/60"}
+                          alt="img"
+                        />
+                      </a>
                       {/* Nội dung farm */}
                       <div className={styles.farm_content}>
-                        <h3>{item.farmName || "No farm name available"}</h3>
-                        {item.location || "No farm location available"}
+                        <h3><b>{item.farm.farmName || "No farm name available"}</b></h3>
+                        <b>Travel Date: </b>{item.travelDate || "No travel date available"}
                         <br />
-                        {item.phone || "No farm phone available"}
+                        <b>Location: </b>{item.farm.location || "No farm location available"}
                         <br />
-                        {item.email || "No farm email available"}
+                        <b>Phone: </b>{item.farm.phone || "No farm phone available"}
+                        <br />
+                        <b>Email: </b>{item.farm.email || "No farm email available"}
                       </div>
                     </List.Item>
                   )}

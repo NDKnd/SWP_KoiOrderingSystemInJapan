@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import styles from './ConsultingStyle.module.css'
-import { Col, Drawer, Input, Layout, List, message, Modal, Row, Select, Table } from 'antd'
+import { Button, Col, Drawer, Input, Layout, List, message, Modal, Row, Select, Table } from 'antd'
 import api from "../../services/axios";
 import dayjs from "dayjs";
 import { IoFish } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
+import { FaFilter } from 'react-icons/fa';
 
 const dateFormat = "MM-DD-YYYY";
 
@@ -26,6 +27,12 @@ function Consulting_orders() {
 
     const [allOrders, setAllOrders] = useState([]);
     const [bookingList, setBookingList] = useState([]);
+
+    const [filterList, setFilterList] = useState([]);
+    const [filterTrip, setFilterTrip] = useState("All");
+
+    const [filterListEditedOrder, setFilterListEditedOrder] = useState([]);
+    const [filterTrip2, setFilterTrip2] = useState("All");
 
     let totalPrice = 0;
 
@@ -90,10 +97,10 @@ function Consulting_orders() {
         }
 
         // lấy cá koi thuộc farm của booking trip đã trạng thái CHECK_IN
-        const res = await api.get("/koi");
         console.log("bookingList", bookingList);
-        const farmIds = [...new Set(bookingList.flatMap((b) => b.trip.farms.map((f) => f.id)))];
+        const farmIds = [...new Set(bookingList.flatMap((b) => b.trip.tripDetails.map((f) => f.farm.id)))];
         console.log("farmIds", farmIds);
+        const res = await api.get("/koi");
         const filteredKoi = res.data.filter((koi) => farmIds.includes(koi.farm.id));
 
         // const KoiToOrders = res.data;
@@ -115,6 +122,7 @@ function Consulting_orders() {
                 <div>
                     <Table
                         className={styles.table_kois}
+                        scroll={{ y: 400 }}
                         dataSource={KoiToOrders}
                         columns={
                             [
@@ -238,9 +246,9 @@ function Consulting_orders() {
                     if (booking.id == values.bookingId) {
                         console.log("booking: ", booking);
                         let isFound = false;
-                        booking.trip.farms.forEach((farm) => {
-                            console.log(farm.farmName + " == " + values.farm.farmName);
-                            if (farm.farmName === values.farm.farmName) {
+                        booking.trip.tripDetails.forEach((dt) => {
+                            console.log(dt.farm.farmName + " == " + values.farm.farmName);
+                            if (dt.farm.farmName === values.farm.farmName) {
                                 isFound = true;
                                 return;
                             }
@@ -448,11 +456,77 @@ function Consulting_orders() {
 
     }
 
-    const displayOrders = (orderList, title) => {
+    const handleFilter = (type) => {
+        console.log("allOrder", allOrders);
+        const filteredOrders =
+            type === 1 ?
+                awaitngSubmitOrder.filter((order) => {
+                    const matchesTrip = filterTrip === "All" ? true
+                        : order.bookingId === filterTrip;
+                    console.log("matchesTrip: ");
+                    console.log("  ID: ", order.bookingId);
+                    console.log("f.ID: ", filterTrip);
+                    return (matchesTrip);
+                }
+                )
+                :
+                orderEdited.filter((order) => {
+                    const matchesTrip = filterTrip2 === "All" ? true
+                        : order.booking.id === filterTrip2;
+                    console.log("matchesTrip: ", order.bookingId + " " + filterTrip2);
+                    return (matchesTrip);
+                });
+        ;
+        console.log("filteredOrders", filteredOrders);
+        filteredOrders.length > 0
+            ? type == 1
+                ? setFilterList(filteredOrders)
+                : setFilterListEditedOrder(filteredOrders)
+            : (
+                setFilterList([]),
+                setFilterListEditedOrder([]),
+                message.error("No order found")
+            );
+    }
+
+    const displayOrders = (orderList, title, typeTable) => {
         let totalPrice = 0;
         return (
             <div className={styles.box_table}>
                 <h2 className={styles.title}>{title}</h2>
+                <div className={styles.filter}>{/* filter */}
+                    <div> {/* filter by Booking Trip */}
+                        <label htmlFor="filter3">Booking Trip: </label>
+                        <Select
+                            id="filter3"
+                            style={{ width: 305 }}
+                            onChange={
+                                typeTable === 1
+                                    ? (value) => setFilterTrip(value, typeTable)
+                                    : (value) => setFilterTrip2(value, typeTable)
+                            }
+                            defaultValue="All"
+                        >
+                            <Select.Option value="All">All</Select.Option>
+                            {bookingList.map((b) => {
+                                return (
+                                    <Select.Option key={b.id} value={b.id}>
+                                        {`${b.account.email} / ${dayjs(b.bookingDate).format("YYYY-MM-DD")}`}
+                                    </Select.Option>
+                                );
+                            })}
+                        </Select>
+                    </div>
+
+                    <div>
+                        <Button
+                            icon={<FaFilter />}
+                            className={styles.filter_button}
+                            onClick={() => handleFilter(typeTable)}
+                        >
+                        </Button>
+                    </div>
+                </div>
                 <Table
                     loading={loading}
                     scroll={{ x: "max-content" }}
@@ -504,7 +578,7 @@ function Consulting_orders() {
                             key: "price",
                             render: (price) => {
                                 totalPrice += price || 0;
-                                console.log("totalPrice + delivery", totalPrice);
+                                // console.log("totalPrice + delivery", totalPrice);
                                 return price
                                     ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
                                     : <div style={{ color: "gray" }}>N/A</div>
@@ -555,9 +629,12 @@ function Consulting_orders() {
                     Choose Kois to order
                 </button>
             </div>
-            {displayOrders(awaitngSubmitOrder, "Awaiting Orders")}
-            {console.log("orderEdited", orderEdited)}
-            {displayOrders(orderEdited, "Edited Orders")}
+            {filterList.length > 0
+                ? displayOrders(filterList, "Awaiting Orders", 1)
+                : displayOrders(awaitngSubmitOrder, "Awaiting Orders", 1)}
+            {filterListEditedOrder.length > 0
+                ? displayOrders(filterListEditedOrder, "Edited Orders", 2)
+                : displayOrders(orderEdited, "Edited Orders", 2)}
         </Layout>
     )
 }

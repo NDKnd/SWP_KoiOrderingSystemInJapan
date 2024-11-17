@@ -17,6 +17,7 @@ const upFile = async (file, folder) => {
     const downloadURL = await getDownloadURL(res.ref); // Lấy URL tải xuống của file vừa tải lên
     return downloadURL; // Trả về URL tải xuống
   } catch (error) {
+    console.error("Upload error:", error.message || error);
     return null; // Lỗi khi upload file lên Firebase
   }
 };

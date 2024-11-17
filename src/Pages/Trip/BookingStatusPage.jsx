@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List, Form, Select } from "antd";
+import { Layout, Row, Col, Card, Spin, message, Tag, Steps, Button, Modal, Input, Rate, List, Form, Select, Table, Image } from "antd";
 import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import api from "../../services/axios";
 import Header from "../../Components/Header/Header";
@@ -522,18 +522,76 @@ function BookingStatusPage() {
             {["IN_PROGRESS", "CHECK_IN"].includes(booking.status) && (
               <Row style={{ marginTop: "20px" }}>
                 <Col xs={24}>
-                  {booking.image && !booking.refundImage && (
-                      <Card title="Uploaded Ticket Image" bordered>
-                        <img className="ticket-img" src={booking.image} alt="Uploaded" />
-                      </Card>
-                    )
-                  }
-                  {booking.refundImage && (booking.status === "COMPLETED" || booking.status === "CANCEL") && (
-                      <Card title="Uploaded Ticket Image" bordered>
-                        <img className="ticket-img" src={booking.refundImage} alt="Uploaded" />
-                      </Card>
-                    )
-                  }
+                  {!booking.image ? (
+                    <div>No image uploaded</div>
+                  ) : (
+                    (() => {
+                      const urls = booking.image.split(";").filter((url) => url);
+                      return (
+                        <Card title="Uploaded Ticket Image" bordered>
+                          <Table
+                            dataSource={urls.map((url, index) => ({
+                              key: index,
+                              url,
+                            }))}
+                            columns={[
+                              {
+                                title: "Image",
+                                dataIndex: "url",
+                                render: (url) => {
+                                  const eachFile = decodeURIComponent(url.split("/").pop().split("?")[0])
+                                  const isPDF = eachFile.toLowerCase().endsWith(".pdf"); // Kiểm tra đuôi file
+                                  return (
+                                    <List.Item>
+                                      <div
+                                      // className={styles.file_preview}
+                                      >
+                                        <p style={{ fontSize: "1rem", fontWeight: "bold" }} >
+                                          {decodeURIComponent(url).split("/").pop().split("?")[0]}
+                                        </p>
+                                        {isPDF ? (
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              justifyContent: "flex-start",
+                                              gap: "1rem",
+                                            }}
+                                          >
+                                            <Button
+                                              type="primary"
+                                              href={url}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                            >
+                                              View PDF
+                                            </Button>
+                                            <Button
+                                              type="primary"
+                                              href={url}
+                                              download={decodeURIComponent(url.split("/").pop().split("?")[0])}
+                                            >
+                                              Download
+                                            </Button>
+                                          </div>
+                                        ) : (
+                                          <Image
+                                            src={url}
+                                            alt="preview"
+                                            style={{ width: "100%", height: "7rem" }}
+                                          />
+                                        )}
+                                      </div>
+                                    </List.Item>
+                                  );
+                                }
+                              },
+                            ]}
+                            pagination={false}
+                          />
+                        </Card>
+                      );
+                    })()
+                  )}
                 </Col>
               </Row>
             )}

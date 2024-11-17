@@ -66,6 +66,7 @@ function TripPage() {
     }
     setSelectedTrip(trip);
     setBookingModal(true);
+
   };
 
   const handleBookTrip = async () => {
