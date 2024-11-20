@@ -125,9 +125,28 @@
 }
 
 .manager-chart-1 {
-    height: 500px;
+    height: 400px;
+    display: flex;
+    margin: 20px;
 }
 
 .manager-chart-2{
-    height: 500px;
+    height: 400px;
+}
+
+.manager-chart-3-box{
+    display: flex;
+    justify-content: space-around;
+}
+.manager-chart-3{
+    height: 400px;
+    width: 48%;
+}
+
+.manager-chart-4{
+    height: 400px;
+}
+
+.year-filter{
+    margin-top: 40px;
 }

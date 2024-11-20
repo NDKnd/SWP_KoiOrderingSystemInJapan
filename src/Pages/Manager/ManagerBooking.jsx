@@ -34,6 +34,7 @@ function ManagerBooking() {
                 } else {
                     console.error("Data format error: Expected an array");
                     setBookings([]);
+                    setOriginalBookings([]);
                 }
             })
             .catch(error => console.error("Fail to load bookings", error));
@@ -43,7 +44,7 @@ function ManagerBooking() {
         {
             title: 'Customer Name',
             key: 'customerName',
-            render: (text, record) => `${record.account.firstName} ${record.account.lastName}`,
+            render: (text, record) => `${record.account?.firstName} ${record.account?.lastName}`,
         },
         {
             title: 'Start Location',
@@ -68,7 +69,7 @@ function ManagerBooking() {
             key: 'farmDetails',
             render: (text, record) => (
                 <span>
-                    {record.trip.farms.map(farm => (
+                    {record.trip?.farms?.map(farm => (
                         <Tag key={farm.id}>{farm.farmName}</Tag>
                     ))}
                 </span>
@@ -107,7 +108,7 @@ function ManagerBooking() {
                 if (!feedback) {
                     return 'N/A';
                 }
-        
+
                 const { rating, comment } = feedback;
                 return (
                     <div>
@@ -115,10 +116,10 @@ function ManagerBooking() {
                         <div>Comment: {comment || 'N/A'}</div>
                     </div>
                 );
-            }, 
+            },
         }
     ];
-    
+
 
     const handleSearch = () => {
         let filteredBookings = originalBookings;
@@ -152,7 +153,7 @@ function ManagerBooking() {
 
         if (selectedFarms.length) {
             filteredBookings = filteredBookings.filter(booking =>
-                booking.trip.farms.some(farm => selectedFarms.includes(farm.id.toString()))
+                booking.trip?.farms?.some(farm => selectedFarms.includes(farm.id.toString()))
             );
         }
 
@@ -206,17 +207,15 @@ function ManagerBooking() {
                         {(() => {
                             const farmSet = new Set();
                             return originalBookings.flatMap(booking =>
-                                booking.trip.farms
-                                    .filter(farm => {
-                                        if (!farmSet.has(farm.id)) {
-                                            farmSet.add(farm.id);
-                                            return true;
-                                        }
-                                        return false;
-                                    })
-                                    .map(farm => (
-                                        <Select.Option key={farm.id} value={farm.id.toString()}>{farm.farmName}</Select.Option>
-                                    ))
+                                booking.trip?.farms?.filter(farm => {
+                                    if (!farmSet.has(farm.id)) {
+                                        farmSet.add(farm.id);
+                                        return true;
+                                    }
+                                    return false;
+                                }).map(farm => (
+                                    <Select.Option key={farm.id} value={farm.id.toString()}>{farm.farmName}</Select.Option>
+                                )) || []
                             );
                         })()}
                     </Select>

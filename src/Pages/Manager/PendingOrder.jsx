@@ -114,6 +114,7 @@ const PendingOrder = () => {
         {
             title: 'Expected Date',
             dataIndex: 'expectedDate',
+            sorter: (a, b) => dayjs(a.expectedDate).unix() - dayjs(b.expectedDate).unix(),
         },
         {
             title: 'Total Payment',
