@@ -39,6 +39,8 @@ const DeliverHome = () => {
     }, []);
 
     const today = dayjs();
+    const tomorrow = today.add(1, 'day');
+    const dayAfterTomorrow = today.add(2, 'day');
     const currentMonth = today.month() + 1;
     const currentYear = today.year();
     const currentDay = today.date();
@@ -52,12 +54,20 @@ const DeliverHome = () => {
     const pendingOrdersToday = pendingOrdersThisMonth.filter(order => {
         const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
         return deliveryDate.date() === currentDay && deliveryDate.month() + 1 === currentMonth && deliveryDate.year() === currentYear;
+    });  
+
+    const filteredOrderList = orderList.filter(order => {
+        const deliveryDate = dayjs(order.expectedDate, "YYYY-MM-DD");
+        return (
+            (deliveryDate.isSame(today, 'day') ||
+                deliveryDate.isSame(tomorrow, 'day') ||
+                deliveryDate.isSame(dayAfterTomorrow, 'day')) &&
+            order.status === "ON_DELIVERY"
+        );
     });
 
-    const todayDate = dayjs().format("YYYY-MM-DD");
-    const filteredOrderList = orderList.filter(order =>
-        order.expectedDate === todayDate && order.status === "ON_DELIVERY"
-    );
+    filteredOrderList.sort((a, b) => dayjs(a.expectedDate).diff(dayjs(b.expectedDate)));
+
 
 
     const handleDetail = (order) => {
@@ -174,7 +184,7 @@ const DeliverHome = () => {
                 ) : (
                     <div className="deliver-dashboard-home-content-user">
                         <div className="deliver-dashboard-home-content-user-card-item">
-                            <h3>Orders for today</h3>
+                            <h3>Upcoming orders</h3>
                         </div>
                         <table>
                             <thead className="deliver-dashboard-home-content-user-header">
@@ -217,7 +227,7 @@ const DeliverHome = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="7" style={{ textAlign: 'center' }}>No orders for today</td>
+                                        <td colSpan="7" style={{ textAlign: 'center' }}>No orders in the next 3 days</td>
                                     </tr>
                                 )}
                             </tbody>
