@@ -278,6 +278,7 @@ function TripPage() {
                         <>
                           <div>From: {trip.startDate}</div>
                           <div>To: {trip.endDate}</div>
+                          <div>Price: {trip.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND</div>
                         </>
                       }
                     />

@@ -143,50 +143,50 @@ function BookingStatusPage() {
     return statusIndex[status] || 0;
   };
 
-  const handleUploadChange = async (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      setUploadedImage(reader.result);
-    };
-    setFile(file);
-    console.log("image : ", file);
-  };
+  // const handleUploadChange = async (e) => {
+  //   const file = e.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onload = () => {
+  //     setUploadedImage(reader.result);
+  //   };
+  //   setFile(file);
+  //   console.log("image : ", file);
+  // };
 
-  const handleCheckIn = async () => {
+  // const handleCheckIn = async () => {
 
-    const downloadURL = await upFile(file, `Bookings/${booking.id}`); // Tải file lên Firebase
+  //   const downloadURL = await upFile(file, `Bookings/${booking.id}`); // Tải file lên Firebase
 
-    if (downloadURL) {
-      // Cập nhật booking với URL của ảnh checkin
-      booking.image = downloadURL;
-      console.log("checkIn.image: ", downloadURL);
-      try {
-        const res = await api.put(`booking/check-in/${booking.id}`,
-          {
-            image: downloadURL
-          }
-        );
-        const res2 = await api.put(`booking/status/${booking.id}`, {
-          status: "CHECK_IN",
-        })
-        console.log("res: ", res.data);
-        console.log("res2: ", res2.data);
-        refreshPage();
-      } catch (error) {
-        deleteFile(downloadURL);
-        console.log(error);
-      }
-    }
-    setFile(null);
-  };
-  const deleteFile = async (url) => {
-    if (url) {
-      const ImageRef = ref(storage, url);
-      await deleteObject(ImageRef);
-    }
-  };
+  //   if (downloadURL) {
+  //     // Cập nhật booking với URL của ảnh checkin
+  //     booking.image = downloadURL;
+  //     console.log("checkIn.image: ", downloadURL);
+  //     try {
+  //       const res = await api.put(`booking/check-in/${booking.id}`,
+  //         {
+  //           image: downloadURL
+  //         }
+  //       );
+  //       const res2 = await api.put(`booking/status/${booking.id}`, {
+  //         status: "CHECK_IN",
+  //       })
+  //       console.log("res: ", res.data);
+  //       console.log("res2: ", res2.data);
+  //       refreshPage();
+  //     } catch (error) {
+  //       deleteFile(downloadURL);
+  //       console.log(error);
+  //     }
+  //   }
+  //   setFile(null);
+  // };
+  // const deleteFile = async (url) => {
+  //   if (url) {
+  //     const ImageRef = ref(storage, url);
+  //     await deleteObject(ImageRef);
+  //   }
+  // };
 
   const handleCheckout = () => {
     api.post(`/booking/payment`, { id: booking.id })
@@ -280,6 +280,35 @@ function BookingStatusPage() {
   function refreshPage() {
     window.location.reload(false);
   }
+
+  const checkPaymentReminder = async () => {
+    if ( booking.status === "AWAITING_PAYMENT") {
+      const today = new Date();
+      const start = new Date(booking.trip.startDate);
+      const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
+      console.log(daysDifference);
+  
+      if (daysDifference < 3 && daysDifference >= 1) {
+        Modal.warning({
+          title: "Payment Reminder",
+          content: "Please complete your payment soon to avoid cancellation.",
+          onOk: () => console.log("Reminder acknowledged"),
+        });
+      } else if (daysDifference < 1) {
+        try {
+          await api.put(`/booking/cancle/no-refund/${booking.id}`);
+          message.error("Your booking has been canceled due to non-payment.");  
+          refreshPage();
+        } catch (error) {
+          console.error("Error canceling booking due to non-payment:", error);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkPaymentReminder();
+  });
 
   return (
     <Layout>

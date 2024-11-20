@@ -439,6 +439,7 @@ return (
               <p>Bank: {drawerInformation.note.split(" - ")[0]}</p>
               <p>Account Number: {drawerInformation.note.split(" - ")[1]}</p>
               <p>Account Name: {drawerInformation.note.split(" - ")[2]}</p>
+              <p>Refund money: {drawerInformation.trip.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })  }</p>
             </div>
           ) : (
             <p><strong>Note:</strong> {drawerInformation.note}</p>
