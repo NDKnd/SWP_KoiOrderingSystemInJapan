@@ -46,7 +46,7 @@ function Header() {
   const handleQuantityOrder = async () => {
     try {
       const res = await api.get("/order/customer");
-      setQuantity(res.data.length);
+      setQuantity(res.data.filter(order => order.status !== "COMPLETED").length);
     } catch (error) {
       console.log(error);
     }

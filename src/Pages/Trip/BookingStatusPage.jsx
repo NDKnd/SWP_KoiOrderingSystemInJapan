@@ -282,12 +282,12 @@ function BookingStatusPage() {
   }
 
   const checkPaymentReminder = async () => {
-    if ( booking.status === "AWAITING_PAYMENT") {
+    if (booking.status === "AWAITING_PAYMENT") {
       const today = new Date();
       const start = new Date(booking.trip.startDate);
       const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
       console.log(daysDifference);
-  
+
       if (daysDifference < 3 && daysDifference >= 1) {
         Modal.warning({
           title: "Payment Reminder",
@@ -297,7 +297,7 @@ function BookingStatusPage() {
       } else if (daysDifference < 1) {
         try {
           await api.put(`/booking/cancle/no-refund/${booking.id}`);
-          message.error("Your booking has been canceled due to non-payment.");  
+          message.error("Your booking has been canceled due to non-payment.");
           refreshPage();
         } catch (error) {
           console.error("Error canceling booking due to non-payment:", error);
@@ -584,12 +584,12 @@ function BookingStatusPage() {
                 </Col>
               </Row>
             )}
-            <Row  gutter={[16, 16]} style={{ marginTop: "20px" }}>
+            <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
               {booking.status === "CANCEL" && (
                 <Col xs={24} md={12}>
                   {booking.refundImage && (
                     <Card title="Refund Image" className="information-card" bordered>
-                      <img style={{ width: "100%" }} src={booking.refundImage} />
+                      <Image style={{ width: "10rem" }} src={booking.refundImage} />
                     </Card>
                   )}
                 </Col>

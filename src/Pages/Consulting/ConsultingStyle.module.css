@@ -107,6 +107,11 @@
     color: #fff;
 }
 
+.disabled_btn {
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
 .list_order_detail {
     list-style-type: none;
 }

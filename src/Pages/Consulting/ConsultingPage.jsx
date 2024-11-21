@@ -153,7 +153,7 @@ function ConsultingPage() {
     };
 
     const handleCheckinTicket = async () => {
-        setLoading(false);
+        setLoading(true);
         setVisibleCheckIn(false);
         console.log("TripCheckIn", tripCheckIn);
         console.log("files", files);
@@ -198,7 +198,7 @@ function ConsultingPage() {
                 }
             }
         }
-
+        setLoading(true);
     };
 
     const handleUpdateStatus = async (record) => {

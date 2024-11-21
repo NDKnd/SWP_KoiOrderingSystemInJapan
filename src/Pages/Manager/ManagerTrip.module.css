@@ -48,6 +48,7 @@
 
 .manager_trip_search_input,
 .manager_trip_search_select {
+  height: fit-content;
   flex: 1;
   margin-right: 10px;
 }

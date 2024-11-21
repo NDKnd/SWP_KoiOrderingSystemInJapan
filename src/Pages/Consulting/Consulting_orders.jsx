@@ -489,6 +489,18 @@ function Consulting_orders() {
             );
     }
 
+    const handleDeleteOrder = async (record) => {
+        try {
+            console.log(record);
+            let list = JSON.parse(localStorage.getItem("AwaitingSubmitOrder"));
+            list = list.filter((order) => order.id !== record.id);
+            setAwaitngSubmitOrder(list);
+            localStorage.setItem("AwaitingSubmitOrder", JSON.stringify(list));
+        } catch (error) {
+            console.error("Error deleting order:", error);
+        }
+    }
+
     const displayOrders = (orderList, title, typeTable) => {
         let totalPrice = 0;
         return (
@@ -597,13 +609,26 @@ function Consulting_orders() {
                             dataIndex: "action",
                             key: "action",
                             render: (text, record) => (
-                                <button
-                                    className={styles.button}
-                                    onClick={() => handleUpdate(record)}
-                                    disabled={record.status !== "PENDING" || record.price > 10000}
-                                >
-                                    Update
-                                </button>
+                                <>
+                                    <button
+                                        className={styles.button}
+                                        onClick={() => handleUpdate(record)}
+                                        disabled={record.status !== "PENDING" || record.price > 10000}
+                                    >
+                                        Update
+                                    </button>
+                                    <button
+                                        className={`${styles.button} ${typeTable === 2
+                                            ? styles.disabled_btn
+                                            : styles.delete_btn}`}
+                                        disabled={typeTable === 2}
+                                        onClick={() => handleDeleteOrder(record)}
+                                    >
+                                        Delete
+                                    </button>
+
+                                </>
+
                             ),
                         }
                     ]}

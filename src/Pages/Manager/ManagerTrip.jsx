@@ -66,7 +66,8 @@ function ManagerTrip() {
       const res = await api.get("trip");
       const data = await res.data;
       console.log("list of trips:", res.data);
-      setTripList(data); // Cập nhật trạng thái trips với dữ liệu từ API
+      const sortedTrips = data.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+      setTripList(sortedTrips); // C p nh t tr ng th i trips v i d li u t API
     } catch (error) {
       message.error("Error fetching trips");
       console.log(error.message.toString());
@@ -346,7 +347,7 @@ function ManagerTrip() {
       const matchesFarms =
         searchFarms.length === 0 ||
         searchFarms.every((farmId) =>
-          trip.farms.map((farm) => farm.id).includes(farmId)
+          trip.tripDetails.map((farm) => farm.farm.id).includes(farmId)
         );
       console.log(searchFarms);
       console.log("matches Farms: ", matchesFarms);
@@ -362,7 +363,7 @@ function ManagerTrip() {
     console.log("filteredTrips: ", filteredTrips);
     filteredTrips.length > 0
       ? setSearchTrips(filteredTrips)
-      : setSearchTrips([]);
+      : (setSearchTrips([]), message.error("No trips found"));
   };
 
   const handleFetchLocation = async () => {
@@ -412,19 +413,39 @@ function ManagerTrip() {
         </Col>
         {/* search input  */}
         <Col xs={24} md={20} className={styles.manager_trip_search}>
-          <Input
-            className={styles.manager_trip_search_input}
+          <Select
+            className={styles.manager_trip_search_select}
+            showSearch
             placeholder="Start Location"
             value={searchStartLocation}
-            onChange={(e) => setSearchStartLocation(e.target.value)}
-          />
+            onChange={(value) => setSearchStartLocation(value)}
+          >
+            <Select.Option value="">All</Select.Option>
+            {[...new Set(tripList.map((trip) => trip.startLocation))].map(
+              (location) => (
+                <Select.Option key={location} value={location}>
+                  {location}
+                </Select.Option>
+              )
+            )}
+          </Select>
 
-          <Input
-            className={styles.manager_trip_search_input}
+          <Select
+            className={styles.manager_trip_search_select}
+            showSearch
             placeholder="End location"
             value={searchEndLocation}
-            onChange={(e) => setSearchEndLocation(e.target.value)}
-          />
+            onChange={(value) => setSearchEndLocation(value)}
+          >
+            <Select.Option value="">All</Select.Option>
+            {[...new Set(tripList.map((trip) => trip.endLocation))].map(
+              (location) => (
+                <Select.Option key={location} value={location}>
+                  {location}
+                </Select.Option>
+              )
+            )}
+          </Select>
 
           <RangePicker
             className={styles.manager_trip_search_select}
@@ -889,6 +910,7 @@ function ManagerTrip() {
                       type="dashed"
                       onClick={() => {
                         console.log("BeforeAdd", fieldForFarm);
+                        console.log("farm available", farmAvailable);
                         const farmAvailableFiltered = farmAvailable.filter(
                           (farm) => !fieldForFarm.some((f) => f.farmId === farm.id)
                         );
