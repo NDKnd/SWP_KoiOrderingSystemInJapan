@@ -286,12 +286,11 @@ function BookingStatusPage() {
       const today = new Date();
       const start = new Date(booking.trip.startDate);
       const daysDifference = (start - today) / (1000 * 60 * 60 * 24);
-      console.log(daysDifference);
 
       if (daysDifference < 3 && daysDifference >= 1) {
         Modal.warning({
           title: "Payment Reminder",
-          content: "Please complete your payment soon to avoid cancellation.",
+          content: "We kindly request that you complete your payment as soon as possible to avoid cancellation. Please note that if you do not check out before the last day, the booking will be automatically cancelled.",
           onOk: () => console.log("Reminder acknowledged"),
         });
       } else if (daysDifference < 1) {
@@ -372,7 +371,7 @@ function BookingStatusPage() {
                     <div className="farm-information">
                       <List
                         itemLayout="horizontal"
-                        dataSource={booking.trip.tripDetails}
+                        dataSource={booking.trip.tripDetails.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate))}
                         renderItem={(tripDetail, index) => (
                           <List.Item>
                             <List.Item.Meta

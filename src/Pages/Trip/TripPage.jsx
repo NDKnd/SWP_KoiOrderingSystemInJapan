@@ -317,7 +317,7 @@ function TripPage() {
           {selectedTrip && (
             <List
               itemLayout="vertical"
-              dataSource={selectedTrip.tripDetails}
+              dataSource={selectedTrip.tripDetails.sort((a, b) => new Date(a.travelDate) - new Date(b.travelDate))}
               renderItem={(tripDetail, index) => (
                 <List.Item>
                   <List.Item.Meta

@@ -99,6 +99,7 @@ const DeliverPendingOrder = () => {
                 const res = await api.put(`order/${currentOrder.id}`, {
                     image: downloadURL,
                 });
+                console.log("checkin: " + res);
                 message.success("Image uploaded and order updated successfully!");
             } catch (error) {
                 console.error("Error updating order:", error);

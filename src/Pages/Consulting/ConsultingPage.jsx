@@ -496,7 +496,7 @@ function ConsultingPage() {
                                         }}
                                         disabled={CheckInList.includes(record.status) === false}
                                     >
-                                        {record.status === CheckInList[1] ? "Update Ticket" : "Complete"}
+                                        {record.status === CheckInList[1] ? "Check In" : "Complete"}
                                     </button>
                                 </>
                             )
